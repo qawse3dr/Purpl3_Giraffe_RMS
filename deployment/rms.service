@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve Purpl3_RMS
+After=network.target
+
+[Service]
+User=larry
+Group=larry
+WorkingDirectory=/path/to/deploy/Purpl3_Giraffe_RMS
+Environment="PATH=/path/to/deploy/Purpl3_Giraffe_RMS/bin"
+ExecStart=/path/to/deploy//Purpl3_Giraffe_RMS/bin/uwsgi --logto rms.log --ini Purpl3_RMS.ini
+
+[Install]
+WantedBy=multi-user.target
