@@ -12,8 +12,10 @@ python3
 venv #might already be installed
 
 ```
-### Install flask using pip
+### Install deps 
 python -m pip install flask
+python -m pip install pyyaml
+python -m pip install pytest pytest-cov
 
 ## Running
 backend will run on port http://localhost:8080

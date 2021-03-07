@@ -1,0 +1,10 @@
+LOGIN_ENDPOINT: "/test"
+ERROR:
+  ERROR_UNKNOWN: "null"
+  ERROR_SUCCESS:
+    code: 0
+    string: "string"
+  ERROR_ATTRIBUTE_NOT_FOUND:
+    SUCCESS:
+    code: 0
+    string: "string"

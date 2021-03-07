@@ -1,3 +1,7 @@
 deploy
 coverage
 junit.xml
+*.pyc
+__pycache__
+.pytest*
+.vscode
