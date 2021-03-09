@@ -1,5 +1,7 @@
 '''
-This file is too handle 
+This file is too handle the login and account managment for the webpage
+Ver 0.01
+09/03/2020
 '''
 
 from flask import jsonify
@@ -10,6 +12,11 @@ import libpurpl3.preferences as pref
 
 #TODO add user sessions
 def login(data: dict) -> str:
+    '''
+    This function is to handle the act of logging into the users account. 
+    @param dict data, the dictonary of the users input data
+    @return a json of the error code
+    '''
     #TODO get table to input static key
     currPassword = encryptPassword(data[pref.getNoCheck(pref.LOGIN_PASSWORD)], b'93fB_lc6JzlZQqh2ywiHCTyacWN1NQpCo3EORh_upiM=')
   
