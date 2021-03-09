@@ -214,6 +214,8 @@ TABLE_OP_EDIT = "TABLE_OP:EDIT"
 LOGIN_LOGIN = "LOGIN:LOGIN"
 LOGIN_MANAGE_USER = "LOGIN:MANAGE_USER"
 LOGIN_CHANGE_PASSWORD = "LOGIN:CHANGE_PASSWORD"
+LOGIN_USERNAME = "LOGIN:USERNAME"
+LOGIN_PASSWORD = "LOGIN:PASSWORD"
 
 #ErrorCodes dictionary of all error codes.
 CONFIG_ERROR_CODES = "ERROR"
@@ -267,6 +269,8 @@ def getLoginOperations() -> dict:
     getAttrName(LOGIN_LOGIN): login.login,
     getAttrName(LOGIN_MANAGE_USER): login.manageUser,
     getAttrName(LOGIN_CHANGE_PASSWORD): login.changePassword,
+    getAttrName(LOGIN_USERNAME): "userName",
+    getAttrName(LOGIN_PASSWORD): "password",
   }
 
 #Holds default config settings.

@@ -1,6 +1,7 @@
 from flask import Flask , redirect, request, jsonify
 import logging
-import libpurpl3.preferences as pref 
+import libpurpl3.preferences as pref
+import libpurpl3.login as login 
 
 
 #Creates logger
@@ -16,6 +17,8 @@ pref.setConfigFile("config.yaml")
 
 #sets loggers level
 logger.setLevel(pref.getNoCheck(pref.CONFIG_LOG_LEVEL))
+
+login.encryptPassword("yeet", b'93fB_lc6JzlZQqh2ywiHCTyacWN1NQpCo3EORh_upiM=')
 
 
 
