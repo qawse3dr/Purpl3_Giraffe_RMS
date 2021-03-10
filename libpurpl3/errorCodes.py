@@ -41,6 +41,16 @@ class Error():
     '''
     self.extraVars = extraVars
 
+  def toJson(self) -> dict:
+    '''Returns the error code as a dict so it can be use
+    in Flask.jsonfiy 
+    @return returns dict error code in format
+    {
+       code: <code>
+       reason: <str reason>
+    }
+    '''
+    #NOTE this function is overwritten in preferences.py
   def __str__(self):
     return self.string  % ((self.code,) + self.extraVars)
 
@@ -78,7 +88,15 @@ def getErrorCodeList() -> dict:
     
     getAttrName(ERROR_FILE_NOT_FOUND): Error(3,"Returned: %d, file %s was not found"),
     
-    getAttrName(ERROR_ATTRIBUTE_NOT_FOUND) : Error(20,"Returned: %d, Attribute %s could not be found.")
+    getAttrName(ERROR_ATTRIBUTE_NOT_FOUND) : Error(20,"Returned: %d, Attribute %s could not be found."),
+
+    #Vars for error codes
+    getAttrName(ERROR_VAR) : {
+      getAttrName(ERROR_VAR_CODE) : "code",
+      getAttrName(ERROR_VAR_STR) : "reason",
+    }
+      
+
   }
 
 #0-30
@@ -88,3 +106,7 @@ ERROR_UNKNOWN = "ERROR:ERROR_UNKNOWN"
 ERROR_FILE_NOT_FOUND = "ERROR:FILE_NOT_FOUND"
 
 ERROR_ATTRIBUTE_NOT_FOUND = "ERROR:ATTRIBUTE_NOT_FOUND"
+
+ERROR_VAR = "ERROR:VAR"
+ERROR_VAR_CODE = "ERROR:VAR:CODE"
+ERROR_VAR_STR = "ERROR:VAR:STR"

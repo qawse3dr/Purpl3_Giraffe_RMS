@@ -1,6 +1,6 @@
 '''
 This will hold any all preference for the program
-when interacting with this module ENUM should be use
+when interacting with this module ENUM should be use.
 for example
 ```
 import preferences as pref
@@ -18,8 +18,6 @@ import copy
 from typing import Any, Tuple, NewType
 import yaml
 from libpurpl3.errorCodes import *
-import libpurpl3.operations as op 
-import libpurpl3.login as login 
 
 
 
@@ -34,9 +32,9 @@ CONFIG = None
 
 def setConfigFile(filename: str) -> Error:
   '''
-  sets the config file and overwrites value in current config
-  @param filename:string the path to the config file
-  @return success:bool if the file could be config or not #TODO change to error
+  sets the config file and overwrites value in current config.
+  @param filename:string the path to the config file.
+  @return success:bool if the file could be config or not #TODO change to error.
   '''
   
   try:
@@ -68,7 +66,7 @@ def setConfigFile(filename: str) -> Error:
 
 def get(key: prefENUM) -> Tuple[Error, Any]:
   '''
-  gets an attribute from preference manager from key
+  gets an attribute from preference manager from key.
   @param key ENUM/name of the attribute
   @return Error returns Success if no error as ocurred
   '''
@@ -112,9 +110,9 @@ def getNoCheck(key: prefENUM) -> Any:
 
 def getError(key: prefENUM,args:Tuple = None ) -> Tuple[Error, Any]:
   '''
-  Gets an error with the option to pass arguments when creating error
-  This should only be used for retriving errors
-  @param key the key of the error to be retrived
+  Gets an error with the option to pass arguments when creating error.
+  This should only be used for retriving errors.
+  @param key the key of the error to be retrived.
   @param args any optional args that can be passed to an error @see error.extraArgs()
   @return a copy of the error.
   '''
@@ -123,6 +121,13 @@ def getError(key: prefENUM,args:Tuple = None ) -> Tuple[Error, Any]:
   if(args != None):
     err.setExtraVars(args)
   return err
+
+def errorToJson(error: Error):
+  return {
+          getNoCheck(ERROR_VAR_CODE):error.code,
+          getNoCheck(ERROR_VAR_STR): str(error)
+    }
+setattr(Error, "toJson", errorToJson)
 
 def setAttr(key: prefENUM, value: Any) -> Error:
   '''
@@ -175,8 +180,8 @@ def setAttr(key: prefENUM, value: Any) -> Error:
 
 '''
 Constants used for referencing preferences.
-these should always be used when interacting
-with (get/set)Attribute to hardcoded values in our code
+These should always be used when interacting
+with (get/set)Attribute to hardcoded values in our code.
 '''
 #general config
 CONFIG_PORT = "PORT"
@@ -189,11 +194,11 @@ CONFIG_PING_ENDPOINT = "PING_ENDPOINT"
 
 #Api operations
 OPERATION_RUN_SCRIPT = "OPERATION:RUN_SCRIPT"
-OPERATION_MANAGE_SCRIPT = "OPERATION:MANAGE_SCRIPT"
+OPERATION_MANAGE_SCRIPT = "OPERATION:MANAGE_SCRIPTS"
 OPERATION_MANAGE_COMPUTERS = "OPERATION:MANAGE_COMPUTERS"
 OPERATION_MANAGE_SCRIPT_LOGS = "OPERATION:MANAGE_SCRIPT_LOGS"
-OPERATION_SCHEDULE_SCRIPT = "OPERATION:SCHEDULE_SCRIPT"
-OPERATION_GET_FILE = "OPERATION:GET_FILE" #Gets a file by type and id (type: "SCRIPT", id:10).
+OPERATION_SCHEDULE_SCRIPT = "OPERATION:SCHEDULE_SCRIPTS"
+OPERATION_GET_FILE = "OPERATION:" #Gets a file by type and id (type: "SCRIPT", id:10).
 
 
 #Table types
@@ -204,19 +209,24 @@ TABLE_COMPUTER = "TABLE:COMPUTERS"
 #table operations
 TABLE_OP_GET_BY_ID = "TABLE_OP:GET_BY_ID"
 TABLE_OP_GET_ALL = "TABLE_OP:GET_ALL"
-TABLE_OP_GET_WITH_QUERY = "TABLE_OP:GET_WITH_QUERY"
 TABLE_OP_ADD = "TABLE_OP:ADD"
 TABLE_OP_DEL = "TABLE_OP:DEL"
 TABLE_OP_EDIT = "TABLE_OP:EDIT"
+TABLE_OP_GET_FILE = "TABLE_OP:GET_FILE"
 
 
 #Login operations
 LOGIN_LOGIN = "LOGIN:LOGIN"
-LOGIN_MANAGE_USER = "LOGIN:MANAGE_USER"
+LOGIN_RESET_PASSWORD = "LOGIN:RESET_PASSWORD"
 LOGIN_CHANGE_PASSWORD = "LOGIN:CHANGE_PASSWORD"
 
 #ErrorCodes dictionary of all error codes.
 CONFIG_ERROR_CODES = "ERROR"
+
+#Request vars for requests
+REQ_VAR_BODY = "REQ_VAR:BODY"
+REQ_VAR_DATA = "REQ_VAR:DATA"
+REQ_VAR_OP   = "REQ_VAR:OP"
 
 CONFIG_OPERATIONS = "OPERATION"
 def getOperationList() -> dict:
@@ -224,12 +234,11 @@ def getOperationList() -> dict:
   @return dict of all operations.
   '''
   return {
-    getAttrName(OPERATION_RUN_SCRIPT): op.runScripts,
-    getAttrName(OPERATION_MANAGE_SCRIPT): op.manageScripts,
-    getAttrName(OPERATION_MANAGE_COMPUTERS): op.manageComputers,
-    getAttrName(OPERATION_MANAGE_SCRIPT_LOGS): op.manageScriptLogs,
-    getAttrName(OPERATION_SCHEDULE_SCRIPT):  op.scheduleScript,
-    getAttrName(OPERATION_GET_FILE): op.getFile,
+    getAttrName(OPERATION_RUN_SCRIPT): "RUN_SCRIPT",
+    getAttrName(OPERATION_MANAGE_SCRIPT): "MANAGE_SCRIPT",
+    getAttrName(OPERATION_MANAGE_COMPUTERS): "MANAGE_COMPUTER",
+    getAttrName(OPERATION_MANAGE_SCRIPT_LOGS): "MANAGE_SCRIPT_LOGS",
+    getAttrName(OPERATION_SCHEDULE_SCRIPT):  "SCHEDULE_SCRIPT",
   }
 
 
@@ -241,10 +250,10 @@ def getTableOperationList() -> dict:
   return {
     getAttrName(TABLE_OP_GET_BY_ID): "GET_BY_ID",
     getAttrName(TABLE_OP_GET_ALL): "GET_ALL",
-    getAttrName(TABLE_OP_GET_WITH_QUERY): "GET_WITH_QUERY",
     getAttrName(TABLE_OP_ADD): "ADD",
     getAttrName(TABLE_OP_DEL): "DEL",
     getAttrName(TABLE_OP_EDIT): "EDIT",
+    getAttrName(TABLE_OP_GET_FILE): "GET_FILE"
   }
 
 CONFIG_TABLES = "TABLES"
@@ -258,17 +267,27 @@ def getTableList() -> dict:
     getAttrName(TABLE_COMPUTER): "COMPUTERS_TABLE",
   }
 
-CONFIG_LOGIN_OPERATION = "LOGIN_OPERATIONS"
+CONFIG_LOGIN_OPERATION = "LOGIN"
 def getLoginOperations() -> dict:
   '''
   @return dict of all login table Operations.
   '''
   return {
-    getAttrName(LOGIN_LOGIN): login.login,
-    getAttrName(LOGIN_MANAGE_USER): login.manageUser,
-    getAttrName(LOGIN_CHANGE_PASSWORD): login.changePassword,
+    getAttrName(LOGIN_LOGIN): "LOGIN",
+    getAttrName(LOGIN_CHANGE_PASSWORD): "CHANGE_PASSWORD",
+    getAttrName(LOGIN_RESET_PASSWORD): "RESET_PASSWORD", 
   }
 
+CONFIG_REQUEST_VAR = "REQ_VAR"
+def getRequestVars() -> dict:
+  '''
+  @return dict of all request vars ie "body".
+  '''
+  return {
+    getAttrName(REQ_VAR_BODY) : "body",
+    getAttrName(REQ_VAR_DATA) : "data",
+    getAttrName(REQ_VAR_OP) : "op",
+  }
 #Holds default config settings.
 def defaultConfig() -> dict:
   '''
@@ -298,6 +317,8 @@ def defaultConfig() -> dict:
 
     #dict of all table operations.
     CONFIG_LOGIN_OPERATION: getLoginOperations(),
+
+    CONFIG_REQUEST_VAR: getRequestVars(),
   }
 
 #Create config.

@@ -1,13 +1,11 @@
 from flask import jsonify
 import libpurpl3.preferences as pref 
 
-
 def runScripts(data: dict) -> str:
+
+  
   return jsonify(
-    Error = {
-          "code":pref.Success.code,
-          "str": str(pref.Success)
-          },
+    Error = pref.Success.toJson(),
     data = {
       "Success": True
     }
@@ -16,10 +14,7 @@ def runScripts(data: dict) -> str:
 
 def manageScripts(data: dict) -> str:
   return jsonify(
-    Error = {
-          "code":pref.Success.code,
-          "str": str(pref.Success)
-          },
+    Error = pref.Success.toJson(),
     data = {
       "Success": True
     }
@@ -27,10 +22,7 @@ def manageScripts(data: dict) -> str:
 
 def manageComputers(data: dict) -> str:
   return jsonify(
-    Error = {
-          "code":pref.Success.code,
-          "str": str(pref.Success)
-          },
+    Error = pref.Success.toJson(),
     data = {
       "Success": True
     }
@@ -38,10 +30,7 @@ def manageComputers(data: dict) -> str:
 
 def manageScriptLogs(data: dict) -> str:
   return jsonify(
-    Error = {
-          "code":pref.Success.code,
-          "str": str(pref.Success)
-          },
+    Error = pref.Success.toJson(),
     data = {
       "Success": True
     }
@@ -49,21 +38,7 @@ def manageScriptLogs(data: dict) -> str:
 
 def scheduleScript(data: dict) -> str:
   return jsonify(
-    Error = {
-          "code":pref.Success.code,
-          "str": str(pref.Success)
-          },
-    data = {
-      "Success": True
-    }
-  )
-
-def getFile(data: dict) -> str:
-  return jsonify(
-    Error = {
-          "code":pref.Success.code,
-          "str": str(pref.Success)
-          },
+    Error = pref.Success.toJson(),
     data = {
       "Success": True
     }
