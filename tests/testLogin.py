@@ -5,6 +5,10 @@ from cryptography.fernet import Fernet
 
 class BaseTestCase(unittest.TestCase):
     def testPasswordEncryption(self):
+        '''
+        Tests the password encryption function too see if
+        the ecryption ruturns the same encyption as the function straight out
+        '''
         key = Fernet.generate_key()
         cipher_suite = Fernet(key)
         holder = cipher_suite.encrypt("THIS_1S-P0ggers".encode())
@@ -12,19 +16,14 @@ class BaseTestCase(unittest.TestCase):
         self.assertEqual(holder, holder2)
     
     def testPasswordDecryption(self):
+        '''
+        Tests the genreated encypted password to see if it decrypts too
+        the correct password
+        '''
         key = Fernet.generate_key()
         cipher_suite = Fernet(key)
         holder = login.encryptPassword("THIS_1S-P0ggers", key)
         self.assertEqual("THIS_1S-P0ggers".encode(), cipher_suite.decrypt(holder))
-        
-
-    
-
-
-
-
-        
-    
 
 if __name__ == '__main__':
     unittest.main()

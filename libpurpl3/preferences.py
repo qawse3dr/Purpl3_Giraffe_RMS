@@ -19,7 +19,8 @@ from typing import Any, Tuple, NewType
 import yaml
 from libpurpl3.errorCodes import *
 import libpurpl3.operations as op 
-import libpurpl3.login as login 
+from libpurpl3.login import login, manageUser, changePassword
+
 
 
 
@@ -266,9 +267,9 @@ def getLoginOperations() -> dict:
   @return dict of all login table Operations.
   '''
   return {
-    getAttrName(LOGIN_LOGIN): login.login,
-    getAttrName(LOGIN_MANAGE_USER): login.manageUser,
-    getAttrName(LOGIN_CHANGE_PASSWORD): login.changePassword,
+    getAttrName(LOGIN_LOGIN): login,
+    getAttrName(LOGIN_MANAGE_USER): manageUser,
+    getAttrName(LOGIN_CHANGE_PASSWORD): changePassword,
     getAttrName(LOGIN_USERNAME): "userName",
     getAttrName(LOGIN_PASSWORD): "password",
   }
