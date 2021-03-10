@@ -34,3 +34,14 @@ def changePassword(data: dict) -> str:
       "Success": True
     }
   )
+
+def resetPassword(data: dict) -> str:
+  return jsonify(
+    Error = {
+          "code":pref.Success.code,
+          "str": str(pref.Success)
+          },
+    data = {
+      "Success": True
+    }
+  )

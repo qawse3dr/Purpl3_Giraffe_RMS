@@ -94,7 +94,13 @@ class BaseTestCase(unittest.TestCase):
       self.assertEqual(pref.getError(pref.ERROR_UNKNOWN).code,unknownErr.code)
       self.assertEqual(pref.Success.code,err.code)
 
-
+    def test_noLoopDepsLogin(self):
+      import libpurpl3.login as login
+      #if no crash it worked
+    def test_noLoopDepsOp(self):
+      import libpurpl3.operations as op
+      #if no crash it worked
+    
         
     
 
