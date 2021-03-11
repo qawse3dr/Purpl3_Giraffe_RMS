@@ -3,7 +3,7 @@ import logging
 import libpurpl3.preferences as pref
 import libpurpl3.login as login
 import libpurpl3.operations as op 
-
+import libpurpl3.sshServer as sshServer
 
 #Creates logger
 logger = logging.getLogger("purpl3_rms")

@@ -16,6 +16,7 @@ venv #might already be installed
 python -m pip install flask
 python -m pip install pyyaml
 python -m pip install pytest pytest-cov
+python -m pip install paramiko
 
 ## Running
 backend will run on port http://localhost:8080
