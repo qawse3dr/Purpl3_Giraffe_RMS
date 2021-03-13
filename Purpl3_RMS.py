@@ -78,17 +78,25 @@ def apiRequest():
     '''
     print("api request: ", request.json)
 
+    err = pref.Success
+
     #names of request vars
     bodyName = pref.getNoCheck(pref.REQ_VAR_BODY)
     dataName = pref.getNoCheck(pref.REQ_VAR_DATA)
     jsonOpName = pref.getNoCheck(pref.REQ_VAR_OP)
 
-    opName = pref.CONFIG_OPERATIONS + ":" + request.json[bodyName][jsonOpName]
-    data = request.json[bodyName][dataName]
-
+    try:
+      opName = pref.CONFIG_OPERATIONS + ":" + request.json[bodyName][jsonOpName]
+      data = request.json[bodyName][dataName]
+    except:
+      err = pref.getError(pref.ERROR_INVALID_REQUEST, args=(request.json))
+      logger.error(err)
+      
     returnValue = None
 
-    err, op = pref.get(opName)
+    if(err == pref.Success):
+      err, op = pref.get(opName)
+    
     if(err == pref.Success):
       apiFtn = OPS[op]
       returnValue = apiFtn(data)

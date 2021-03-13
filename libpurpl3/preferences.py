@@ -185,7 +185,7 @@ with (get/set)Attribute to hardcoded values in our code.
 #general config
 CONFIG_PORT = "PORT"
 CONFIG_LOG_LEVEL = "LOG_LEVEL"
-
+CONFIG_RES_FOLDER = "RES_FOLDER"
 #endpoints
 CONFIG_LOGIN_ENDPOINT = "LOGIN_ENDPOINT"
 CONFIG_API_ENDPOINT = "API_ENDPOINT"
@@ -194,7 +194,7 @@ CONFIG_PING_ENDPOINT = "PING_ENDPOINT"
 #Api operations
 OPERATION_RUN_SCRIPT = "OPERATION:RUN_SCRIPT"
 OPERATION_MANAGE_SCRIPT = "OPERATION:MANAGE_SCRIPTS"
-OPERATION_MANAGE_COMPUTERS = "OPERATION:MANAGE_COMPUTERS"
+OPERATION_MANAGE_COMPUTERS = "OPERATION:MANAGE_COMPUTER"
 OPERATION_MANAGE_SCRIPT_LOGS = "OPERATION:MANAGE_SCRIPT_LOGS"
 OPERATION_SCHEDULE_SCRIPT = "OPERATION:SCHEDULE_SCRIPTS"
 OPERATION_GET_FILE = "OPERATION:" #Gets a file by type and id (type: "SCRIPT", id:10).
@@ -204,6 +204,10 @@ CONFIG_PRIVATE_SSH_KEY = "PRIVATE_SSH_KEY_PATH"
 CONFIG_PUBLIC_SSH_KEY = "PUBLIC_SSH_KEY_VALUE"
 CONFIG_SCRIPT_PATH = "SCRIPT_PATH"
 CONFIG_SCRIPT_LOG_PATH = "SCRIPT_LOG_PATH"
+CONFIG_REMOTE_FOLDER ="REMOTE_FOLDER"
+
+#built in script names (will be assumed to be in res folder)
+CONFIG_ADD_COMPUTER_SCRIPT = "ADD_COMPUTER_SCRIPT_NAME"
 
 #Table types
 TABLE_SCRIPT = "TABLE:SCRIPT"
@@ -231,6 +235,8 @@ CONFIG_ERROR_CODES = "ERROR"
 REQ_VAR_BODY = "REQ_VAR:BODY"
 REQ_VAR_DATA = "REQ_VAR:DATA"
 REQ_VAR_OP   = "REQ_VAR:OP"
+REQ_VAR_SCRIPT_ID = "REQ_VAR:SCRIPT_ID"
+REQ_VAR_COMPUTER_ID = "REQ_VAR:COMPUTER_ID"
 
 CONFIG_OPERATIONS = "OPERATION"
 def getOperationList() -> dict:
@@ -291,6 +297,9 @@ def getRequestVars() -> dict:
     getAttrName(REQ_VAR_BODY) : "body",
     getAttrName(REQ_VAR_DATA) : "data",
     getAttrName(REQ_VAR_OP) : "op",
+    getAttrName(REQ_VAR_SCRIPT_ID) : "ScriptID",
+    getAttrName(REQ_VAR_COMPUTER_ID) : "ComputerID",
+
   }
 #Holds default config settings.
 def defaultConfig() -> dict:
@@ -301,6 +310,8 @@ def defaultConfig() -> dict:
     #General config
     CONFIG_PORT : 8080,
     CONFIG_LOG_LEVEL : logging.INFO,
+    CONFIG_RES_FOLDER: "res/",
+    
 
     #Endpoints
     CONFIG_LOGIN_ENDPOINT: "/login",
@@ -328,7 +339,11 @@ def defaultConfig() -> dict:
     CONFIG_PRIVATE_SSH_KEY: "res/key",
     CONFIG_PUBLIC_SSH_KEY: "",
     CONFIG_SCRIPT_PATH: "data/scripts/",
-    CONFIG_SCRIPT_LOG_PATH: "data/scriptLogs/"
+    CONFIG_SCRIPT_LOG_PATH: "data/scriptLogs/",
+    CONFIG_REMOTE_FOLDER: "/tmp/Purpl3_RMS",
+
+    #built in script names (will be assumed to be in res folder)
+    CONFIG_ADD_COMPUTER_SCRIPT: "addSSHKey.sh"
   }
 
 #Create config.
