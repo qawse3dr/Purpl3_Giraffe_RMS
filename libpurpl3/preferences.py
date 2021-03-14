@@ -52,8 +52,7 @@ def setConfigFile(filename: str) -> Error:
           CONFIG[key] = newConfig[key]
         else: #Attribute wasn't found revert changes
           err = getError(ERROR_ATTRIBUTE_NOT_FOUND,args=(key))
-          err.setExtraVars(key)
-          logger.warning("File config will be reverted: {}".format(str(err)))
+          logger.warning(err)
           CONFIG = oldConf
           break
   except IOError:
@@ -200,6 +199,11 @@ OPERATION_MANAGE_SCRIPT_LOGS = "OPERATION:MANAGE_SCRIPT_LOGS"
 OPERATION_SCHEDULE_SCRIPT = "OPERATION:SCHEDULE_SCRIPTS"
 OPERATION_GET_FILE = "OPERATION:" #Gets a file by type and id (type: "SCRIPT", id:10).
 
+#SSH configs
+CONFIG_PRIVATE_SSH_KEY = "PRIVATE_SSH_KEY_PATH"
+CONFIG_PUBLIC_SSH_KEY = "PUBLIC_SSH_KEY_VALUE"
+CONFIG_SCRIPT_PATH = "SCRIPT_PATH"
+CONFIG_SCRIPT_LOG_PATH = "SCRIPT_LOG_PATH"
 
 #Table types
 TABLE_SCRIPT = "TABLE:SCRIPT"
@@ -319,6 +323,12 @@ def defaultConfig() -> dict:
     CONFIG_LOGIN_OPERATION: getLoginOperations(),
 
     CONFIG_REQUEST_VAR: getRequestVars(),
+
+    #ssh configs
+    CONFIG_PRIVATE_SSH_KEY: "res/key",
+    CONFIG_PUBLIC_SSH_KEY: "",
+    CONFIG_SCRIPT_PATH: "data/scripts/",
+    CONFIG_SCRIPT_LOG_PATH: "data/scriptLogs/"
   }
 
 #Create config.
