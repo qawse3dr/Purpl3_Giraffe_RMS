@@ -29,7 +29,7 @@ class Error():
     self.code = code
     self.string = string
 
-  def setExtraVars(self,*extraVars) -> None:
+  def setExtraVars(self,extraVars) -> None:
     '''
       @param extraVars any extra var that is needed when printing the Error
       Sets extra values used in the output of the error
@@ -52,6 +52,8 @@ class Error():
     '''
     #NOTE this function is overwritten in preferences.py
   def __str__(self):
+    if(not isinstance(self.extraVars,tuple)):
+      self.extraVars = (self.extraVars,)
     return self.string  % ((self.code,) + self.extraVars)
 
   def __eq__(self, other):
@@ -92,6 +94,12 @@ def getErrorCodeList() -> dict:
 
     getAttrName(ERROR_SQL_FAILURE): Error(21, "Skeleton message for SQL errors."),
 
+    #46-59 ssh errors
+    getAttrName(ERROR_CONNECTION_FAILED): Error(46,"Returned: %d, Connection to %s@%s could not be made."),
+
+    getAttrName(ERROR_CANT_FIND_SSH_KEY) : Error(49,"Returned %d: failed to find a valid ssh key at %s."),
+
+    getAttrName(ERROR_SSH_AUTHENTICATION_FAILED) : Error(50,"Returned %d: failed authentication over ssh for %s@%s."),
     #Vars for error codes
     getAttrName(ERROR_VAR) : {
       getAttrName(ERROR_VAR_CODE) : "code",
@@ -108,6 +116,12 @@ ERROR_UNKNOWN = "ERROR:ERROR_UNKNOWN"
 ERROR_FILE_NOT_FOUND = "ERROR:FILE_NOT_FOUND"
 
 ERROR_ATTRIBUTE_NOT_FOUND = "ERROR:ATTRIBUTE_NOT_FOUND"
+
+#46-59 ssh errors
+ERROR_CONNECTION_FAILED = "ERROR:CONNECTION_FAILED"
+
+ERROR_CANT_FIND_SSH_KEY = "ERROR:CANT_FIND_SSH_KEY"
+ERROR_SSH_AUTHENTICATION_FAILED = "ERROR:SSH_AUTHENTICATION_FAILED"
 
 ERROR_VAR = "ERROR:VAR"
 ERROR_VAR_CODE = "ERROR:VAR:CODE"
