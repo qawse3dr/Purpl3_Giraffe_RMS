@@ -90,6 +90,8 @@ def getErrorCodeList() -> dict:
     
     getAttrName(ERROR_ATTRIBUTE_NOT_FOUND) : Error(20,"Returned: %d, Attribute %s could not be found."),
 
+    getAttrName(ERROR_SQL_FAILURE): Error(21, "Skeleton message for SQL errors."),
+
     #Vars for error codes
     getAttrName(ERROR_VAR) : {
       getAttrName(ERROR_VAR_CODE) : "code",
@@ -110,3 +112,5 @@ ERROR_ATTRIBUTE_NOT_FOUND = "ERROR:ATTRIBUTE_NOT_FOUND"
 ERROR_VAR = "ERROR:VAR"
 ERROR_VAR_CODE = "ERROR:VAR:CODE"
 ERROR_VAR_STR = "ERROR:VAR:STR"
+
+ERROR_SQL_FAILURE = "ERROR:SQL_FAILURE"
