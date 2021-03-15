@@ -92,6 +92,8 @@ def getErrorCodeList() -> dict:
     
     getAttrName(ERROR_ATTRIBUTE_NOT_FOUND) : Error(20,"Returned: %d, Attribute %s could not be found."),
 
+    getAttrName(ERROR_SQL_FAILURE): Error(21, "Skeleton message for SQL errors."),
+
     #46-59 ssh errors
     getAttrName(ERROR_CONNECTION_FAILED): Error(46,"Returned: %d, Connection to %s@%s could not be made."),
 
@@ -124,3 +126,5 @@ ERROR_SSH_AUTHENTICATION_FAILED = "ERROR:SSH_AUTHENTICATION_FAILED"
 ERROR_VAR = "ERROR:VAR"
 ERROR_VAR_CODE = "ERROR:VAR:CODE"
 ERROR_VAR_STR = "ERROR:VAR:STR"
+
+ERROR_SQL_FAILURE = "ERROR:SQL_FAILURE"
