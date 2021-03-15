@@ -11,3 +11,19 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+#root {
+
+	background-color: grey;
+	height: 100
+}
+
+.trapezoid {
+	border-bottom: 40px solid #555;
+	border-left: 50px solid transparent;
+	border-right: 55px solid transparent;
+	height: 0;
+	width: 250px;
+	background-color: grey;
+	color: white;
+}

@@ -1,14 +1,18 @@
 import logo from './logo.svg';
 import './App.css';
 import axios from "axios";
+import React, { Component } from 'react';
+import MenuTab from "./components/MenuTab"
 
 function App() {
   return (
     <div className="App">
       
-      <button onClick={Ping}>
-          Ping
-      </button>
+      <button onClick={Ping}>Ping</button>
+
+      <MenuTab/>
+
+      
     </div>
   );
 }
