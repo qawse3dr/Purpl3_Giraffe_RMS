@@ -1,12 +1,15 @@
 
 
 import logging
+import threading
+import os
 from typing import Tuple 
 import datetime
 import libpurpl3.preferences as pref 
 import paramiko
 import libpurpl3.tableOpComputer as computerTable
 import libpurpl3.tableOpScript as scriptTable
+import libpurpl3.tableOpScriptLog as scriptLogTable
 import libpurpl3.tableOpUser as userTable
 
 #Creates logger
@@ -84,19 +87,136 @@ class sshConnection():
 
   def run(self) -> Tuple[pref.Error, int]:
     ''' Runs a script based on the script passed in init'''
+
+    ftp_client = None
     err = pref.Success
-    return err, 0
+
+    for _ in range(1):
+      try:
+        ftp_client = self.ssh.open_sftp()
+      except:
+        err = pref.getError(pref.ERROR_UNKNOWN)
+        break
+      
+      #Copies script over
+      remoteFolder = pref.getNoCheck(pref.CONFIG_REMOTE_FOLDER)
+      scriptFolder = pref.getNoCheck(pref.CONFIG_SCRIPT_PATH)
+      err = copyFileToComputer(ftp_client, remoteFolder, scriptFolder, self.script.fileName)
+      if(err != pref.Success):
+        break
+      
+      #Executes script
+ 
+      #windows echo command
+      #echoCmd = "echo Returned $?"
+      echoCmd = "printf \"\\n\nReturned: %d\" $?"
+      _, stdout, stderr = self.ssh.exec_command("{}{}; {}".format(remoteFolder, self.script.fileName, echoCmd))
+
+      #creates Script logs TODO: change to correct way when ready
+      self.scriptLog = scriptLogTable.ScriptLog(None, self.script.ID, None, self.computer.ID,datetime.datetime.now(),None,None,None,"liveSTDOUT.txt","liveSTDERR.txt",self.computer.asAdmin)
+           
+      outputThread = threading.Thread(target=self.getOutput, daemon=True, args=(stdout,stderr))
+      outputThread.start()
+
+    
+    id = self.scriptLog.ID if self.scriptLog != None else -1
+    return err, id
 
 
-  def getOutput(self):
+  def getOutput(self, stdout: paramiko.ChannelFile, stderr : paramiko.ChannelFile):
     '''
     This should never be called from outside this class.
     And should be run in another thread retriving the output from the 
     script running on the remote computer
     it is assumed the scriptLog is already set before this function
     '''
-    err = pref.Success
 
+    #sets it so chanels arent blocking
+    stdout.channel.setblocking(0)
+    stderr.channel.setblocking(0)
+
+    stdout_buffer = ""
+    stderr_buffer = ""
+
+    #scriptLog folder
+    logFolder = pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH)
+    try:
+      stdoutFile = open("{}{}".format(logFolder, self.scriptLog.stdoutFile),"w")
+      stderrFile = open("{}{}".format(logFolder, self.scriptLog.stderrFile),"w")
+    except: 
+      #Couldn't create stdout and stderr file aborting and display warning
+      err = pref.getError(pref.ERROR_CANT_CREATE_FILE, args=("{} and {}".format(self.scriptLog.stdoutFile, self.scriptLog.stderrFile)))
+      logger.warning(err)
+      return
+    #writes basic info to stdout and stderr
+    stdoutFile.write("Script Start at: {}\n".format(datetime.datetime.now()))
+    stderrFile.write("Script Start at: {}\n".format(datetime.datetime.now()))
+    stdoutFile.write("{}: ".format(datetime.datetime.now()))
+    stderrFile.write("{}: ".format(datetime.datetime.now()))
+    stdoutFile.flush()
+    stderrFile.flush()
+    #gets the output
+    while not stdout.channel.exit_status_ready() or not stderr.channel.exit_status_ready() or stdout.channel.recv_ready() or stderr.channel.recv_ready():
+      #stdout
+      
+      if(stdout.channel.recv_ready()):
+        try:
+          stdout_buffer = stdout.read(1).decode()
+          stdoutFile.write(stdout_buffer)
+          if stdout_buffer == "\n":
+            stdoutFile.write("{}: ".format(datetime.datetime.now()))
+          stdoutFile.flush()
+        except:
+          pass
+        
+      #stderr
+      if(stderr.channel.recv_ready()):
+        try:
+          stderr_buffer = stderr.read(1).decode()
+          stderrFile.write(stderr_buffer)
+          if stderr_buffer == "\n":
+            stderrFile.write("{}: ".format(datetime.datetime.now()))
+          stderrFile.flush()
+        except:
+          pass
+
+    #writes rest of data
+    for line in stdout.readlines():
+      stdoutFile.write("{}: {}".format(datetime.datetime.now(),line))
+    for line in stderr.readlines():
+      stderrFile.write("{}: {}".format(datetime.datetime.now(),line))
+
+    stdoutFile.close()
+    stderrFile.close()
+
+
+    #gets returnValue
+    stdoutFile = open("{}{}".format(logFolder, self.scriptLog.stdoutFile), "r+")
+    stdoutFile.seek(0,os.SEEK_END)
+    end = stdoutFile.tell()
+    buffer = ""
+    counter = 1
+    while( buffer != "\n"):
+      stdoutFile.seek(end-counter,os.SEEK_SET)
+      buffer = stdoutFile.read(1)
+      counter += 1
+
+    returnValue = stdoutFile.readline().split("Returned: ")
+    
+    err = pref.Success
+    #Failed to get return value error reading connection losted
+    if len(returnValue) == 1:
+      err = pref.getError(pref.ERROR_SSH_CONNECTION_LOST,args=(self.computer.username,self.computer.IP,self.script.name))
+      returnValue = None
+      logger.error(err)
+    else:
+      returnValue = returnValue[-1]
+      logger.info("Complete script {} with return value {}".format(self.script.name, returnValue))
+    EndTime = datetime.datetime.now()
+    ErrorCode = err.code
+    
+    #Writes return value to db
+    #TODO WRITE TO DB
   @staticmethod
   def addNewComputer(computerIP: str,username: str, password:str, userID: int = None, name:str = None, nickName:str =None , desc:str = None, asAdmin:bool = False) -> pref.Error:
     '''
@@ -200,17 +320,10 @@ def copyFileToComputer(ftp_client: paramiko.SFTPClient, remoteFolder: str,resFol
   try:
     ftp_client.put("{}{}".format(resFolder,filename),"{}{}".format(remoteFolder,filename))
     ftp_client.chmod("{}{}".format(remoteFolder,filename), 0o777)
-  except paramiko.SFTP_NO_SUCH_FILE:
+  except Exception as e:
     #couldn't find script on sever.
     err = pref.getError(pref.ERROR_FILE_NOT_FOUND, args=(resFolder+filename))
     logger.error(err)
-  except paramiko.SFTP_PERMISSION_DENIED:
-    #permission denied.
-    err = pref.getError(pref.ERROR_SSH_PERMISSION_DENIED, args=(remoteFolder))
-    logger.error(err)
-  except Exception as e:
-    #Unknown error.
-    err = pref.getError(pref.ERROR_UNKNOWN, args=(e))
-    logger.error(err)
+
   return err
 

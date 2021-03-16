@@ -89,7 +89,8 @@ def getErrorCodeList() -> dict:
     getAttrName(ERROR_UNKNOWN): Error(1,"Returned: %d, an unknown error has occurred: %s"),
     
     getAttrName(ERROR_FILE_NOT_FOUND): Error(3,"Returned: %d, file %s was not found"),
-    
+    getAttrName(ERROR_CANT_CREATE_FILE): Error(4,"Returned: %d, file %s could not be created"),
+
     getAttrName(ERROR_INVALID_REQUEST): Error(10,"Returned: %d, invalid request %s"),
 
     getAttrName(ERROR_ATTRIBUTE_NOT_FOUND) : Error(20,"Returned: %d, Attribute %s could not be found."),
@@ -108,6 +109,7 @@ def getErrorCodeList() -> dict:
     getAttrName(ERROR_SSH_PERMISSION_DENIED): Error(52, "Returned %d: permission denied accessing: %s"),
     getAttrName(ERROR_SSH_FAILED_TO_EXECUTE_SCRIPT): Error(53, "Returned %d: failed to execute script: %s"),
     getAttrName(ERROR_SSH_SCRIPT_FAILED_WITH_ERROR_CODE): Error(54, "Returned %d: script failed with error code: %s"),
+    getAttrName(ERROR_SSH_CONNECTION_LOST): Error(55,"Returned %d: Connection to remote computer %s@%s running script %s lost"),
     #Vars for error codes
     getAttrName(ERROR_VAR) : {
       getAttrName(ERROR_VAR_CODE) : "code",
@@ -122,6 +124,7 @@ ERROR_SUCCESS = "ERROR:ERROR_SUCCESS"
 ERROR_UNKNOWN = "ERROR:ERROR_UNKNOWN"
 
 ERROR_FILE_NOT_FOUND = "ERROR:FILE_NOT_FOUND"
+ERROR_CANT_CREATE_FILE = "ERROR:CANT_CREATE_FILE"
 
 ERROR_INVALID_REQUEST = "ERROR:INVALID_REQUEST"
 
@@ -140,6 +143,7 @@ ERROR_EMPTY_SSH_PUBLIC_KEY = "ERROR:EMPTY_SSH_PUBLIC_KEY"
 ERROR_SSH_PERMISSION_DENIED = "ERROR:SSH_PERMISSION_DENIED"
 ERROR_SSH_FAILED_TO_EXECUTE_SCRIPT = "ERROR:SSH_FAILED_TO_EXECUTE_SCRIPT"
 ERROR_SSH_SCRIPT_FAILED_WITH_ERROR_CODE = "ERROR:ERROR_SSH_SCRIPT_FAILED_WITH_ERROR_CODE"
+ERROR_SSH_CONNECTION_LOST = "ERROR:ERROR_SSH_CONNECTION_LOST"
 
 ERROR_VAR = "ERROR:VAR"
 ERROR_VAR_CODE = "ERROR:VAR:CODE"
