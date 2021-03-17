@@ -1,5 +1,4 @@
 body {
-  margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -7,15 +6,43 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html{
+	height: 100%;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
 
-#root {
+.logoHeader{
+	background-color: black;
+	width: 100%;
+}
+.logoHeader img{
+	width: 200px;
+	height: auto;
+}
 
-	background-color: grey;
-	height: 100
+ul.navTabs{
+	display: table;
+	width: 100%;
+	margin-left: -40px;
+}
+
+ul.navTabs li{
+	display: table-cell;
+    list-style-type: none;
+}
+
+ul.navTabs li a{
+	color: black;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.content{
+	background-color: #d3d3d3;
 }
 
 .trapezoid {
@@ -25,5 +52,16 @@ code {
 	height: 0;
 	width: 250px;
 	background-color: grey;
-	color: white;
+	display: inline-block;
 }
+
+.tab {
+	color: #fff;
+	background-color: rgb(175,175,175);
+	border-radius: 50px 50px 0 0;
+	padding: 10px 20px;
+	width: auto;
+	position: relative;
+	text-decoration: none;
+	display:inline-block;
+  }
