@@ -19,8 +19,6 @@ from typing import Any, Tuple, NewType
 import yaml
 from libpurpl3.errorCodes import *
 
-
-
 #Creates logger
 logger = logging.getLogger("purpl3_rms")
 
@@ -227,6 +225,8 @@ TABLE_OP_GET_FILE = "TABLE_OP:GET_FILE"
 LOGIN_LOGIN = "LOGIN:LOGIN"
 LOGIN_RESET_PASSWORD = "LOGIN:RESET_PASSWORD"
 LOGIN_CHANGE_PASSWORD = "LOGIN:CHANGE_PASSWORD"
+LOGIN_USERNAME = "LOGIN:USERNAME"
+LOGIN_PASSWORD = "LOGIN:PASSWORD"
 
 #ErrorCodes dictionary of all error codes.
 CONFIG_ERROR_CODES = "ERROR"
