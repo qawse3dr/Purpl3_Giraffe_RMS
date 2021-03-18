@@ -90,6 +90,8 @@ def getErrorCodeList() -> dict:
     
     getAttrName(ERROR_FILE_NOT_FOUND): Error(3,"Returned: %d, file %s was not found"),
     
+    getAttrName(ERROR_INVALID_REQUEST): Error(10,"Returned: %d, invalid request %s"),
+
     getAttrName(ERROR_ATTRIBUTE_NOT_FOUND) : Error(20,"Returned: %d, Attribute %s could not be found."),
 
     getAttrName(ERROR_SQL_FAILURE): Error(21, "Skeleton message for SQL errors."),
@@ -101,8 +103,11 @@ def getErrorCodeList() -> dict:
     getAttrName(ERROR_CONNECTION_FAILED): Error(46,"Returned: %d, Connection to %s@%s could not be made."),
 
     getAttrName(ERROR_CANT_FIND_SSH_KEY) : Error(49,"Returned %d: failed to find a valid ssh key at %s."),
-
     getAttrName(ERROR_SSH_AUTHENTICATION_FAILED) : Error(50,"Returned %d: failed authentication over ssh for %s@%s."),
+    getAttrName(ERROR_EMPTY_SSH_PUBLIC_KEY): Error(51,"Returned %d: PUBLIC_SSH_KEY_VALUE config is empty"),
+    getAttrName(ERROR_SSH_PERMISSION_DENIED): Error(52, "Returned %d: permission denied accessing: %s"),
+    getAttrName(ERROR_SSH_FAILED_TO_EXECUTE_SCRIPT): Error(53, "Returned %d: failed to execute script: %s"),
+    getAttrName(ERROR_SSH_SCRIPT_FAILED_WITH_ERROR_CODE): Error(54, "Returned %d: script failed with error code: %s"),
     #Vars for error codes
     getAttrName(ERROR_VAR) : {
       getAttrName(ERROR_VAR_CODE) : "code",
@@ -118,6 +123,8 @@ ERROR_UNKNOWN = "ERROR:ERROR_UNKNOWN"
 
 ERROR_FILE_NOT_FOUND = "ERROR:FILE_NOT_FOUND"
 
+ERROR_INVALID_REQUEST = "ERROR:INVALID_REQUEST"
+
 ERROR_ATTRIBUTE_NOT_FOUND = "ERROR:ATTRIBUTE_NOT_FOUND"
 
 #31-45 account managment
@@ -129,6 +136,10 @@ ERROR_CONNECTION_FAILED = "ERROR:CONNECTION_FAILED"
 
 ERROR_CANT_FIND_SSH_KEY = "ERROR:CANT_FIND_SSH_KEY"
 ERROR_SSH_AUTHENTICATION_FAILED = "ERROR:SSH_AUTHENTICATION_FAILED"
+ERROR_EMPTY_SSH_PUBLIC_KEY = "ERROR:EMPTY_SSH_PUBLIC_KEY"
+ERROR_SSH_PERMISSION_DENIED = "ERROR:SSH_PERMISSION_DENIED"
+ERROR_SSH_FAILED_TO_EXECUTE_SCRIPT = "ERROR:SSH_FAILED_TO_EXECUTE_SCRIPT"
+ERROR_SSH_SCRIPT_FAILED_WITH_ERROR_CODE = "ERROR:ERROR_SSH_SCRIPT_FAILED_WITH_ERROR_CODE"
 
 ERROR_VAR = "ERROR:VAR"
 ERROR_VAR_CODE = "ERROR:VAR:CODE"

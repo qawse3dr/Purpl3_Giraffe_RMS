@@ -6,3 +6,4 @@ __pycache__
 .pytest*
 .vscode
 key
+key.pub
