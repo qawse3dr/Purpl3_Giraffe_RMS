@@ -5,3 +5,4 @@ junit.xml
 __pycache__
 .pytest*
 .vscode
+key

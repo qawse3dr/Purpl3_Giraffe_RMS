@@ -43,29 +43,23 @@ def manageUser(data: dict) -> str:
     )
 
 def changePassword(data: dict) -> str:
-    return jsonify(
-        Error = {
-            "code":pref.Success.code,
-            "str": str(pref.Success)
-            },
-        data = {
-        "Success": True
-        }
-    )
+  return jsonify(
+    Error = {
+          "code":pref.Success.code,
+          "str": str(pref.Success)
+          },
+    data = {
+      "Success": True
+    }
+  )
 
-def encryptPassword(password: str, key: str) -> str:
-    '''
-    This function takes in a given password and encryption key and returns
-    the encrypted password.
-    @param str password, the password for encrpytion
-    @param str key, the encryption key
-    @return a string of the ecrypted key
-    '''
-    cipher_suite = Fernet(key)
-    ciphered_text = cipher_suite.encrypt(password.encode())
-
-    return ciphered_text
-
-
-
-
+def resetPassword(data: dict) -> str:
+  return jsonify(
+    Error = {
+          "code":pref.Success.code,
+          "str": str(pref.Success)
+          },
+    data = {
+      "Success": True
+    }
+  )
