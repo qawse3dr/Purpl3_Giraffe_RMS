@@ -18,11 +18,6 @@ import copy
 from typing import Any, Tuple, NewType
 import yaml
 from libpurpl3.errorCodes import *
-import libpurpl3.operations as op 
-from libpurpl3.login import login, manageUser, changePassword
-
-
-
 
 #Creates logger
 logger = logging.getLogger("purpl3_rms")
