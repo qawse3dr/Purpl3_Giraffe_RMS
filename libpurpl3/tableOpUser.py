@@ -43,7 +43,8 @@ class UserTable(tableOp.Table):
         checks username and password against db
         will return false if username is not in db or if
         password given does not match db password
-        @param
+        @param userName, the userName of the user cannot contain " " or ";"
+        @param password, a hashed password to check against db
         @return user ID, if failed return -1
         '''
 
