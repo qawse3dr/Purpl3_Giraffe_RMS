@@ -21,9 +21,6 @@ pref.setConfigFile("config.yaml")
 #sets loggers level
 logger.setLevel(pref.getNoCheck(pref.CONFIG_LOG_LEVEL))
 
-login.encryptPassword("yeet", b'93fB_lc6JzlZQqh2ywiHCTyacWN1NQpCo3EORh_upiM=')
-
-
 #Functions for login and operations
 LOGIN_OPS = {
   pref.getNoCheck(pref.LOGIN_LOGIN): login.login,
