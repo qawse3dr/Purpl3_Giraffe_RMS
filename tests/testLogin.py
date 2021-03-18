@@ -1,29 +1,11 @@
 import unittest
 import libpurpl3.login as login
+from libpurpl3.tableOpUser import *
 from flask import jsonify
-from cryptography.fernet import Fernet
+from unittest.mock import MagicMock
 
-class BaseTestCase(unittest.TestCase):
-    def testPasswordEncryption(self):
-        '''
-        Tests the password encryption function too see if
-        the ecryption ruturns the same encyption as the function straight out
-        '''
-        key = Fernet.generate_key()
-        cipher_suite = Fernet(key)
-        holder = cipher_suite.encrypt("THIS_1S-P0ggers".encode())
-        holder2 = login.encryptPassword("THIS_1S-P0ggers", key)
-        self.assertEqual(holder, holder2)
-    
-    def testPasswordDecryption(self):
-        '''
-        Tests the genreated encypted password to see if it decrypts too
-        the correct password
-        '''
-        key = Fernet.generate_key()
-        cipher_suite = Fernet(key)
-        holder = login.encryptPassword("THIS_1S-P0ggers", key)
-        self.assertEqual("THIS_1S-P0ggers".encode(), cipher_suite.decrypt(holder))
+loginHolder = UserTable()
+loginHolder.checkLogin = MagicMock(return_value=False)     
 
 if __name__ == '__main__':
     unittest.main()

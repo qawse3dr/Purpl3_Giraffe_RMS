@@ -93,6 +93,9 @@ def getErrorCodeList() -> dict:
     getAttrName(ERROR_ATTRIBUTE_NOT_FOUND) : Error(20,"Returned: %d, Attribute %s could not be found."),
 
     getAttrName(ERROR_SQL_FAILURE): Error(21, "Skeleton message for SQL errors."),
+    #31-45 account managment
+    getAttrName(ERROR_USER_AUTHENTICATION_ERROR): Error(31, "Returned: %d, failed login for %s"),
+    getAttrName(ERROR_USERNAME_INVALID): Error(32, "Return: %d, failed login due too invalid username"),
 
     #46-59 ssh errors
     getAttrName(ERROR_CONNECTION_FAILED): Error(46,"Returned: %d, Connection to %s@%s could not be made."),
@@ -116,6 +119,10 @@ ERROR_UNKNOWN = "ERROR:ERROR_UNKNOWN"
 ERROR_FILE_NOT_FOUND = "ERROR:FILE_NOT_FOUND"
 
 ERROR_ATTRIBUTE_NOT_FOUND = "ERROR:ATTRIBUTE_NOT_FOUND"
+
+#31-45 account managment
+ERROR_USER_AUTHENTICATION_ERROR = "ERROR:ERROR_USER_ATHENTICATION_ERROR"
+ERROR_USERNAME_INVALID = "ERROR:INVALID_USERNAME"
 
 #46-59 ssh errors
 ERROR_CONNECTION_FAILED = "ERROR:CONNECTION_FAILED"

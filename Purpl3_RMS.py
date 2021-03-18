@@ -1,4 +1,4 @@
-from flask import Flask , redirect, request, jsonify
+from flask import Flask , redirect, request, jsonify, session
 import logging
 import libpurpl3.preferences as pref
 import libpurpl3.login as login
@@ -11,6 +11,8 @@ logger = logging.getLogger("purpl3_rms")
 #Creates application
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.secret_key = "any random string"
+#TODO get better key larry
 
 #Load preferences #TODO change to command line arg
 pref.setConfigFile("config.yaml")
@@ -79,6 +81,9 @@ def apiRequest():
       }
     '''
     print("api request: ", request.json)
+    # if not("userID" in session):
+    #     session.pop("userID", None)
+
 
     #names of request vars
     bodyName = pref.getNoCheck(pref.REQ_VAR_BODY)

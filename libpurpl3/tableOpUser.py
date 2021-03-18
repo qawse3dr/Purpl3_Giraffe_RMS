@@ -36,6 +36,18 @@ class UserTable(tableOp.Table):
         @return errorCode: Error
         '''
         return pref.getError(pref.ERROR_SUCCESS)
+    
+    @staticmethod
+    def checkLogin(userName: str, password: str)->int:
+        '''
+        checks username and password against db
+        will return false if username is not in db or if
+        password given does not match db password
+        @param
+        @return user ID, if failed return -1
+        '''
+
+        return True
 
     # overriding abstract method
     @staticmethod
