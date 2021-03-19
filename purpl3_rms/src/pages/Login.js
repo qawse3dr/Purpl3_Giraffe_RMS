@@ -4,7 +4,7 @@ import LoginForm from '../components/LoginForm'
 class InputField extends React.Component {
     render() {
         return (
-            <LoginForm/>
+            <LoginForm history={this.props.history}/>
         );
     }
 }

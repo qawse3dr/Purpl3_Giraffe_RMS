@@ -21,30 +21,33 @@ function App() {
     <div className="App">
       
       <HashRouter>
-        <div className="logoHeader">
-          <img src={logo}></img>
-        </div>
-        <div className="header">
-          <h1>User stuff goes here</h1>
-        </div>
-        <ul className="navTabs">
-          <li className="tab"><NavLink exact to="/run-script">Run Script</NavLink></li>
-          <li className="tab"><NavLink to="/script-logs">Script Logs</NavLink></li>
-          <li className="tab"><NavLink to="/schedule">Schedule</NavLink></li>
-          <li className="tab"><NavLink to="/script-viewer">Script Viewer</NavLink></li>
-          <li className="tab"><NavLink to="/error-doc">Error Doc</NavLink></li>
-        </ul>
-        
+        <Switch>
+          <Route exact path="/" component={Login}></Route>
+          <>
+            <div className="logoHeader">
+              <img src={logo}></img>
+            </div>
+            <div className="header">
+              <h1>User stuff goes here</h1>
+            </div>
+            <ul className="navTabs">
+              <li className="tab"><NavLink exact to="/run-script">Run Script</NavLink></li>
+              <li className="tab"><NavLink to="/script-logs">Script Logs</NavLink></li>
+              <li className="tab"><NavLink to="/schedule">Schedule</NavLink></li>
+              <li className="tab"><NavLink to="/script-viewer">Script Viewer</NavLink></li>
+              <li className="tab"><NavLink to="/error-doc">Error Doc</NavLink></li>
+            </ul>
+            
 
-        <div className="content">
-          <Switch>
-            <Route path="/run-script" component={RunScripts}></Route>
-            <Route path="/script-logs" component={ScriptLogs}></Route>
-            <Route path="/schedule" component={Schedule}></Route>
-            <Route path="/script-viewer" component={ScriptsViewer}></Route>
-            <Route path="/error-doc" component={ErrorDoc}></Route>
-          </Switch>
-        </div>
+            <div className="content">
+              <Route path="/run-script" component={RunScripts}></Route>
+              <Route path="/script-logs" component={ScriptLogs}></Route>
+              <Route path="/schedule" component={Schedule}></Route>
+              <Route path="/script-viewer" component={ScriptsViewer}></Route>
+              <Route path="/error-doc" component={ErrorDoc}></Route>
+            </div>
+          </>
+        </Switch>
       </HashRouter>
 
       
