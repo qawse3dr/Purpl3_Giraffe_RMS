@@ -1,6 +1,8 @@
 import datetime
 import libpurpl3.preferences as pref
 import libpurpl3.tableOp as tableOp
+import libpurpl3.sqlFuncs as sqlFuncs
+import sqlite3
 
 class User(tableOp.Entry):
     #TODO add default values
@@ -35,7 +37,17 @@ class UserTable(tableOp.Table):
         @param None.
         @return errorCode: Error
         '''
-        return pref.getError(pref.ERROR_SUCCESS)
+        command = """CREATE TABLE IF NOT EXISTS u (
+                       id INTEGER,
+                       username CHAR(256),
+                       password CHAR(256),
+                       dtCreated DATETIME,
+                       dtModified DATETIME,
+                       admin BOOL,
+                       PRIMARY KEY(id)
+                    );"""
+        e = sqlFuncs.createTable(command)
+        return e
     
     @staticmethod
     def checkLogin(userName: str, password: str)->int:
@@ -47,7 +59,6 @@ class UserTable(tableOp.Table):
         @param password, a hashed password to check against db
         @return user ID, if failed return -1
         '''
-
         return True
 
     # overriding abstract method

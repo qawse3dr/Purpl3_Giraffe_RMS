@@ -1,13 +1,14 @@
 import datetime
 import libpurpl3.preferences as pref 
 import libpurpl3.tableOp as tableOp
-
+import libpurpl3.sqlFuncs as sqlFuncs
+import sqlite3
 
 class Script(tableOp.Entry):
     #TODO add default values
     # overriding abstract method
-    def __init__(self, ID: int, name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime,
-                 dtModified: datetime.datetime, size: float, isAdmin: bool):
+    def __init__(self, name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime,
+                 dtModified: datetime.datetime, size: float, isAdmin: bool, id = None):
         self.ID = ID
         self.name = name
         self.fileName = fileName
@@ -42,7 +43,21 @@ class ScriptTable(tableOp.Table):
         @param None.
         @return errorCode: Error
         '''
-        return pref.getError(pref.ERROR_SUCCESS)
+        command = """CREATE TABLE IF NOT EXISTS s (
+                       id INTEGER,
+                       name CHAR(256),
+                       fileName CHAR(256),
+                       author INTEGER,
+                       desc CHAR(1024),
+                       dtCreated DATETIME,
+                       dtModified DATETIME,
+                       size FLOAT(5, 3),
+                       isAdmin BOOL,
+                       PRIMARY KEY(id),
+                       FOREIGN KEY (author) REFERENCES u(id)
+                    );"""
+        e = sqlFuncs.createTable(command)
+        return e
 
     # overriding abstract method
     @staticmethod 
@@ -72,7 +87,7 @@ class ScriptTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def createEntry(values: tuple):
+    def createEntry(values: tuple): # OR name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime, dtModified: datetime.datetime, size: float, isAdmin: bool
         '''
         #TODO
         *add description*.
@@ -124,7 +139,7 @@ class ScriptTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def add(entry: Script):
+    def add(entry: Script): # OR name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime, dtModified: datetime.datetime, size: float, isAdmin: bool
         '''
         #TODO
         *add description*.

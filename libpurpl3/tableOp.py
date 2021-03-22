@@ -4,6 +4,7 @@
 # for functions common amongst script, scriptLog, computer and user classes
 
 from abc import ABC, abstractmethod 
+import sqlite3
 
 class Entry(ABC):
     # abstract method

@@ -1,6 +1,8 @@
 import datetime
 import libpurpl3.preferences as pref
 import libpurpl3.tableOp as tableOp
+import libpurpl3.sqlFuncs as sqlFuncs
+import sqlite3
 
 class ScriptLog(tableOp.Entry):
     # TODO add default values
@@ -46,7 +48,25 @@ class ScriptLogTable(tableOp.Table):
         @param None.
         @return errorCode: Error
         '''
-        return pref.getError(pref.ERROR_SUCCESS)
+        command = """CREATE TABLE IF NOT EXISTS sl (
+                       id INTEGER,
+                       scriptId INTEGER,
+                       userId INTEGER,
+                       compId INTEGER,
+                       startTime DATETIME,
+                       endTime DATETIME,
+                       returnVal INTEGER,
+                       errorCode INTEGER,
+                       stdoutFile CHAR(256),
+                       stderrFile CHAR(256),
+                       asAdmin BOOL,
+                       PRIMARY KEY(id),
+                       FOREIGN KEY (scriptId) REFERENCES s(id),
+                       FOREIGN KEY (userId) REFERENCES u(id),
+                       FOREIGN KEY (compId) REFERENCES c(id)
+                    );"""
+        e = sqlFuncs.createTable(command)
+        return e
 
     # overriding abstract method
     @staticmethod

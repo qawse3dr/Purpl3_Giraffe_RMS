@@ -1,6 +1,8 @@
 import datetime
 import libpurpl3.preferences as pref
 import libpurpl3.tableOp as tableOp
+import libpurpl3.sqlFuncs as sqlFuncs
+import sqlite3
 
 class Computer(tableOp.Entry):
     #TODO add default values
@@ -43,7 +45,21 @@ class ComputerTable(tableOp.Table):
         @param None.
         @return errorCode: Error
         '''
-        return pref.getError(pref.ERROR_SUCCESS)
+        command = """CREATE TABLE IF NOT EXISTS c (
+                       id INTEGER,
+                       userId INTEGER,
+                       name CHAR(256),
+                       nickName CHAR(256),
+                       desc CHAR(1024),
+                       IP CHAR(256),
+                       dtCreated DATETIME,
+                       dtModified DATETIME,
+                       asAdmin BOOL,
+                       PRIMARY KEY(id),
+                       FOREIGN KEY (userId) REFERENCES u(id)
+                    );"""
+        e = sqlFuncs.createTable(command)
+        return e
 
     # overriding abstract method
     @staticmethod

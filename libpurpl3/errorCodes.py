@@ -108,6 +108,11 @@ def getErrorCodeList() -> dict:
     getAttrName(ERROR_SSH_PERMISSION_DENIED): Error(52, "Returned %d: permission denied accessing: %s"),
     getAttrName(ERROR_SSH_FAILED_TO_EXECUTE_SCRIPT): Error(53, "Returned %d: failed to execute script: %s"),
     getAttrName(ERROR_SSH_SCRIPT_FAILED_WITH_ERROR_CODE): Error(54, "Returned %d: script failed with error code: %s"),
+    
+    # 66- 72 SQLITE3 ERRORS
+    getAttrName(ERROR_SQLITE3_CONNECTION): Error(66, "Returned %d: connection to sqlite3 database failed %s"),
+    getAttrName(ERROR_EXECUTE_CREATE_TABLE): Error(67, "Returned %d: creation of sqlite3 table failed %s"),
+    
     #Vars for error codes
     getAttrName(ERROR_VAR) : {
       getAttrName(ERROR_VAR_CODE) : "code",
@@ -146,3 +151,7 @@ ERROR_VAR_CODE = "ERROR:VAR:CODE"
 ERROR_VAR_STR = "ERROR:VAR:STR"
 
 ERROR_SQL_FAILURE = "ERROR:SQL_FAILURE"
+
+# 66- 72 SQLITE3 ERRORS
+ERROR_SQLITE3_CONNECTION = "ERROR:SQLITE3_CONNECTION"
+ERROR_EXECUTE_CREATE_TABLE = "ERROR:EXECUTE_CREATE_TABLE"
