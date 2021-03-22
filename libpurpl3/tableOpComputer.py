@@ -58,7 +58,7 @@ class ComputerTable(tableOp.Table):
                        PRIMARY KEY(id),
                        FOREIGN KEY (userId) REFERENCES u(id)
                     );"""
-        e = sqlFuncs.createTable(command)
+        e = sqlFuncs.createTable(command, "Computer")
         return e
 
     # overriding abstract method

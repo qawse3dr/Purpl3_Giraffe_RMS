@@ -46,7 +46,7 @@ class UserTable(tableOp.Table):
                        admin BOOL,
                        PRIMARY KEY(id)
                     );"""
-        e = sqlFuncs.createTable(command)
+        e = sqlFuncs.createTable(command, "User")
         return e
     
     @staticmethod

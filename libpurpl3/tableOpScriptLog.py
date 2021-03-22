@@ -65,7 +65,7 @@ class ScriptLogTable(tableOp.Table):
                        FOREIGN KEY (userId) REFERENCES u(id),
                        FOREIGN KEY (compId) REFERENCES c(id)
                     );"""
-        e = sqlFuncs.createTable(command)
+        e = sqlFuncs.createTable(command, "ScriptLog")
         return e
 
     # overriding abstract method

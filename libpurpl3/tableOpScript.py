@@ -56,7 +56,7 @@ class ScriptTable(tableOp.Table):
                        PRIMARY KEY(id),
                        FOREIGN KEY (author) REFERENCES u(id)
                     );"""
-        e = sqlFuncs.createTable(command)
+        e = sqlFuncs.createTable(command, "Script")
         return e
 
     # overriding abstract method
