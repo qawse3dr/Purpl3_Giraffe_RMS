@@ -8,11 +8,10 @@ class blackListTesting(unittest.TestCase):
         self.assertEqual(pref.getError(pref.ERROR_FILE_NOT_FOUND), holder)
     
     def testNoBlackListInFile(self):
-        holder = ops.confirmValidCommads("blackListTestScript", ["pooooooop", "lmao", "depression"])
+        holder = ops.confirmValidCommads("tests/res/blackListTestScript", ["pooooooop", "lmao", "depression"])
         self.assertEqual(holder, pref.Success)
     
     def testBlackListedCommandInFile(self):
-        holder = ops.confirmValidCommads("blackListTestScript", ["pooooooop", "lmao", "delete"])
-        print(holder)
+        holder = ops.confirmValidCommads("tests/res/blackListTestScript", ["pooooooop", "lmao", "delete"])
         self.assertEqual(holder, pref.getError(pref.ERROR_BLACKLISTED_COMMAND))
     

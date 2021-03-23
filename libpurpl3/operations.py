@@ -143,14 +143,13 @@ def confirmValidCommads(fileName: str, blackListedCommands: list) -> pref.Error:
     by the admin of the server
     @param str fileName, the name of the script NOT INCLUDING DIRECTORY
     @param dict blackListedCommands, a dictonary of blacklisted commands, all elements of dict will be treated as a string
+    @return error code of error
     '''
     try:
-        script = open("data/scripts/" + fileName, "r")
+        script = open(fileName, "r")
         data = script.readlines()
     except IOError:
         return pref.getError(pref.ERROR_FILE_NOT_FOUND, args=(fileName))
-    
-    print(blackListedCommands)
     
     for commands in blackListedCommands:
         for lines in data:
