@@ -7,8 +7,8 @@ import sqlite3
 class Script(tableOp.Entry):
     #TODO add default values
     # overriding abstract method
-    def __init__(self, name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime,
-                 dtModified: datetime.datetime, size: float, isAdmin: bool, id = None):
+    def __init__(self, ID: int, name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime,
+                 dtModified: datetime.datetime, size: float, isAdmin: bool):
         '''
         #TODO
         *add description*.
