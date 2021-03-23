@@ -12,7 +12,7 @@ class BaseTestCase(unittest.TestCase):
   #Change to reflect your machine
   username = "root"
   ip = "localhost"
-  filename = "sleepTest.sh"
+  filename = "sleepScript.sh"
   #mock vars as db isn't complete yet
   computer = None 
   user = None
@@ -134,3 +134,46 @@ class BaseTestCase(unittest.TestCase):
     pref.setAttr(pref.CONFIG_ADD_COMPUTER_SCRIPT,"DNE")
     error = ssh.sshConnection.addNewComputer(self.ip,self.username,"WRONGPASSWORD!@##@!")
     self.assertEqual(error,pref.getError(pref.ERROR_SSH_AUTHENTICATION_FAILED))
+
+  def test_runScript(self):
+    '''
+    runs basic script
+    '''
+
+    #Create ssh connection
+    conn = ssh.sshConnection(self.computer,self.user,self.script)
+
+    #Connect to computer
+    err = conn.connect()
+
+    #Test for no error
+    if(err != pref.Success):
+      return self.skipTest("Failed to connect to remote computer")
+
+    self.script.fileName = "sleepScript.sh"
+
+    err, id = conn.run()
+
+    self.assertEqual(err, pref.Success)
+    self.assertNotEqual(id, -1)
+
+  def test_runScriptFileDNE(self):
+    '''
+    runs basic script
+    '''
+
+    #Create ssh connection
+    conn = ssh.sshConnection(self.computer,self.user,self.script)
+
+    #Connect to computer
+    err = conn.connect()
+
+    #Test for no error
+    if(err != pref.Success):
+      return self.skipTest("Failed to connect to remote computer")
+
+    self.script.fileName = "sleepScript11.sh"
+
+    err, id = conn.run()
+
+    self.assertEqual(err, pref.getError(pref.ERROR_FILE_NOT_FOUND))
