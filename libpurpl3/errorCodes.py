@@ -110,6 +110,9 @@ def getErrorCodeList() -> dict:
     getAttrName(ERROR_SSH_FAILED_TO_EXECUTE_SCRIPT): Error(53, "Returned %d: failed to execute script: %s"),
     getAttrName(ERROR_SSH_SCRIPT_FAILED_WITH_ERROR_CODE): Error(54, "Returned %d: script failed with error code: %s"),
     getAttrName(ERROR_SSH_CONNECTION_LOST): Error(55,"Returned %d: Connection to remote computer %s@%s running script %s lost"),
+
+    #James' blacklist commands
+    getAttrName(ERROR_BLACKLISTED_COMMAND): Error(56, "Returned%d, script contained invalid command: %s"),
     #Vars for error codes
     getAttrName(ERROR_VAR) : {
       getAttrName(ERROR_VAR_CODE) : "code",
@@ -144,6 +147,9 @@ ERROR_SSH_PERMISSION_DENIED = "ERROR:SSH_PERMISSION_DENIED"
 ERROR_SSH_FAILED_TO_EXECUTE_SCRIPT = "ERROR:SSH_FAILED_TO_EXECUTE_SCRIPT"
 ERROR_SSH_SCRIPT_FAILED_WITH_ERROR_CODE = "ERROR:ERROR_SSH_SCRIPT_FAILED_WITH_ERROR_CODE"
 ERROR_SSH_CONNECTION_LOST = "ERROR:ERROR_SSH_CONNECTION_LOST"
+
+#James' blacklist commands
+ERROR_BLACKLISTED_COMMAND = "ERROR:ERROR_BLACKLISTED_COMMAND"
 
 ERROR_VAR = "ERROR:VAR"
 ERROR_VAR_CODE = "ERROR:VAR:CODE"
