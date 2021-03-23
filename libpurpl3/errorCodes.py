@@ -110,8 +110,8 @@ def getErrorCodeList() -> dict:
     getAttrName(ERROR_SSH_SCRIPT_FAILED_WITH_ERROR_CODE): Error(54, "Returned %d: script failed with error code: %s"),
     
     # 66- 72 SQLITE3 ERRORS
-    getAttrName(ERROR_SQLITE3_CONNECTION): Error(66, "Returned %d: connection to sqlite3 database failed when executing function %s"),
-    getAttrName(ERROR_EXECUTE_CREATE_TABLE): Error(67, "Returned %d: creation of sqlite3 table \"%s\" failed"),
+    getAttrName(ERROR_CREATE_SQLITE3_CONNECTION): Error(66, "Returned: %d, connection to sqlite3 database failed when executing function %s on table %s with message - \"%s\""),
+    getAttrName(ERROR_EXECUTE_SQLITE3_COMMAND): Error(67, "Returned: %d, executing command of type %s failed on table %s with message - \"%s\""),
     
     #Vars for error codes
     getAttrName(ERROR_VAR) : {
@@ -153,5 +153,5 @@ ERROR_VAR_STR = "ERROR:VAR:STR"
 ERROR_SQL_FAILURE = "ERROR:SQL_FAILURE"
 
 # 66- 72 SQLITE3 ERRORS
-ERROR_SQLITE3_CONNECTION = "ERROR:SQLITE3_CONNECTION"
-ERROR_EXECUTE_CREATE_TABLE = "ERROR:EXECUTE_CREATE_TABLE"
+ERROR_CREATE_SQLITE3_CONNECTION = "ERROR:CREATE_SQLITE3_CONNECTION"
+ERROR_EXECUTE_SQLITE3_COMMAND = "ERROR:EXECUTE_SQLITE3_COMMAND"

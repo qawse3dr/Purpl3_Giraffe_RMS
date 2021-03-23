@@ -9,6 +9,12 @@ class Script(tableOp.Entry):
     # overriding abstract method
     def __init__(self, name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime,
                  dtModified: datetime.datetime, size: float, isAdmin: bool, id = None):
+        '''
+        #TODO
+        *add description*.
+        @param *add param*.
+        @return *add return*.
+        '''
         self.ID = ID
         self.name = name
         self.fileName = fileName
@@ -21,6 +27,12 @@ class Script(tableOp.Entry):
 
     # overriding abstract method
     def toJson(self):
+        '''
+        #TODO
+        *add description*.
+        @param *add param*.
+        @return *add return*.
+        '''
         return {
             "ID": str(self.ID),
             "name": str(self.name),
@@ -44,7 +56,7 @@ class ScriptTable(tableOp.Table):
         @return errorCode: Error
         '''
         command = """CREATE TABLE IF NOT EXISTS s (
-                       id INTEGER,
+                       id INTEGER PRIMARY KEY,
                        name CHAR(256),
                        fileName CHAR(256),
                        author INTEGER,
@@ -53,10 +65,25 @@ class ScriptTable(tableOp.Table):
                        dtModified DATETIME,
                        size FLOAT(5, 3),
                        isAdmin BOOL,
-                       PRIMARY KEY(id),
-                       FOREIGN KEY (author) REFERENCES u(id)
+                       CONSTRAINT author
+                        FOREIGN KEY (author)
+                        REFERENCES u(id)
                     );"""
-        e = sqlFuncs.createTable(command, "Script")
+        # e = sqlFuncs.createTable(command, "Script")
+        e = sqlFuncs.exeCommand(command, "createTable", "Script")
+        return e
+
+    # overriding abstract method
+    @staticmethod
+    def deleteTable():
+        '''
+        Removes the script SQL table from the database. Used for testing principally.
+        @param None.
+        @return e - Error code, returns success if no error occurs.
+        '''
+        command = """DROP TABLE s;
+                  """
+        e = sqlFuncs.exeCommand(command, "deleteTable", "Script")
         return e
 
     # overriding abstract method

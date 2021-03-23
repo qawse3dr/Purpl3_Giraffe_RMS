@@ -9,6 +9,12 @@ class User(tableOp.Entry):
     # overriding abstract method
     def __init__(self, ID: int, username: str, password: str, dtCreated: datetime.datetime,
                  dtModified: datetime.datetime, admin: bool):
+        '''
+        #TODO
+        *add description*.
+        @param *add param*.
+        @return *add return*.
+        '''
         self.ID = ID
         self.username = username
         self.password = password
@@ -18,6 +24,12 @@ class User(tableOp.Entry):
 
     # overriding abstract method
     def toJson(self):
+        '''
+        #TODO
+        *add description*.
+        @param *add param*.
+        @return *add return*.
+        '''
         return {
             "ID": str(self.ID),
             "username": str(self.username),
@@ -38,17 +50,30 @@ class UserTable(tableOp.Table):
         @return errorCode: Error
         '''
         command = """CREATE TABLE IF NOT EXISTS u (
-                       id INTEGER,
+                       id INTEGER PRIMARY KEY,
                        username CHAR(256),
                        password CHAR(256),
                        dtCreated DATETIME,
                        dtModified DATETIME,
-                       admin BOOL,
-                       PRIMARY KEY(id)
+                       admin BOOL
                     );"""
-        e = sqlFuncs.createTable(command, "User")
+        e = sqlFuncs.exeCommand(command, "createTable", "User")
+        # e = sqlFuncs.createTable(command, "User")
         return e
     
+    # overriding abstract method
+    @staticmethod
+    def deleteTable():
+        '''
+        Removes the user SQL table from the database. Used for testing principally.
+        @param None.
+        @return e - Error code, returns success if no error occurs.
+        '''
+        command = """DROP TABLE u;
+                  """
+        e = sqlFuncs.exeCommand(command, "deleteTable", "User")
+        return e
+
     @staticmethod
     def checkLogin(userName: str, password: str)->int:
         '''

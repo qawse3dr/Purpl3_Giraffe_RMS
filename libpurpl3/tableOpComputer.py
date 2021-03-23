@@ -9,6 +9,12 @@ class Computer(tableOp.Entry):
     # overriding abstract method
     def __init__(self, ID: int, userID: int, name: str, nickName: str, desc: str, username: str, IP: str, dtCreated: datetime.datetime,
                  dtModified: datetime.datetime, asAdmin: bool):
+        '''
+        #TODO
+        *add description*.
+        @param *add param*.
+        @return *add return*.
+        '''
         self.ID = ID
         self.userID = userID
         self.name = name
@@ -22,6 +28,12 @@ class Computer(tableOp.Entry):
 
     # overriding abstract method
     def toJson(self):
+        '''
+        #TODO
+        *add description*.
+        @param *add param*.
+        @return *add return*.
+        '''
         return {
             "ID": str(self.ID),
             "userID": str(self.userID),
@@ -46,7 +58,7 @@ class ComputerTable(tableOp.Table):
         @return errorCode: Error
         '''
         command = """CREATE TABLE IF NOT EXISTS c (
-                       id INTEGER,
+                       id INTEGER PRIMARY KEY,
                        userId INTEGER,
                        name CHAR(256),
                        nickName CHAR(256),
@@ -55,10 +67,23 @@ class ComputerTable(tableOp.Table):
                        dtCreated DATETIME,
                        dtModified DATETIME,
                        asAdmin BOOL,
-                       PRIMARY KEY(id),
                        FOREIGN KEY (userId) REFERENCES u(id)
                     );"""
-        e = sqlFuncs.createTable(command, "Computer")
+        e = sqlFuncs.exeCommand(command, "createTable", "Computer")
+        # e = sqlFuncs.createTable(command, "Computer")
+        return e
+
+    # overriding abstract method
+    @staticmethod
+    def deleteTable():
+        '''
+        Removes the computer SQL table from the database. Used for testing principally.
+        @param None.
+        @return e - Error code, returns success if no error occurs.
+        '''
+        command = """DROP TABLE c;
+                  """
+        e = sqlFuncs.exeCommand(command, "deleteTable", "Computer")
         return e
 
     # overriding abstract method

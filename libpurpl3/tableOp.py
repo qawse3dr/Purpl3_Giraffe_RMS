@@ -23,6 +23,11 @@ class Table(ABC):
     def createTable():
         raise NotImplementedError("Subclasses should implement this!")
 
+    #abstract method
+    @staticmethod
+    def deleteTable():
+        raise NotImplementedError("Subclasses should implement this!")
+
     # abstract method
     @staticmethod 
     def getByID(ID: int): 

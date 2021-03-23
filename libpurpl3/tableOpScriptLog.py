@@ -10,6 +10,12 @@ class ScriptLog(tableOp.Entry):
     def __init__(self, ID: int, scriptID: int, userID: int, compID: int, startTime: datetime.datetime,
                 endTime: datetime.datetime, returnVal: int, errorCode: int, stdoutFile: str, stderrFile: str,
                  asAdmin: bool):
+        '''
+        #TODO
+        *add description*.
+        @param *add param*.
+        @return *add return*.
+        '''
         self.ID = ID
         self.scriptID = scriptID
         self.userID = userID
@@ -24,6 +30,12 @@ class ScriptLog(tableOp.Entry):
 
     # overriding abstract method
     def toJson(self):
+        '''
+        #TODO
+        *add description*.
+        @param *add param*.
+        @return *add return*.
+        '''
         return {
             "ID": str(self.ID),
             "scriptID": str(self.scriptID),
@@ -49,7 +61,7 @@ class ScriptLogTable(tableOp.Table):
         @return errorCode: Error
         '''
         command = """CREATE TABLE IF NOT EXISTS sl (
-                       id INTEGER,
+                       id INTEGER PRIMARY KEY,
                        scriptId INTEGER,
                        userId INTEGER,
                        compId INTEGER,
@@ -60,12 +72,25 @@ class ScriptLogTable(tableOp.Table):
                        stdoutFile CHAR(256),
                        stderrFile CHAR(256),
                        asAdmin BOOL,
-                       PRIMARY KEY(id),
                        FOREIGN KEY (scriptId) REFERENCES s(id),
                        FOREIGN KEY (userId) REFERENCES u(id),
                        FOREIGN KEY (compId) REFERENCES c(id)
                     );"""
-        e = sqlFuncs.createTable(command, "ScriptLog")
+        # e = sqlFuncs.createTable(command, "ScriptLog")
+        e = sqlFuncs.exeCommand(command, "createTable", "ScriptLog")
+        return e
+
+    # overriding abstract method
+    @staticmethod
+    def deleteTable():
+        '''
+        Removes the scriptLog SQL table from the database. Used for testing principally.
+        @param None.
+        @return e - Error code, returns success if no error occurs.
+        '''
+        command = """DROP TABLE sl;
+                  """
+        e = sqlFuncs.exeCommand(command, "deleteTable", "ScriptLog")
         return e
 
     # overriding abstract method

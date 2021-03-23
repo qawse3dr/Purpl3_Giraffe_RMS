@@ -9,94 +9,168 @@ import sqlite3
 import datetime
 import unittest
 
+def clearTables():
+    '''
+    Drops all SQL tables in database (scriptLog, script, computer and user)
+    @param None.
+    @return None.
+    @Notes 
+        All rows of a given table are deleted upon a drop table operation. 
+        If any of these deletions trigger errors due to foreign key constraints or other issues, an error will be raised. 
+        No error will be raised for dropping empty tables regardless of foreign key constraints on them.
+    '''
+    e = tosl.ScriptLogTable().deleteTable()
+    e = tos.ScriptTable().deleteTable()
+    e = toc.ComputerTable().deleteTable()
+    e = tou.UserTable().deleteTable()
+
+def createEmptyTables(): 
+    '''
+    Creates empty SQL tables for scriptLog, script, computer and user
+    @param None.
+    @return None.
+    @Notes 
+        Foreign key constraints are not checked when a table is created. 
+        There is nothing stopping the user from creating a foreign key definition that refers 
+            to a parent table that does not exist therefore creation order does not matter.
+    '''
+    clearTables()
+    e = tosl.ScriptLogTable().createTable()
+    e = tos.ScriptTable().createTable()
+    e = toc.ComputerTable().createTable()
+    e = tou.UserTable().createTable()
+
+def createTables():
+    '''
+    Create tables (scriptLog, script, computer and user) with some records inserted into each of them
+    @param None.
+    @return None.
+    '''
+    createEmptyTables()
+    # TODO insert records
+
 class BaseTestCase(unittest.TestCase):
-    # Tests table creation from user class directly
+    ################## CREATE TABLE TESTS ##################
+    # Tests table creation from user class directly (expecting success)
     def test_createTableU(self):
+      clearTables()
       err = tou.UserTable().createTable()
-      self.assertEqual(err,pref.getError(pref.ERROR_SUCCESS))
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
 
-    # Tests table creation from script class directly
+    # Tests table creation from script class directly (expecting success)
     def test_createTableS(self):
+      clearTables()
       err = tos.ScriptTable().createTable()
-      self.assertEqual(err,pref.getError(pref.ERROR_SUCCESS))
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
 
-    # Tests table creation from computer class directly
+    # Tests table creation from computer class directly (expecting success)
     def test_createTableC(self):
+      clearTables()
       err = toc.ComputerTable().createTable()
-      self.assertEqual(err,pref.getError(pref.ERROR_SUCCESS))
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
 
-    # Tests table creation from scriptLog class directly
+    # Tests table creation from scriptLog class directly (expecting success)
     def test_createTableSL(self):
+      clearTables()
       err = tosl.ScriptLogTable().createTable()
-      self.assertEqual(err,pref.getError(pref.ERROR_SUCCESS))
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
 
+    ################## DELETE EMPTY TABLE TESTS (SUCCESS) ##################
+    # Tests deleting user table  (expecting success)
+    def test_deleteTableEmptyU(self):
+      createEmptyTables()
+      err = tou.UserTable().deleteTable()
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
 
+    # Tests deleting script table (expecting success)
+    def test_deleteTableEmptyS(self):
+      createEmptyTables()
+      err = tos.ScriptTable().deleteTable()
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
 
-    
-      
+    # Tests deleting computer table (expecting success)
+    def test_deleteTableEmptyC(self):
+      createEmptyTables()
+      err = toc.ComputerTable().deleteTable()
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
 
+    # Tests deleting scriptLog table (expecting success)
+    def test_deleteTableEmptySL(self):
+      createEmptyTables()
+      err = tosl.ScriptLogTable().deleteTable()
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
 
+    ################## DELETE NON-EMPTY TABLE TESTS (SUCCESS) ##################
+    # Need to drop sql tables with foreign keys first i.e. order must be scriptLog, (computer, script), user. 
+    # See details in https://sqlite.org/foreignkeys.html
+
+    # Tests deleting user table containing records (expecting success)
+    def test_deleteTableU_S(self):
+      createTables()
+      err = tosl.ScriptLogTable().deleteTable()
+      err = tos.ScriptTable().deleteTable()
+      err = toc.ComputerTable().deleteTable()
+      err = tou.UserTable().deleteTable()
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
+
+    # Tests deleting script table containing records (expecting success)
+    def test_deleteTableS_S(self):
+      createTables()
+      err = tosl.ScriptLogTable().deleteTable()
+      err = tos.ScriptTable().deleteTable()
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
+
+    # Tests deleting computer table containing records (expecting success)
+    def test_deleteTableC_S(self):
+      createTables()
+      err = tosl.ScriptLogTable().deleteTable()
+      err = toc.ComputerTable().deleteTable()
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
+
+    # Tests deleting script log table containing records (expecting success)
+    def test_deleteTableSL_S(self):
+      createTables()
+      err = tosl.ScriptLogTable().deleteTable()
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
+
+    # TODO - these tests will fail until createTables is correctly implemented
+    ################## DELETE NON-EMPTY TABLE TESTS (FAILURE) ##################
+    # # Tests deleting user table containing records (expecting failure)
+    # def test_deleteTableU_F(self):
+    #   createTables()
+    #   err = tou.UserTable().deleteTable()
+    #   errExp = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args = ("deleteTable", "User", "message")) #TODO find out what message would be
+    #   self.assertEqual(err,errExp)
+
+    # # Tests deleting script table containing records (expecting failure)
+    # def test_deleteTableS_F(self):
+    #   createTables()
+    #   err = tos.ScriptTable().deleteTable()
+    #   errExp = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args = ("deleteTable", "Script", "message")) #TODO find out what message would be
+    #   self.assertEqual(err,errExp)
+
+    # # Tests deleting computer table containing records (expecting failure)
+    # def test_deleteTableC_F(self):
+    #   createTables()
+    #   err = toc.ComputerTable().deleteTable()
+    #   errExp = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args = ("deleteTable", "Computer", "message")) #TODO find out what message would be
+    #   self.assertEqual(err,errExp)
+
+    # Tests deleting script log table containing records (expecting success)
+    # Note that test_deleteTableSL_F does not exist as the ScriptLog table's
+    #     primary key is not referenced as a foreign key elsewhere
 
 if __name__ == '__main__':
     unittest.main()
-
-
-# testScript = tos.Script(1, "SkeletonScriptName1", "SkeletonScriptName1.py", 1, "Skeleton Script Description 1",datetime.datetime.now(), datetime.datetime.now(), 0, False)
-# testScriptLog = tosl.ScriptLog(0, 0, 0, 0, datetime.datetime.now(), datetime.datetime.now(), 1, 1, "stdoutFile.txt", "stderrFile.txt", False)
-# testComputer = toc.Computer(0, 0, "RachelsComputer", "RaquelsComp", "Rachel's computer description", "some IP address idk", datetime.datetime.now(), datetime.datetime.now(), False)
-# testUser = tou.User(0, "username1", "hashed password 1", datetime.datetime.now(), datetime.datetime.now(), False)
-
-# testTupleS = (1, "SkeletonScriptName1", "SkeletonScriptName1.py", 1, "Skeleton Script Description 1",datetime.datetime.now(), datetime.datetime.now(), 0, False)
-# testTupleSL = (0, 0, 0, 0, datetime.datetime.now(), datetime.datetime.now(), 1, 1, "stdoutFile.txt", "stderrFile.txt", False)
-# testTupleC = (0, 0, "RachelsComputer", "RaquelsComp", "Rachel's computer description", "some IP address idk", datetime.datetime.now(), datetime.datetime.now(), False)
-# testTupleU = (0, "username1", "hashed password 1", datetime.datetime.now(), datetime.datetime.now(), False)
-
-# testScript.toJson()
-# testScriptLog.toJson()
-# testComputer.toJson()
-# testUser.toJson()
-
-# testScriptTable = tos.ScriptTable()
-# testScriptLogTable = tosl.ScriptLogTable()
-# testComputerTable = toc.ComputerTable()
-# testUserTable = tou.UserTable()
-
-# testScriptTable.createTable()
-# testScriptTable.getByID(0)
-# testScriptTable.getAll()
-# testScriptTable.createEntry(testTupleS)
-# testScriptTable.getAttrByID("ID", 0)
-# testScriptTable.getWithQuery("")
-# testScriptTable.add(testScript)
-# testScriptTable.delete(0)
-# testScriptTable.editEntry(testTupleS)
-
-# testScriptLogTable.createTable()
-# testScriptLogTable.getByID(0)
-# testScriptLogTable.getAll()
-# testScriptLogTable.createEntry(testTupleSL)
-# testScriptLogTable.getAttrByID("ID", 0)
-# testScriptLogTable.getWithQuery("")
-# testScriptLogTable.add(testScriptLog)
-# testScriptLogTable.delete(0)
-# testScriptLogTable.editEntry(testTupleSL)
-
-# testComputerTable.createTable()
-# testComputerTable.getByID(0)
-# testComputerTable.getAll()
-# testComputerTable.createEntry(testTupleC)
-# testComputerTable.getAttrByID("ID", 0)
-# testComputerTable.getWithQuery("")
-# testComputerTable.add(testComputer)
-# testComputerTable.delete(0)
-# testComputerTable.editEntry(testComputer)
-
-# testUserTable.createTable()
-# testUserTable.getByID(0)
-# testUserTable.getAll()
-# testUserTable.createEntry(testTupleU)
-# testUserTable.getAttrByID("ID", 0)
-# testUserTable.getWithQuery("")
-# testUserTable.add(testUser)
-# testUserTable.delete(0)
-# testUserTable.editEntry(testUser)
