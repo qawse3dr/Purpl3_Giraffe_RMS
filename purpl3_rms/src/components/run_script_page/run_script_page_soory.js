@@ -29,17 +29,13 @@ const RunScriptPage = (props) => {
                 <div className="Run_Button">
                     <button type="button" onClick={Run_script}>Run Script</button>
                 </div>
-
-                <button type="button" onClick={Update}>Test on main page</button>
-                <LiveOutput test={5}/>
+                
+                <textarea id="Live_Output" readonly rows="6" cols="200">
+                    Run a program to view it's output!
+                </textarea>
             </footer>
         </div>
     )
-}
-
-function Update() {
-    let scriptID = document.getElementById("Select_Script_text").value;
-    alert(scriptID);
 }
 
 function Select_computer_func(parms){
@@ -66,14 +62,42 @@ function Run_script(parms){
             ComputerID: in_computer.value
           }
         }
+    }).then((res) => {
+        alert(JSON.stringify(res.data))
+        let btn = document.getElementById("run_page_runbtn");
+        btn.value = res.data;
+        console.log(btn.value.Id);
+    
+        //Set the live output
+        alert(res.data.id); //Julian Testing, you can remove this later
+        setLiveOutput(res.data.id); //Call to set the live output.
+
+    }).catch((res) =>{
+        alert("Post Failed"); //Prob remove this final ver
+
+        //Set the live output (error)
+        document.getElementById("Live_Output").value = "Running the script failed. Try again";
+    })
+
+    //Call to backend to retrieve script output.
+    function setLiveOutput(parms){
+      axios.post("/api", {
+        body: {
+            op:"GET_FILE",
+            data:{
+                Id: parms,
+                Filetype: "ENUM"
+            }
+        }
         }).then((res) => {
-          alert(JSON.stringify(res.data))
-          let btn = document.getElementById("run_page_runbtn");
-          btn.value = res.data;
-          console.log(btn.value.Id);
+            alert(JSON.stringify(res.data))
+
+            //Set the live output textarea
+            document.getElementById("Live_Output").value = res.data.entry
         }).catch((res) =>{
-          alert("Post Failed")
+            alert("Post Failed")
         })
+    }
 }
   
 
