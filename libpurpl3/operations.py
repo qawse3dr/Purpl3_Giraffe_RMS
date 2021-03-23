@@ -118,3 +118,28 @@ def scheduleScript(data: dict) -> str:
       "Success": True
     }
   )
+
+def confirmValidCommads(fileName: str, blackListedCommands: dict) -> str:
+    '''
+    This function is too check a given file for blacklisted commands as defined
+    by the admin of the server
+    @param str fileName, the name of the script NOT INCLUDING DIRECTORY
+    @param dict blackListedCommands, a dictonary of blacklisted commands, all elements of dict will be treated as a string
+    '''
+    try:
+        script = open("../data/scripts" + fileName, "r")
+    except IOError:
+        return jsonify(Error = pref.getError(pref.ERROR_FILE_NOT_FOUND), args=(fileName))
+    
+    for commands in blackListedCommands:
+        if commands + " " in script:
+            #return if blacklisted command is contained within script
+            return jsonify(Error = pref.getError(pref.ERROR_BLACKLISTED_COMMAND, args=(commands)))
+    #return if no blacklisted commands are found
+    return jsonify(
+    Error = pref.Success.toJson(),
+    data = {
+      "Success": True
+    }
+    )
+    
