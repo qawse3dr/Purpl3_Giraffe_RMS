@@ -2,6 +2,10 @@ import React from "react"
 import axios from "axios";
 import Button from '../Button'
 
+//=========================================================================================
+// CURRENTLY NOT USED AS THIS FUNCTIONALITY IS DIRECTLY BAKED INTO run_script_page_soory.js
+//=========================================================================================
+
 class LiveOutput extends React.Component {
     constructor(props) {
         super(props);
@@ -33,14 +37,14 @@ class LiveOutput extends React.Component {
     }
 }
 
-//Currently just the example from run scripts
-function getOutput(){
+//Get output of script. Requires the ID of current script from Run_script().
+function getLiveOutput(){
   axios.post("/api", {
     body: {
       op:"GET_FILE",
       data:{
-        ScriptID: 0,
-        ComputerID: 0
+        Id: 0,
+        Filetype: "ENUM"
       }
     }
     }).then((res) => {
