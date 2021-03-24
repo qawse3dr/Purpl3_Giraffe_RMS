@@ -5,8 +5,6 @@ import libpurpl3.login as login
 import libpurpl3.operations as op 
 import libpurpl3.sshServer as sshServer
 
-#Creates logger
-logger = logging.getLogger("purpl3_rms")
 
 #Creates application
 app = Flask(__name__)
@@ -19,7 +17,10 @@ pref.setConfigFile("config.yaml")
 
 
 #sets loggers level
+logging.basicConfig(level=pref.getNoCheck(pref.CONFIG_LOG_LEVEL),format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger()
 logger.setLevel(pref.getNoCheck(pref.CONFIG_LOG_LEVEL))
+
 
 #Functions for login and operations
 LOGIN_OPS = {

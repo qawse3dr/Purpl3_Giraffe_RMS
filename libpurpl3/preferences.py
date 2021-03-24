@@ -20,7 +20,7 @@ import yaml
 from libpurpl3.errorCodes import *
 
 #Creates logger
-logger = logging.getLogger("purpl3_rms")
+logger = logging.getLogger()
 
 #create prefENUM datatype
 prefENUM = NewType("prefENUM", str)
@@ -172,7 +172,7 @@ def setAttr(key: prefENUM, value: Any) -> Error:
       logger.error(err)
   else: #Attribute not found.
     err = getError(ERROR_ATTRIBUTE_NOT_FOUND,args=(key))
-    logger.Error(str(err))
+    logger.error(str(err))
   return err
 
 '''
@@ -203,6 +203,10 @@ CONFIG_PUBLIC_SSH_KEY = "PUBLIC_SSH_KEY_VALUE"
 CONFIG_SCRIPT_PATH = "SCRIPT_PATH"
 CONFIG_SCRIPT_LOG_PATH = "SCRIPT_LOG_PATH"
 CONFIG_REMOTE_FOLDER ="REMOTE_FOLDER"
+
+#Whitelist blacklist
+CONFIG_BLACKLIST_CMD_FILE = "BLACKLIST_CMD_FILE"
+
 
 #built in script names (will be assumed to be in res folder)
 CONFIG_ADD_COMPUTER_SCRIPT = "ADD_COMPUTER_SCRIPT_NAME"
@@ -341,6 +345,9 @@ def defaultConfig() -> dict:
     CONFIG_SCRIPT_PATH: "data/scripts/",
     CONFIG_SCRIPT_LOG_PATH: "data/scriptLogs/",
     CONFIG_REMOTE_FOLDER: "/tmp/Purpl3_RMS",
+
+    #Whitelist blacklist
+    CONFIG_BLACKLIST_CMD_FILE: "res/blacklistCMD.txt",
 
     #built in script names (will be assumed to be in res folder)
     CONFIG_ADD_COMPUTER_SCRIPT: "addSSHKey.sh"

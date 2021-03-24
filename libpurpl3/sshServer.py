@@ -11,9 +11,10 @@ import libpurpl3.tableOpComputer as computerTable
 import libpurpl3.tableOpScript as scriptTable
 import libpurpl3.tableOpScriptLog as scriptLogTable
 import libpurpl3.tableOpUser as userTable
+import libpurpl3.whitelistBlacklist as whitelistBlackList
 
 #Creates logger
-logger = logging.getLogger("purpl3_rms")
+logger = logging.getLogger()
 
 class sshConnection():
   '''
@@ -98,9 +99,33 @@ class sshConnection():
         err = pref.getError(pref.ERROR_UNKNOWN)
         break
       
-      #Copies script over
+      #Paths for scripts
       remoteFolder = pref.getNoCheck(pref.CONFIG_REMOTE_FOLDER)
       scriptFolder = pref.getNoCheck(pref.CONFIG_SCRIPT_PATH)
+
+      #Checks whitelistBlackList
+      for _ in range(1):
+        blackListFileName = pref.getNoCheck(pref.CONFIG_BLACKLIST_CMD_FILE)
+        if(blackListFileName != ""):
+          blackList = None
+          try:
+            blackList = [line.rstrip("\n") for line in open(blackListFileName)]
+          except:
+            tempErr = pref.getError(pref.ERROR_FILE_NOT_FOUND, args=(blackListFileName))
+            logger.error(tempErr)
+            break
+
+          err = whitelistBlackList.confirmValidCommads("{}{}".format(scriptFolder,self.script.fileName), blackList)
+          print(blackList)
+        else:
+          logger.warning("no cmd blacklist no filtering")
+
+      #Error during blacklist
+      if err != pref.Success:
+        logger.error(err)
+        break
+
+      #Copies script over
       err = copyFileToComputer(ftp_client, remoteFolder, scriptFolder, self.script.fileName)
       if(err != pref.Success):
         break
@@ -113,7 +138,7 @@ class sshConnection():
       _, stdout, stderr = self.ssh.exec_command("{}{}; {}".format(remoteFolder, self.script.fileName, echoCmd))
 
       #creates Script logs TODO: change to correct way when ready
-      self.scriptLog = scriptLogTable.ScriptLog(None, self.script.ID, None, self.computer.ID,datetime.datetime.now(),None,None,None,"liveSTDOUT.txt","liveSTDERR.txt",self.computer.asAdmin)
+      self.scriptLog = scriptLogTable.ScriptLog(0, self.script.ID, None, self.computer.ID,datetime.datetime.now(),None,None,None,"liveSTDOUT.txt","liveSTDERR.txt",self.computer.asAdmin)
            
       outputThread = threading.Thread(target=self.getOutput, daemon=True, args=(stdout,stderr))
       outputThread.start()
@@ -146,7 +171,7 @@ class sshConnection():
     except: 
       #Couldn't create stdout and stderr file aborting and display warning
       err = pref.getError(pref.ERROR_CANT_CREATE_FILE, args=("{} and {}".format(self.scriptLog.stdoutFile, self.scriptLog.stderrFile)))
-      logger.warning(err)
+      logger.error(err)
       return
     #writes basic info to stdout and stderr
     stdoutFile.write("Script Start at: {}\n".format(datetime.datetime.now()))
