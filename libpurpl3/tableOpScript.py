@@ -1,13 +1,29 @@
 import datetime
 import libpurpl3.preferences as pref 
 import libpurpl3.tableOp as tableOp
-
+import libpurpl3.sqlFuncs as sqlFuncs
+import sqlite3
 
 class Script(tableOp.Entry):
     #TODO add default values
     # overriding abstract method
     def __init__(self, ID: int, name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime,
                  dtModified: datetime.datetime, size: float, isAdmin: bool):
+        '''
+        Creates a script object with all info on a script.
+        @param 
+            ID: int - unique identifier automatically generated when script is added to sql table. Will be None until script is added to table.
+            name: str - use defined name to identify file 
+            fileName: str - identifying fileName
+            author: int - primary key of user table to indicate which user created the script 
+            desc: str - user defined script description
+            dtCreated: datetime.datetime - dateTime when createEntry is called for the script
+            dtModified: datetime.datetime - dateTime when createEntry is called for the script or when editEntry is called
+            size: float - size of file containing script (in MB)
+            isAdmin: bool - whether or not the script requires admin access to run
+        @return 
+            None
+        '''
         self.ID = ID
         self.name = name
         self.fileName = fileName
@@ -20,6 +36,13 @@ class Script(tableOp.Entry):
 
     # overriding abstract method
     def toJson(self):
+        '''
+        Returns a dictionary of all object attributes as strings.
+        @param 
+            None.
+        @return
+            Dictionary of all object attributes as strings.
+        '''
         return {
             "ID": str(self.ID),
             "name": str(self.name),
@@ -42,7 +65,36 @@ class ScriptTable(tableOp.Table):
         @param None.
         @return errorCode: Error
         '''
-        return pref.getError(pref.ERROR_SUCCESS)
+        command = """CREATE TABLE IF NOT EXISTS s (
+                       id INTEGER PRIMARY KEY,
+                       name CHAR(256),
+                       fileName CHAR(256),
+                       author INTEGER,
+                       desc CHAR(1024),
+                       dtCreated DATETIME,
+                       dtModified DATETIME,
+                       size FLOAT(5, 3),
+                       isAdmin BOOL,
+                       CONSTRAINT author
+                        FOREIGN KEY (author)
+                        REFERENCES u(id)
+                    );"""
+        # e = sqlFuncs.createTable(command, "Script")
+        e = sqlFuncs.exeCommand(command, "createTable", "Script")
+        return e
+
+    # overriding abstract method
+    @staticmethod
+    def deleteTable():
+        '''
+        Removes the script SQL table from the database. Used for testing principally.
+        @param None.
+        @return e - Error code, returns success if no error occurs.
+        '''
+        command = """DROP TABLE s;
+                  """
+        e = sqlFuncs.exeCommand(command, "deleteTable", "Script")
+        return e
 
     # overriding abstract method
     @staticmethod 
@@ -72,14 +124,19 @@ class ScriptTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def createEntry(values: tuple):
+    def createEntry(name: str, fileName: str, author: int, desc: str, isAdmin: bool): 
         '''
         #TODO
         *add description*.
         @param *add param*.
         @return *add return*.
         '''
-        #TODO error check what is passed to function (in terms of types?)
+        # id will be set when object is added to table
+        # set dtCreated
+        # set dtModified (will be same as dtCreated initially)
+        # set size
+        
+        # create script object
         skelScript = Script(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8])
         return pref.getError(pref.ERROR_SUCCESS), skelScript
 
@@ -124,10 +181,10 @@ class ScriptTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def add(entry: Script):
+    def add(entry: Script): 
         '''
         #TODO
-        *add description*.
+        Must take script object from createEntry call.
         @param *add param*.
         @return *add return*.
         '''

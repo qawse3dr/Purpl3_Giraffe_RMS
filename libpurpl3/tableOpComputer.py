@@ -1,12 +1,30 @@
 import datetime
 import libpurpl3.preferences as pref
 import libpurpl3.tableOp as tableOp
+import libpurpl3.sqlFuncs as sqlFuncs
+import sqlite3
 
 class Computer(tableOp.Entry):
     #TODO add default values
     # overriding abstract method
     def __init__(self, ID: int, userID: int, name: str, nickName: str, desc: str, username: str, IP: str, dtCreated: datetime.datetime,
                  dtModified: datetime.datetime, asAdmin: bool):
+        '''
+        Creates computer object. Contains all info on a provisioned computer.
+        @param 
+            ID: int - unique identifier automatically generated when script is added to sql table. Will be None until script is added to table.
+            userID: int - primary key of user table to indicate which user provisioned this computer 
+            name: str - predefined name of computer
+            nickName: str - user defined name for computer 
+            desc: str - user defined computer description 
+            username: str - username of user being accessed on computer 
+            IP: str - IP address of computer
+            dtCreated: datetime.datetime - dateTime when createEntry is called for the computer
+            dtModified: datetime.datetime - dateTime when createEntry is called for the computer or when editEntry is called
+            asAdmin: bool - whether or not user is accessing computer as admin
+        @return 
+            None.
+        '''
         self.ID = ID
         self.userID = userID
         self.name = name
@@ -20,6 +38,13 @@ class Computer(tableOp.Entry):
 
     # overriding abstract method
     def toJson(self):
+        '''
+        Returns a dictionary of all object attributes as strings.
+        @param 
+            None.
+        @return
+            Dictionary of all object attributes as strings.
+        '''
         return {
             "ID": str(self.ID),
             "userID": str(self.userID),
@@ -43,7 +68,34 @@ class ComputerTable(tableOp.Table):
         @param None.
         @return errorCode: Error
         '''
-        return pref.getError(pref.ERROR_SUCCESS)
+        command = """CREATE TABLE IF NOT EXISTS c (
+                       id INTEGER PRIMARY KEY,
+                       userId INTEGER,
+                       name CHAR(256),
+                       nickName CHAR(256),
+                       desc CHAR(1024),
+                       IP CHAR(256),
+                       dtCreated DATETIME,
+                       dtModified DATETIME,
+                       asAdmin BOOL,
+                       FOREIGN KEY (userId) REFERENCES u(id)
+                    );"""
+        e = sqlFuncs.exeCommand(command, "createTable", "Computer")
+        # e = sqlFuncs.createTable(command, "Computer")
+        return e
+
+    # overriding abstract method
+    @staticmethod
+    def deleteTable():
+        '''
+        Removes the computer SQL table from the database. Used for testing principally.
+        @param None.
+        @return e - Error code, returns success if no error occurs.
+        '''
+        command = """DROP TABLE c;
+                  """
+        e = sqlFuncs.exeCommand(command, "deleteTable", "Computer")
+        return e
 
     # overriding abstract method
     @staticmethod
@@ -76,13 +128,18 @@ class ComputerTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def createEntry(values: tuple):
+    def createEntry(userID: int, name: str, nickName: str, desc: str, username: str, IP: str, asAdmin: bool):
         '''
         #TODO
         *add description*.
         @param *add param*.
         @return *add return*.
         '''
+        # id will be set when object is added to table
+        # set dtCreated
+        # set dtModified (will be same as dtCreated initially)
+        
+
         # TODO error check what is passed to function (in terms of types?)
         skelComp = Computer(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7],
                             values[8],values[9])

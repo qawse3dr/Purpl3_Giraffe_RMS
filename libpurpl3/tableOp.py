@@ -4,6 +4,7 @@
 # for functions common amongst script, scriptLog, computer and user classes
 
 from abc import ABC, abstractmethod 
+import sqlite3
 
 class Entry(ABC):
     # abstract method
@@ -20,6 +21,11 @@ class Table(ABC):
     #abstract method
     @staticmethod
     def createTable():
+        raise NotImplementedError("Subclasses should implement this!")
+
+    #abstract method
+    @staticmethod
+    def deleteTable():
         raise NotImplementedError("Subclasses should implement this!")
 
     # abstract method

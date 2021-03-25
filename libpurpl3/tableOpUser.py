@@ -1,12 +1,26 @@
 import datetime
 import libpurpl3.preferences as pref
 import libpurpl3.tableOp as tableOp
+import libpurpl3.sqlFuncs as sqlFuncs
+import sqlite3
 
 class User(tableOp.Entry):
     #TODO add default values
     # overriding abstract method
     def __init__(self, ID: int, username: str, password: str, dtCreated: datetime.datetime,
                  dtModified: datetime.datetime, admin: bool):
+        '''
+        Creates user object. Contains all info on a user of the system.
+        @param 
+            ID: int - unique identifier automatically generated when user is added to sql table. Will be None until user is added to table.
+            username: str - the given user's username
+            password: str - the user's *hashed* password
+            dtCreated: datetime.datetime - dateTime when createEntry is called for the user
+            dtModified: datetime.datetime - dateTime when createEntry is called for the user or when editEntry is called
+            admin: bool - whether or not the user has admin privledges
+        @return 
+            None.
+        '''
         self.ID = ID
         self.username = username
         self.password = password
@@ -16,6 +30,13 @@ class User(tableOp.Entry):
 
     # overriding abstract method
     def toJson(self):
+        '''
+        Returns a dictionary of all object attributes as strings.
+        @param 
+            None.
+        @return
+            Dictionary of all object attributes as strings.
+        '''
         return {
             "ID": str(self.ID),
             "username": str(self.username),
@@ -35,8 +56,31 @@ class UserTable(tableOp.Table):
         @param None.
         @return errorCode: Error
         '''
-        return pref.getError(pref.ERROR_SUCCESS)
+        command = """CREATE TABLE IF NOT EXISTS u (
+                       id INTEGER PRIMARY KEY,
+                       username CHAR(256),
+                       password CHAR(256),
+                       dtCreated DATETIME,
+                       dtModified DATETIME,
+                       admin BOOL
+                    );"""
+        e = sqlFuncs.exeCommand(command, "createTable", "User")
+        # e = sqlFuncs.createTable(command, "User")
+        return e
     
+    # overriding abstract method
+    @staticmethod
+    def deleteTable():
+        '''
+        Removes the user SQL table from the database. Used for testing principally.
+        @param None.
+        @return e - Error code, returns success if no error occurs.
+        '''
+        command = """DROP TABLE u;
+                  """
+        e = sqlFuncs.exeCommand(command, "deleteTable", "User")
+        return e
+
     @staticmethod
     def checkLogin(userName: str, password: str)->int:
         '''
@@ -47,7 +91,6 @@ class UserTable(tableOp.Table):
         @param password, a hashed password to check against db
         @return user ID, if failed return -1
         '''
-
         return True
 
     # overriding abstract method
@@ -78,13 +121,17 @@ class UserTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def createEntry(values: tuple):
+    def createEntry(username: str, password: str, admin: bool):
         '''
         #TODO
         *add description*.
         @param *add param*.
         @return *add return*.
         '''
+        # id will be set when object is added to table
+        # set dtCreated
+        # set dtModified (will be same as dtCreated initially)
+
         # TODO error check what is passed to function (in terms of types?)
         skelUser = User(values[0], values[1], values[2], values[3], values[4], values[5])
         return pref.getError(pref.ERROR_SUCCESS), skelUser

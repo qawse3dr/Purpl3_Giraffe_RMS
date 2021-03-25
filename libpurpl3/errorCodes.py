@@ -113,6 +113,11 @@ def getErrorCodeList() -> dict:
 
     #James' blacklist commands
     getAttrName(ERROR_BLACKLISTED_COMMAND): Error(56, "Returned%d, script contained invalid command: %s"),
+    
+    # 66- 72 SQLITE3 ERRORS
+    getAttrName(ERROR_CREATE_SQLITE3_CONNECTION): Error(66, "Returned: %d, connection to sqlite3 database failed when executing function %s on table %s with message - \"%s\""),
+    getAttrName(ERROR_EXECUTE_SQLITE3_COMMAND): Error(67, "Returned: %d, executing command of type %s failed on table %s with message - \"%s\""),
+    
     #Vars for error codes
     getAttrName(ERROR_VAR) : {
       getAttrName(ERROR_VAR_CODE) : "code",
@@ -156,3 +161,7 @@ ERROR_VAR_CODE = "ERROR:VAR:CODE"
 ERROR_VAR_STR = "ERROR:VAR:STR"
 
 ERROR_SQL_FAILURE = "ERROR:SQL_FAILURE"
+
+# 66- 72 SQLITE3 ERRORS
+ERROR_CREATE_SQLITE3_CONNECTION = "ERROR:CREATE_SQLITE3_CONNECTION"
+ERROR_EXECUTE_SQLITE3_COMMAND = "ERROR:EXECUTE_SQLITE3_COMMAND"
