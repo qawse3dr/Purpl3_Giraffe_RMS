@@ -8,6 +8,7 @@ import libpurpl3.sqlFuncs as sqlFuncs
 import sqlite3
 import datetime
 import unittest
+import os
 
 def clearTables():
     '''
@@ -53,146 +54,207 @@ class BaseTestCase(unittest.TestCase):
     def setUp(self):
       pref.setAttr("DB_PATH", "unit_test.db") # work on seperate clean database so as to not mess up test data in base db
 
-    ################## CREATE TABLE TESTS ##################
-    # Tests table creation from user class directly (expecting success)
-    def test_createTableU(self):
+    # ################## CREATE TABLE TESTS ##################
+    # # Tests table creation from user class directly (expecting success)
+    # def test_createTableU(self):
+    #   clearTables()
+    #   err = tou.UserTable().createTable()
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+
+    # # Tests table creation from script class directly (expecting success)
+    # def test_createTableS(self):
+    #   clearTables()
+    #   err = tos.ScriptTable().createTable()
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+
+    # # Tests table creation from computer class directly (expecting success)
+    # def test_createTableC(self):
+    #   clearTables()
+    #   err = toc.ComputerTable().createTable()
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+
+    # # Tests table creation from scriptLog class directly (expecting success)
+    # def test_createTableSL(self):
+    #   clearTables()
+    #   err = tosl.ScriptLogTable().createTable()
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+
+    # ################## DELETE EMPTY TABLE TESTS (SUCCESS) ##################
+    # # Tests deleting user table  (expecting success)
+    # def test_deleteTableEmptyU(self):
+    #   createEmptyTables()
+    #   err = tou.UserTable().deleteTable()
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+
+    # # Tests deleting script table (expecting success)
+    # def test_deleteTableEmptyS(self):
+    #   createEmptyTables()
+    #   err = tos.ScriptTable().deleteTable()
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+
+    # # Tests deleting computer table (expecting success)
+    # def test_deleteTableEmptyC(self):
+    #   createEmptyTables()
+    #   err = toc.ComputerTable().deleteTable()
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+
+    # # Tests deleting scriptLog table (expecting success)
+    # def test_deleteTableEmptySL(self):
+    #   createEmptyTables()
+    #   err = tosl.ScriptLogTable().deleteTable()
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+
+    # ################## DELETE NON-EMPTY TABLE TESTS (SUCCESS) ##################
+    # # Need to drop sql tables with foreign keys first i.e. order must be scriptLog, (computer, script), user. 
+    # # See details in https://sqlite.org/foreignkeys.html
+
+    # # Tests deleting user table containing records (expecting success)
+    # def test_deleteTableU_S(self):
+    #   createTables()
+    #   err = tosl.ScriptLogTable().deleteTable()
+    #   err = tos.ScriptTable().deleteTable()
+    #   err = toc.ComputerTable().deleteTable()
+    #   err = tou.UserTable().deleteTable()
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+
+    # # Tests deleting script table containing records (expecting success)
+    # def test_deleteTableS_S(self):
+    #   createTables()
+    #   err = tosl.ScriptLogTable().deleteTable()
+    #   err = tos.ScriptTable().deleteTable()
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+
+    # # Tests deleting computer table containing records (expecting success)
+    # def test_deleteTableC_S(self):
+    #   createTables()
+    #   err = tosl.ScriptLogTable().deleteTable()
+    #   err = toc.ComputerTable().deleteTable()
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+
+    # # Tests deleting script log table containing records (expecting success)
+    # def test_deleteTableSL_S(self):
+    #   createTables()
+    #   err = tosl.ScriptLogTable().deleteTable()
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+
+    # ################## CREATE ENTRY (SUCCESS) ##################
+    # def test_createEntryS(self):
+    #   createTables()
+    #   err, s = tos.ScriptTable().createEntry("test_script_name", "test_script_name.sh", 0, "emptry script used for testing", False)
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+    #   self.assertEqual(s.name, "test_script_name")
+    #   self.assertEqual(s.fileName, "test_script_name.sh")
+    #   self.assertEqual(s.author, 0)
+    #   self.assertEqual(s.desc, "emptry script used for testing")
+    #   self.assertEqual(s.isAdmin, False)
+
+    # def test_createEntryC(self):
+    #   createTables()
+    #   err, c = toc.ComputerTable().createEntry(0, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+    #   self.assertEqual(c.userID, 0)
+    #   self.assertEqual(c.name, "RachelsSurface")
+    #   self.assertEqual(c.nickName, "Raquels Computer")
+    #   self.assertEqual(c.desc, "Rachel's wonderful awful computer")
+    #   self.assertEqual(c.username, "rbroders")
+    #   self.assertEqual(c.IP, "idk how IPs are formatted ya yeet")
+    #   self.assertEqual(c.asAdmin, False)
+
+    # def test_createEntrySL(self):
+    #   createTables()
+    #   err, sl = tosl.ScriptLogTable().createEntry(0, 0, 0, False)
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+    #   self.assertEqual(sl.scriptID, 0)
+    #   self.assertEqual(sl.userID, 0)
+    #   self.assertEqual(sl.compID, 0)
+    #   self.assertEqual(sl.asAdmin, False)
+
+    # def test_createEntryU(self):
+    #   createTables()
+    #   err, u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   self.assertEqual(err,errExp)
+    #   self.assertEqual(u.username, "rbroders")
+    #   self.assertEqual(u.password, "hella_secure_hashed_password")
+    #   self.assertEqual(u.admin, True)
+
+    ################## ADD ENTRY (SUCCESS) ##################
+    def test_addEntryU(self):
       clearTables()
-      err = tou.UserTable().createTable()
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      self.assertEqual(err,errExp)
-
-    # Tests table creation from script class directly (expecting success)
-    def test_createTableS(self):
-      clearTables()
-      err = tos.ScriptTable().createTable()
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      self.assertEqual(err,errExp)
-
-    # Tests table creation from computer class directly (expecting success)
-    def test_createTableC(self):
-      clearTables()
-      err = toc.ComputerTable().createTable()
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      self.assertEqual(err,errExp)
-
-    # Tests table creation from scriptLog class directly (expecting success)
-    def test_createTableSL(self):
-      clearTables()
-      err = tosl.ScriptLogTable().createTable()
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      self.assertEqual(err,errExp)
-
-    ################## DELETE EMPTY TABLE TESTS (SUCCESS) ##################
-    # Tests deleting user table  (expecting success)
-    def test_deleteTableEmptyU(self):
-      createEmptyTables()
-      err = tou.UserTable().deleteTable()
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      self.assertEqual(err,errExp)
-
-    # Tests deleting script table (expecting success)
-    def test_deleteTableEmptyS(self):
-      createEmptyTables()
-      err = tos.ScriptTable().deleteTable()
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      self.assertEqual(err,errExp)
-
-    # Tests deleting computer table (expecting success)
-    def test_deleteTableEmptyC(self):
-      createEmptyTables()
-      err = toc.ComputerTable().deleteTable()
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      self.assertEqual(err,errExp)
-
-    # Tests deleting scriptLog table (expecting success)
-    def test_deleteTableEmptySL(self):
-      createEmptyTables()
-      err = tosl.ScriptLogTable().deleteTable()
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      self.assertEqual(err,errExp)
-
-    ################## DELETE NON-EMPTY TABLE TESTS (SUCCESS) ##################
-    # Need to drop sql tables with foreign keys first i.e. order must be scriptLog, (computer, script), user. 
-    # See details in https://sqlite.org/foreignkeys.html
-
-    # Tests deleting user table containing records (expecting success)
-    def test_deleteTableU_S(self):
-      createTables()
-      err = tosl.ScriptLogTable().deleteTable()
-      err = tos.ScriptTable().deleteTable()
-      err = toc.ComputerTable().deleteTable()
-      err = tou.UserTable().deleteTable()
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      self.assertEqual(err,errExp)
-
-    # Tests deleting script table containing records (expecting success)
-    def test_deleteTableS_S(self):
-      createTables()
-      err = tosl.ScriptLogTable().deleteTable()
-      err = tos.ScriptTable().deleteTable()
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      self.assertEqual(err,errExp)
-
-    # Tests deleting computer table containing records (expecting success)
-    def test_deleteTableC_S(self):
-      createTables()
-      err = tosl.ScriptLogTable().deleteTable()
-      err = toc.ComputerTable().deleteTable()
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      self.assertEqual(err,errExp)
-
-    # Tests deleting script log table containing records (expecting success)
-    def test_deleteTableSL_S(self):
-      createTables()
-      err = tosl.ScriptLogTable().deleteTable()
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      self.assertEqual(err,errExp)
-
-    ################## CREATE ENTRY (SUCCESS) ##################
-    def test_createEntryS(self):
-      createTables()
-      err, s = tos.ScriptTable().createEntry("test_script_name", "test_script_name.sh", 0, "emptry script used for testing", False)
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      self.assertEqual(err,errExp)
-      self.assertEqual(s.name, "test_script_name")
-      self.assertEqual(s.fileName, "test_script_name.sh")
-      self.assertEqual(s.author, 0)
-      self.assertEqual(s.desc, "emptry script used for testing")
-      self.assertEqual(s.isAdmin, False)
-
-    def test_createEntryC(self):
-      createTables()
-      err, c = toc.ComputerTable().createEntry(0, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      self.assertEqual(err,errExp)
-      self.assertEqual(c.userID, 0)
-      self.assertEqual(c.name, "RachelsSurface")
-      self.assertEqual(c.nickName, "Raquels Computer")
-      self.assertEqual(c.desc, "Rachel's wonderful awful computer")
-      self.assertEqual(c.username, "rbroders")
-      self.assertEqual(c.IP, "idk how IPs are formatted ya yeet")
-      self.assertEqual(c.asAdmin, False)
-
-    def test_createEntrySL(self):
-      createTables()
-      err, sl = tosl.ScriptLogTable().createEntry(0, 0, 0, False)
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      self.assertEqual(err,errExp)
-      self.assertEqual(sl.scriptID, 0)
-      self.assertEqual(sl.userID, 0)
-      self.assertEqual(sl.compID, 0)
-      self.assertEqual(sl.asAdmin, False)
-
-    def test_createEntryU(self):
       createTables()
       err, u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
+      err = tou.UserTable().add(u)
       errExp = pref.getError(pref.ERROR_SUCCESS)
       self.assertEqual(err,errExp)
-      self.assertEqual(u.username, "rbroders")
-      self.assertEqual(u.password, "hella_secure_hashed_password")
-      self.assertEqual(u.admin, True)
+      self.assertEqual(u.ID, 1)
 
+    def test_addEntryS(self):
+      clearTables()
+      createTables()
+      # need user entry first for foreign key
+      err, u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
+      err = tou.UserTable().add(u) # uID will be 1
+      # script entry
+      err, s = tos.ScriptTable().createEntry("test_script_name", "test_script_name.sh", 1, "emptry script used for testing", False)
+      err = tos.ScriptTable().add(s)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
+      self.assertEqual(s.ID, 1)
 
+    def test_addEntryC(self):
+      clearTables()
+      createTables()
+      # need user entry first for foreign key
+      err, u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
+      err = tou.UserTable().add(u) # uID will be 1
+      # computer entry
+      err, c = toc.ComputerTable().createEntry(1, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
+      err = toc.ComputerTable().add(c)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
+      self.assertEqual(c.ID, 1)
+
+    def test_addEntrySL(self):
+      clearTables()
+      createTables()
+      # need user entry first for foreign key
+      err, u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
+      err = tou.UserTable().add(u) # uID will be 1
+      # need script entry for foreign key
+      err, s = tos.ScriptTable().createEntry("test_script_name", "test_script_name.sh", 1, "emptry script used for testing", False)
+      err = tos.ScriptTable().add(s)
+      # need computer entry for foreign key
+      err, c = toc.ComputerTable().createEntry(1, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
+      err = toc.ComputerTable().add(c)
+      # scriptLog entry
+      err, sl = tosl.ScriptLogTable().createEntry(1, 1, 1, False)
+      err = tosl.ScriptLogTable().add(sl)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
+      self.assertEqual(sl.ID, 1)
+      # check stdout/stderr file creation
+      outPath = pref.getNoCheck("SCRIPT_LOG_PATH") + sl.stdoutFile
+      errPath = pref.getNoCheck("SCRIPT_LOG_PATH") + sl.stderrFile
+      self.assertEqual(os.path.exists(outPath), True)
+      self.assertEqual(os.path.exists(errPath), True)
+      os.remove(outPath)
+      os.remove(errPath)
+      
 
   
 

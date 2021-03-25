@@ -57,6 +57,23 @@ class Script(tableOp.Entry):
             "isAdmin": str(self.isAdmin)
         }
 
+    def paramToList(self):
+        '''
+        #TODO
+        *desc*
+        @param *add param*.
+        @return *add return*.
+        '''
+        param = ()
+        for attr, value in self.__dict__.items():
+            if attr == "ID":
+                pass
+            elif attr[0:2] == "dt":
+                param = param + (value.strftime('%Y-%m-%d %H:%M:%S'), )
+            else:
+                param = param + (value, )
+        return param
+
 
 class ScriptTable(tableOp.Table):
     # overriding abstract method
@@ -68,7 +85,7 @@ class ScriptTable(tableOp.Table):
         @return errorCode: Error
         '''
         command = """CREATE TABLE IF NOT EXISTS s (
-                       id INTEGER PRIMARY KEY,
+                       id INTEGER PRIMARY KEY AUTOINCREMENT,
                        name CHAR(256),
                        fileName CHAR(256),
                        author INTEGER,
@@ -81,7 +98,6 @@ class ScriptTable(tableOp.Table):
                         FOREIGN KEY (author)
                         REFERENCES u(id)
                     );"""
-        # e = sqlFuncs.createTable(command, "Script")
         e = sqlFuncs.exeCommand(command, "createTable", "Script")
         return e
 
@@ -169,8 +185,10 @@ class ScriptTable(tableOp.Table):
         if(attr == "ID" or attr == "author"):
             return pref.getError(pref.ERROR_SUCCESS), 0
         #str
-        elif(attr == "name" or attr == "fileName" or attr == "desc"):
-            return pref.getError(pref.ERROR_SUCCESS), ""
+        elif(attr == "name"):
+            return pref.getError(pref.ERROR_SUCCESS), "skelScriptName"
+        elif(attr == "fileName" or attr == "desc"):
+            return pref.getError(pref.ERROR_SUCCESS), "FIXME"
         # datetime
         elif(attr == "dtCreated" or attr == "dtModified"):
             return pref.getError(pref.ERROR_SUCCESS), datetime.datetime.now()
@@ -204,9 +222,12 @@ class ScriptTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        ID: int = 0
-        return pref.getError(pref.ERROR_SUCCESS), ID
-        
+        ID = 0
+        command = """ INSERT INTO s (id, name, fileName, author, desc, dtCreated, dtModified, size, isAdmin) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        data = entry.paramToList()
+        e, ID = sqlFuncs.insert(command, data, "add", "Script")
+        entry.ID = ID
+        return e
 
     # overriding abstract method
     @staticmethod

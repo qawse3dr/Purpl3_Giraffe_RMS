@@ -59,6 +59,23 @@ class Computer(tableOp.Entry):
             "asAdmin": str(self.asAdmin)
         }
 
+    def paramToList(self):
+        '''
+        #TODO
+        *desc*
+        @param *add param*.
+        @return *add return*.
+        '''
+        param = ()
+        for attr, value in self.__dict__.items():
+            if attr == "ID":
+                pass
+            elif attr[0:2] == "dt":
+                param = param + (value.strftime('%Y-%m-%d %H:%M:%S'), )
+            else:
+                param = param + (value, )
+        return param
+
 
 class ComputerTable(tableOp.Table):
     # overriding abstract method
@@ -70,11 +87,12 @@ class ComputerTable(tableOp.Table):
         @return errorCode: Error
         '''
         command = """CREATE TABLE IF NOT EXISTS c (
-                       id INTEGER PRIMARY KEY,
+                       id INTEGER PRIMARY KEY AUTOINCREMENT,
                        userId INTEGER,
                        name CHAR(256),
                        nickName CHAR(256),
                        desc CHAR(1024),
+                       username CHAR(256),
                        IP CHAR(256),
                        dtCreated DATETIME,
                        dtModified DATETIME,
@@ -202,8 +220,12 @@ class ComputerTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        ID: int = 0
-        return pref.getError(pref.ERROR_SUCCESS), ID
+        ID = 0
+        command = """ INSERT INTO c (id, userID, name, nickName, desc, username, IP, dtCreated, dtModified, asAdmin) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        data = entry.paramToList()
+        e, ID = sqlFuncs.insert(command, data, "add", "Computer")
+        entry.ID = ID
+        return e
 
     # overriding abstract method
     @staticmethod

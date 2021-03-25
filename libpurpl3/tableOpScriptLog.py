@@ -64,6 +64,23 @@ class ScriptLog(tableOp.Entry):
             "asAdmin": str(self.asAdmin)
         }
 
+    def paramToList(self):
+        '''
+        #TODO
+        *desc*
+        @param *add param*.
+        @return *add return*.
+        '''
+        param = ()
+        for attr, value in self.__dict__.items():
+            if attr == "ID":
+                pass
+            elif attr[0:2] == "dt":
+                param = param + (value.strftime('%Y-%m-%d %H:%M:%S'), )
+            else:
+                param = param + (value, )
+        return param
+
 
 class ScriptLogTable(tableOp.Table):
     # overriding abstract method
@@ -75,7 +92,7 @@ class ScriptLogTable(tableOp.Table):
         @return errorCode: Error
         '''
         command = """CREATE TABLE IF NOT EXISTS sl (
-                       id INTEGER PRIMARY KEY,
+                       id INTEGER PRIMARY KEY AUTOINCREMENT,
                        scriptId INTEGER,
                        userId INTEGER,
                        compId INTEGER,
@@ -214,9 +231,24 @@ class ScriptLogTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        ID: int = 0
-        stdoutFile = "STDOUT_" + str(tos.ScriptTable().getAttrByID("name", scriptID)) + "_" + str("FIXME") + ".log" # use 
-        return pref.getError(pref.ERROR_SUCCESS), ID
+        ID = 0
+        command = """ INSERT INTO sl (id, scriptID, userID, compID, startTime, endTime, returnVal, errorCode, stdoutFile, stderrFile, asAdmin) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        data = entry.paramToList()
+        e, ID = sqlFuncs.insert(command, data, "add", "ScriptLog")
+        entry.ID = ID
+        ######### create names/files for stdoutFile, stderrFile - {STDOUT/STDERR}_SCRIPT_ID.log #########
+        # (1) Add names to entry object
+        e, scriptName = tos.ScriptTable().getAttrByID("name", ID)
+        if e == pref.getError(pref.ERROR_SUCCESS):
+            entry.stdoutFile = "STDOUT_" + str(scriptName) + "_" + str(ID) + ".log" 
+            entry.stderrFile = "STDERR_" + str(scriptName) + "_" + str(ID) + ".log" 
+            # (2) Write names to sql entry
+            command2 = """UPDATE sl SET stdoutFile = \"""" + str(entry.stdoutFile) + """\", stderrFile = \"""" + str(entry.stderrFile) + """\" WHERE id = """ + str(ID) + """;"""
+            e = sqlFuncs.exeCommand(command2, "add", "ScriptLog")
+            # (3) Create files 
+            e = createFile(e, pref.getNoCheck("SCRIPT_LOG_PATH"), entry.stdoutFile)
+            e = createFile(e, pref.getNoCheck("SCRIPT_LOG_PATH"), entry.stderrFile)
+        return e #FIXME - should actions be undone if any errors occur along the way *thinking*
 
     # overriding abstract method
     @staticmethod
@@ -241,3 +273,11 @@ class ScriptLogTable(tableOp.Table):
         skelScriptLog = ScriptLog(0, 0, 0, 0, datetime.datetime.now(), datetime.datetime.now(), 1, 1, "stdoutFile1.txt",
                                   "stderrFile1.txt", False)
         return pref.getError(pref.ERROR_SUCCESS), skelScriptLog
+
+
+def createFile(e, path, filename):
+    try:
+        f = open(path + filename, "x")
+    except OSError as osE:
+        e = pref.getError(pref.ERROR_CANT_CREATE_FILE, args = (osE, filename))
+    return e
