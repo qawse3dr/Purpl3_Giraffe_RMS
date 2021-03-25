@@ -50,6 +50,9 @@ def createTables():
     # TODO insert records
 
 class BaseTestCase(unittest.TestCase):
+    def setUp(self):
+      pref.setAttr("DB_PATH", "unit_test.db") # work on seperate clean database so as to not mess up test data in base db
+
     ################## CREATE TABLE TESTS ##################
     # Tests table creation from user class directly (expecting success)
     def test_createTableU(self):
@@ -171,6 +174,12 @@ class BaseTestCase(unittest.TestCase):
     # Tests deleting script log table containing records (expecting success)
     # Note that test_deleteTableSL_F does not exist as the ScriptLog table's
     #     primary key is not referenced as a foreign key elsewhere
+
+
+    # This function must stay at the bottom of the unit tests
+    def cleanUp(self):
+      resetConfig() # return to default database file
+
 
 if __name__ == '__main__':
     unittest.main()

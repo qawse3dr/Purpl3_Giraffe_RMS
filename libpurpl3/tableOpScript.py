@@ -114,13 +114,18 @@ class ScriptTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def createEntry(values: tuple): # OR name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime, dtModified: datetime.datetime, size: float, isAdmin: bool
+    def createEntry(name: str, fileName: str, author: int, desc: str, isAdmin: bool): 
         '''
         #TODO
         *add description*.
         @param *add param*.
         @return *add return*.
         '''
+        # id will be set when object is added to table
+        # set dtCreated
+        # set dtModified (will be same as dtCreated initially)
+        # set size
+
         #TODO error check what is passed to function (in terms of types?)
         skelScript = Script(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8])
         return pref.getError(pref.ERROR_SUCCESS), skelScript

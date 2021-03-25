@@ -114,13 +114,17 @@ class UserTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def createEntry(values: tuple):
+    def createEntry(username: str, password: str, admin: bool):
         '''
         #TODO
         *add description*.
         @param *add param*.
         @return *add return*.
         '''
+        # id will be set when object is added to table
+        # set dtCreated
+        # set dtModified (will be same as dtCreated initially)
+
         # TODO error check what is passed to function (in terms of types?)
         skelUser = User(values[0], values[1], values[2], values[3], values[4], values[5])
         return pref.getError(pref.ERROR_SUCCESS), skelUser

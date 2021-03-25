@@ -124,13 +124,18 @@ class ScriptLogTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def createEntry(values: tuple):
+    def createEntry(scriptID: int, userID: int, compID: int, asAdmin: bool):
         '''
         #TODO
         *add description*.
         @param *add param*.
         @return *add return*.
         '''
+        # id will be set when object is added to table
+        # set startTime
+        # endTime, returnVal, errorCode are none - will be created through calls to editEntry
+        # create names/files for stdoutFile, stderrFile - {STDOUT/STDERR}_SCRIPT_ID.log
+
         # TODO error check what is passed to function (in terms of types?)
         skelScriptLog = ScriptLog(values[0], values[1], values[2], values[3], values[4], values[5], values[6],
                                   values[7], values[8], values[9], values[10])
