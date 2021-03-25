@@ -184,6 +184,8 @@ with (get/set)Attribute to hardcoded values in our code.
 CONFIG_PORT = "PORT"
 CONFIG_LOG_LEVEL = "LOG_LEVEL"
 CONFIG_RES_FOLDER = "RES_FOLDER"
+CONFIG_DB_PATH = "DB_PATH"
+
 #endpoints
 CONFIG_LOGIN_ENDPOINT = "LOGIN_ENDPOINT"
 CONFIG_API_ENDPOINT = "API_ENDPOINT"
@@ -311,7 +313,7 @@ def defaultConfig() -> dict:
     CONFIG_PORT : 8080,
     CONFIG_LOG_LEVEL : logging.INFO,
     CONFIG_RES_FOLDER: "res/",
-    
+    CONFIG_DB_PATH: "purpl3_rms.db",
 
     #Endpoints
     CONFIG_LOGIN_ENDPOINT: "/login",
