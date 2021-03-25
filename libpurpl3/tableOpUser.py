@@ -10,10 +10,16 @@ class User(tableOp.Entry):
     def __init__(self, ID: int, username: str, password: str, dtCreated: datetime.datetime,
                  dtModified: datetime.datetime, admin: bool):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Creates user object. Contains all info on a user of the system.
+        @param 
+            ID: int - unique identifier automatically generated when user is added to sql table. Will be None until user is added to table.
+            username: str - the given user's username
+            password: str - the user's *hashed* password
+            dtCreated: datetime.datetime - dateTime when createEntry is called for the user
+            dtModified: datetime.datetime - dateTime when createEntry is called for the user or when editEntry is called
+            admin: bool - whether or not the user has admin privledges
+        @return 
+            None.
         '''
         self.ID = ID
         self.username = username

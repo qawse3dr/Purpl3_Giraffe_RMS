@@ -11,10 +11,21 @@ class ScriptLog(tableOp.Entry):
                 endTime: datetime.datetime, returnVal: int, errorCode: int, stdoutFile: str, stderrFile: str,
                  asAdmin: bool):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Creates scriptLog object. Contains all info on the execution of a given script on a given computer by a specific user.
+        @param 
+            ID: int - unique identifier automatically generated when scriptLog is added to sql table. Will be None until scriptLog is added to table.
+            scriptID: int - primary key of script table to indicate which script was executed
+            userID: int - primary key of user table to indicate which user executed script
+            compID: int - primary key of computer table to indictae which computer is having script executed on it
+            startTime: datetime.datetime - dateTime when createEntry is called for the scriptLog
+            endTime: datetime.datetime - dateTime when createEntry script execution is finished
+            returnVal: int - value returned from script execution 
+            errorCode: int - error code returned from script execution
+            stdoutFile: str - file location where stdout logs will be stored from script execution
+            stderrFile: str - file location where stderr logs will be stored from script execution
+            asAdmin: bool - whether or not the script was executed as admin
+        @return 
+            None.
         '''
         self.ID = ID
         self.scriptID = scriptID

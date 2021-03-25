@@ -10,10 +10,19 @@ class Script(tableOp.Entry):
     def __init__(self, ID: int, name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime,
                  dtModified: datetime.datetime, size: float, isAdmin: bool):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Creates a script object with all info on a script.
+        @param 
+            ID: int - unique identifier automatically generated when script is added to sql table. Will be None until script is added to table.
+            name: str - use defined name to identify file 
+            fileName: str - identifying fileName
+            author: int - primary key of user table to indicate which user created the script 
+            desc: str - user defined script description
+            dtCreated: datetime.datetime - dateTime when createEntry is called for the script
+            dtModified: datetime.datetime - dateTime when createEntry is called for the script or when editEntry is called
+            size: float - size of file containing script (in MB)
+            isAdmin: bool - whether or not the script requires admin access to run
+        @return 
+            None
         '''
         self.ID = ID
         self.name = name
@@ -125,8 +134,8 @@ class ScriptTable(tableOp.Table):
         # set dtCreated
         # set dtModified (will be same as dtCreated initially)
         # set size
-
-        #TODO error check what is passed to function (in terms of types?)
+        
+        # create script object
         skelScript = Script(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8])
         return pref.getError(pref.ERROR_SUCCESS), skelScript
 

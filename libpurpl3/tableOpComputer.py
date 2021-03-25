@@ -10,10 +10,20 @@ class Computer(tableOp.Entry):
     def __init__(self, ID: int, userID: int, name: str, nickName: str, desc: str, username: str, IP: str, dtCreated: datetime.datetime,
                  dtModified: datetime.datetime, asAdmin: bool):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Creates computer object. Contains all info on a provisioned computer.
+        @param 
+            ID: int - unique identifier automatically generated when script is added to sql table. Will be None until script is added to table.
+            userID: int - primary key of user table to indicate which user provisioned this computer 
+            name: str - predefined name of computer
+            nickName: str - user defined name for computer 
+            desc: str - user defined computer description 
+            username: str - username of user being accessed on computer 
+            IP: str - IP address of computer
+            dtCreated: datetime.datetime - dateTime when createEntry is called for the computer
+            dtModified: datetime.datetime - dateTime when createEntry is called for the computer or when editEntry is called
+            asAdmin: bool - whether or not user is accessing computer as admin
+        @return 
+            None.
         '''
         self.ID = ID
         self.userID = userID
