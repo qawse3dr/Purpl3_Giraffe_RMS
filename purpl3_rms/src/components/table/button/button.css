@@ -1,0 +1,18 @@
+.tableButton {
+    overflow: hidden;
+    background-color: rgb(10, 102, 16);
+    transition-duration: 0.2s;
+    border-radius: 8px;
+    float: left;
+    display: block;
+    color: #000000;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    width:100%;
+}
+
+.tableButton:hover {
+    background-color: rgb(33, 177, 8);
+    color: black;
+}
