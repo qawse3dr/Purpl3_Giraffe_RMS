@@ -285,7 +285,9 @@ def getLoginOperations() -> dict:
   return {
     getAttrName(LOGIN_LOGIN): "LOGIN",
     getAttrName(LOGIN_CHANGE_PASSWORD): "CHANGE_PASSWORD",
-    getAttrName(LOGIN_RESET_PASSWORD): "RESET_PASSWORD", 
+    getAttrName(LOGIN_RESET_PASSWORD): "RESET_PASSWORD",
+    getAttrName(LOGIN_USERNAME): "Username",
+    getAttrName(LOGIN_PASSWORD): "Password", 
   }
 
 CONFIG_REQUEST_VAR = "REQ_VAR"
