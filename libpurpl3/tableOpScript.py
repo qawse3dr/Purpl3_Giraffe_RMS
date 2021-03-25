@@ -37,10 +37,11 @@ class Script(tableOp.Entry):
     # overriding abstract method
     def toJson(self):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Returns a dictionary of all object attributes as strings.
+        @param 
+            None.
+        @return
+            Dictionary of all object attributes as strings.
         '''
         return {
             "ID": str(self.ID),
