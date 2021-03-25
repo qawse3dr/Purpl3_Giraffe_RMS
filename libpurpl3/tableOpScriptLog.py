@@ -140,10 +140,17 @@ class ScriptLogTable(tableOp.Table):
     @staticmethod
     def createEntry(scriptID: int, userID: int, compID: int, asAdmin: bool):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Creates a scriptLog object. Some parameters must be passed in, some will be calculated 
+        in this function and some can only be filled when the scriptLog is added to the SQL 
+        table (these parameters will be set to None until the scriptLog is added to the SQL table).
+        @param 
+            scriptID: int - primary key of script table to indicate which script was executed
+            userID: int - primary key of user table to indicate which user executed script
+            compID: int - primary key of computer table to indictae which computer is having script executed on it
+            asAdmin: bool - whether or not the script was executed as admin
+        @return 
+            Error - error object indicating if any error was encountered when creating the script object 
+            scriptLog - scriptLog object created
         '''
         # id will be set when object is added to table
         id = None
@@ -158,7 +165,7 @@ class ScriptLogTable(tableOp.Table):
         stderrFile = None
         # create scriptLog object
         scriptLog = ScriptLog(id, scriptID, userID, compID, startTime, endTime, returnVal, errorCode, stdoutFile, stderrFile, asAdmin)
-        return pref.getError(pref.ERROR_SUCCESS), scriptLog
+        return pref.getError(pref.ERROR_SUCCESS), scriptLog #FIXME - error is redundant, take out???
 
     # overriding abstract method
     @staticmethod

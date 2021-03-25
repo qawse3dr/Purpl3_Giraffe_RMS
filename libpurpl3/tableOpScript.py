@@ -128,10 +128,18 @@ class ScriptTable(tableOp.Table):
     @staticmethod
     def createEntry(name: str, fileName: str, author: int, desc: str, isAdmin: bool): 
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Creates a script object. Some parameters must be passed in, some will be calculated 
+        in this function and some can only be filled when the script is added to the SQL 
+        table (these parameters will be set to None until the script is added to the SQL table).
+        @param 
+            name: str - use defined name to identify file 
+            fileName: str - identifying fileName
+            author: int - primary key of user table to indicate which user created the script 
+            desc: str - user defined script description
+            isAdmin: bool - whether or not the script requires admin access to run
+        @return 
+            Error - error object indicating if any error was encountered when creating the script object 
+            script - script object created
         '''
         # id will be set when object is added to table
         id = None
@@ -146,7 +154,7 @@ class ScriptTable(tableOp.Table):
         
         # create script object
         script = Script(None, name, fileName, author, desc, dtCreated, dtModified, fileSizeMB, isAdmin)
-        return pref.getError(pref.ERROR_SUCCESS), script
+        return pref.getError(pref.ERROR_SUCCESS), script #FIXME - error is redundant, take out???
 
     # overriding abstract method
     @staticmethod

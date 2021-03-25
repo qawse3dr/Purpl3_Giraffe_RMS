@@ -131,10 +131,20 @@ class ComputerTable(tableOp.Table):
     @staticmethod
     def createEntry(userID: int, name: str, nickName: str, desc: str, username: str, IP: str, asAdmin: bool):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Creates a computer object. Some parameters must be passed in, some will be calculated 
+        in this function and some can only be filled when the computer is added to the SQL 
+        table (these parameters will be set to None until the computer is added to the SQL table).
+        @param 
+            userID: int - primary key of user table to indicate which user provisioned this computer 
+            name: str - predefined name of computer
+            nickName: str - user defined name for computer 
+            desc: str - user defined computer description 
+            username: str - username of user being accessed on computer 
+            IP: str - IP address of computer
+            asAdmin: bool - whether or not user is accessing computer as admin
+        @return 
+            Error - error object indicating if any error was encountered when creating the script object 
+            computer - computer object created
         '''
         # id will be set when object is added to table
         id = None
@@ -144,7 +154,7 @@ class ComputerTable(tableOp.Table):
         dtModified = dtCreated
         # create computer object
         computer = Computer(id, userID, name, nickName, desc, username, IP, dtCreated, dtModified, asAdmin)
-        return pref.getError(pref.ERROR_SUCCESS), computer
+        return pref.getError(pref.ERROR_SUCCESS), computer #FIXME - error is redundant, take out???
 
     # overriding abstract method
     @staticmethod

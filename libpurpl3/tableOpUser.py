@@ -124,10 +124,16 @@ class UserTable(tableOp.Table):
     @staticmethod
     def createEntry(username: str, password: str, admin: bool):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Creates a user object. Some parameters must be passed in, some will be calculated 
+        in this function and some can only be filled when the user is added to the SQL 
+        table (these parameters will be set to None until the user is added to the SQL table).
+        @param 
+            username: str - the given user's username
+            password: str - the user's *hashed* password
+            admin: bool - whether or not the user has admin privledges
+        @return 
+            Error - error object indicating if any error was encountered when creating the script object 
+            user - user object created
         '''
         # id will be set when object is added to table
         id = None
@@ -137,7 +143,7 @@ class UserTable(tableOp.Table):
         dtModified = dtCreated
         # create user object
         user = User(id, username, password, dtCreated, dtModified, admin)
-        return pref.getError(pref.ERROR_SUCCESS), user
+        return pref.getError(pref.ERROR_SUCCESS), user #FIXME - error is redundant, take out???
 
     # overriding abstract method
     @staticmethod
