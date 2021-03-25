@@ -16,7 +16,7 @@ def exeCommand(command: str, commandName: str, tableName:type):
     '''
     e = pref.getError(pref.ERROR_SUCCESS)
     try: # attempt to create connection
-        con = sqlite3.connect(pref.CONFIG_DB_PATH)
+        con = sqlite3.connect(pref.getNoCheck(pref.CONFIG_DB_PATH))
         con.execute('PRAGMA foreign_keys = 1') #enable foreign keys
         try: # attempt to execute some command
             cur = con.cursor()
@@ -46,7 +46,7 @@ def insert(command: str, data: tuple, commandName: str, tableName:type):
     e = pref.getError(pref.ERROR_SUCCESS)
     ret = None
     try: # attempt to create connection
-        con = sqlite3.connect(pref.CONFIG_DB_PATH)
+        con = sqlite3.connect(pref.getNoCheck(pref.CONFIG_DB_PATH))
         con.execute('PRAGMA foreign_keys = 1') #enable foreign keys
         try: # attempt to execute insert command
             cur = con.cursor()
@@ -86,7 +86,7 @@ def getRow(command: str, commandName: str, tableName:type):
     e = pref.getError(pref.ERROR_SUCCESS)
     row = None
     try: # attempt to create connection
-        con = sqlite3.connect(pref.CONFIG_DB_PATH)
+        con = sqlite3.connect(pref.getNoCheck(pref.CONFIG_DB_PATH))
         con.execute('PRAGMA foreign_keys = 1') #enable foreign keys
         try: # attempt to do select command and get row
             cur = con.cursor()

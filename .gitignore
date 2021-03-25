@@ -12,3 +12,4 @@ key.pub
 purpl3_rms.db
 sqlite
 data/scriptLogs/*
+*.log

@@ -2,9 +2,10 @@ import libpurpl3.preferences as pref
 import libpurpl3.sshServer as ssh
 import libpurpl3.tableOpComputer as computerTable
 import libpurpl3.tableOpScript as ScriptTable
+from Purpl3_RMS import app
 import datetime
 import unittest
-
+import tests.testHelpers as helper
 
 
 class BaseTestCase(unittest.TestCase):
@@ -140,8 +141,13 @@ class BaseTestCase(unittest.TestCase):
     runs basic script
     '''
 
+    helper.createMockDB()
+    user = helper.createUserAccount()
+    computer = helper.createComputer()
+    script = helper.createScript()
+    helper.mockApp()
     #Create ssh connection
-    conn = ssh.sshConnection(self.computer,self.user,self.script)
+    conn = ssh.sshConnection(computer,user.ID,script)
 
     #Connect to computer
     err = conn.connect()
@@ -150,7 +156,6 @@ class BaseTestCase(unittest.TestCase):
     if(err != pref.Success):
       return self.skipTest("Failed to connect to remote computer")
 
-    self.script.fileName = "sleepScript.sh"
 
     err, id = conn.run()
 
@@ -161,6 +166,7 @@ class BaseTestCase(unittest.TestCase):
     '''
     runs basic script
     '''
+    
 
     #Create ssh connection
     conn = ssh.sshConnection(self.computer,self.user,self.script)
@@ -175,5 +181,6 @@ class BaseTestCase(unittest.TestCase):
     self.script.fileName = "sleepScript11.sh"
 
     err, id = conn.run()
-
+    print(err)
+    print("\n\n\n\n")
     self.assertEqual(err, pref.getError(pref.ERROR_FILE_NOT_FOUND))
