@@ -171,10 +171,10 @@ class ScriptTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def add(entry: Script): # OR name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime, dtModified: datetime.datetime, size: float, isAdmin: bool
+    def add(entry: Script): 
         '''
         #TODO
-        *add description*.
+        Must take script object from createEntry call.
         @param *add param*.
         @return *add return*.
         '''
