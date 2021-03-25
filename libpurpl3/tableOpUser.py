@@ -1,4 +1,5 @@
 import datetime
+from datetime import datetime as dt
 import libpurpl3.preferences as pref
 import libpurpl3.tableOp as tableOp
 import libpurpl3.sqlFuncs as sqlFuncs
@@ -129,12 +130,14 @@ class UserTable(tableOp.Table):
         @return *add return*.
         '''
         # id will be set when object is added to table
+        id = None
         # set dtCreated
+        dtCreated = dt.now()
         # set dtModified (will be same as dtCreated initially)
-
-        # TODO error check what is passed to function (in terms of types?)
-        skelUser = User(values[0], values[1], values[2], values[3], values[4], values[5])
-        return pref.getError(pref.ERROR_SUCCESS), skelUser
+        dtModified = dtCreated
+        # create user object
+        user = User(id, username, password, dtCreated, dtModified, admin)
+        return pref.getError(pref.ERROR_SUCCESS), user
 
     # overriding abstract method
     @staticmethod

@@ -1,4 +1,5 @@
 import datetime
+from datetime import datetime as dt
 import libpurpl3.preferences as pref
 import libpurpl3.tableOp as tableOp
 import libpurpl3.sqlFuncs as sqlFuncs
@@ -136,14 +137,14 @@ class ComputerTable(tableOp.Table):
         @return *add return*.
         '''
         # id will be set when object is added to table
+        id = None
         # set dtCreated
+        dtCreated = dt.now()
         # set dtModified (will be same as dtCreated initially)
-        
-
-        # TODO error check what is passed to function (in terms of types?)
-        skelComp = Computer(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7],
-                            values[8],values[9])
-        return pref.getError(pref.ERROR_SUCCESS), skelComp
+        dtModified = dtCreated
+        # create computer object
+        computer = Computer(id, userID, name, nickName, desc, username, IP, dtCreated, dtModified, asAdmin)
+        return pref.getError(pref.ERROR_SUCCESS), computer
 
     # overriding abstract method
     @staticmethod

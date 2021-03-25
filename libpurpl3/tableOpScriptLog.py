@@ -1,7 +1,9 @@
 import datetime
+from datetime import datetime as dt
 import libpurpl3.preferences as pref
 import libpurpl3.tableOp as tableOp
 import libpurpl3.sqlFuncs as sqlFuncs
+import libpurpl3.tableOpScript as tos
 import sqlite3
 
 class ScriptLog(tableOp.Entry):
@@ -144,14 +146,19 @@ class ScriptLogTable(tableOp.Table):
         @return *add return*.
         '''
         # id will be set when object is added to table
-        # set startTime
+        id = None
+        # set startTime to "now"
+        startTime = dt.now()
         # endTime, returnVal, errorCode are none - will be created through calls to editEntry
-        # create names/files for stdoutFile, stderrFile - {STDOUT/STDERR}_SCRIPT_ID.log
-
-        # TODO error check what is passed to function (in terms of types?)
-        skelScriptLog = ScriptLog(values[0], values[1], values[2], values[3], values[4], values[5], values[6],
-                                  values[7], values[8], values[9], values[10])
-        return pref.getError(pref.ERROR_SUCCESS), skelScriptLog
+        endTime = None
+        returnVal = None
+        errorCode = None
+        # create names/files for stdoutFile, stderrFile - {STDOUT/STDERR}_SCRIPT_ID.log requires scriptLog ID and thus must be done in add function
+        stdoutFile = None
+        stderrFile = None
+        # create scriptLog object
+        scriptLog = ScriptLog(id, scriptID, userID, compID, startTime, endTime, returnVal, errorCode, stdoutFile, stderrFile, asAdmin)
+        return pref.getError(pref.ERROR_SUCCESS), scriptLog
 
     # overriding abstract method
     @staticmethod
@@ -201,6 +208,7 @@ class ScriptLogTable(tableOp.Table):
         @return *add return*.
         '''
         ID: int = 0
+        stdoutFile = "STDOUT_" + str(tos.ScriptTable().getAttrByID("name", scriptID)) + "_" + str("FIXME") + ".log" # use 
         return pref.getError(pref.ERROR_SUCCESS), ID
 
     # overriding abstract method

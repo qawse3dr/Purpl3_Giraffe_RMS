@@ -148,6 +148,55 @@ class BaseTestCase(unittest.TestCase):
       errExp = pref.getError(pref.ERROR_SUCCESS)
       self.assertEqual(err,errExp)
 
+    ################## CREATE ENTRY (SUCCESS) ##################
+    def test_createEntryS(self):
+      createTables()
+      err, s = tos.ScriptTable().createEntry("test_script_name", "test_script_name.sh", 0, "emptry script used for testing", False)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
+      self.assertEqual(s.name, "test_script_name")
+      self.assertEqual(s.fileName, "test_script_name.sh")
+      self.assertEqual(s.author, 0)
+      self.assertEqual(s.desc, "emptry script used for testing")
+      self.assertEqual(s.isAdmin, False)
+
+    def test_createEntryC(self):
+      createTables()
+      err, c = toc.ComputerTable().createEntry(0, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
+      self.assertEqual(c.userID, 0)
+      self.assertEqual(c.name, "RachelsSurface")
+      self.assertEqual(c.nickName, "Raquels Computer")
+      self.assertEqual(c.desc, "Rachel's wonderful awful computer")
+      self.assertEqual(c.username, "rbroders")
+      self.assertEqual(c.IP, "idk how IPs are formatted ya yeet")
+      self.assertEqual(c.asAdmin, False)
+
+    def test_createEntrySL(self):
+      createTables()
+      err, sl = tosl.ScriptLogTable().createEntry(0, 0, 0, False)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
+      self.assertEqual(sl.scriptID, 0)
+      self.assertEqual(sl.userID, 0)
+      self.assertEqual(sl.compID, 0)
+      self.assertEqual(sl.asAdmin, False)
+
+    def test_createEntryU(self):
+      createTables()
+      err, u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err,errExp)
+      self.assertEqual(u.username, "rbroders")
+      self.assertEqual(u.password, "hella_secure_hashed_password")
+      self.assertEqual(u.admin, True)
+
+
+
+  
+
+
     # TODO - these tests will fail until createTables is correctly implemented
     ################## DELETE NON-EMPTY TABLE TESTS (FAILURE) ##################
     # # Tests deleting user table containing records (expecting failure)

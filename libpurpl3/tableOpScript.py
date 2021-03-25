@@ -1,8 +1,10 @@
 import datetime
+from datetime import datetime as dt
 import libpurpl3.preferences as pref 
 import libpurpl3.tableOp as tableOp
 import libpurpl3.sqlFuncs as sqlFuncs
 import sqlite3
+import os
 
 class Script(tableOp.Entry):
     #TODO add default values
@@ -132,13 +134,19 @@ class ScriptTable(tableOp.Table):
         @return *add return*.
         '''
         # id will be set when object is added to table
+        id = None
         # set dtCreated
+        dtCreated = dt.now()
         # set dtModified (will be same as dtCreated initially)
+        dtModified = dtCreated
         # set size
+        filePath = pref.getNoCheck("SCRIPT_PATH") + fileName
+        fileStats = os.stat(filePath)
+        fileSizeMB = fileStats.st_size / (1024 * 1024)
         
         # create script object
-        skelScript = Script(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8])
-        return pref.getError(pref.ERROR_SUCCESS), skelScript
+        script = Script(None, name, fileName, author, desc, dtCreated, dtModified, fileSizeMB, isAdmin)
+        return pref.getError(pref.ERROR_SUCCESS), script
 
     # overriding abstract method
     @staticmethod
