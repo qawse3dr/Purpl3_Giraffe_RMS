@@ -228,22 +228,27 @@ class ScriptLogTable(tableOp.Table):
     @staticmethod
     def add(entry: ScriptLog):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Takes a scriptLog object (which has not yet been added to the scriptLog SQL table), 
+            adds it to the table and updates scriptLog object's ID (ID is automatically 
+            generated using sqlite AUTOINCREMENT) 
+        This function is meant to take a scriptLog object generated from a call to the 
+            createEntry function.
+        @param 
+            entry - object of class ScriptLog
+        @return 
+            e - most recent error when executing function or Success if no error occurs
         '''
         ID = 0
         command = """ INSERT INTO sl (id, scriptID, userID, compID, startTime, endTime, returnVal, errorCode, stdoutFile, stderrFile, asAdmin) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         data = entry.paramToList()
         e, ID = sqlFuncs.insert(command, data, "add", "ScriptLog")
-        entry.ID = ID
+        entry.ID = ID # access ID through entry object after executing this function
         ######### create names/files for stdoutFile, stderrFile - {STDOUT/STDERR}_SCRIPT_ID.log #########
         # (1) Add names to entry object
         e, scriptName = tos.ScriptTable().getAttrByID("name", ID)
         if e == pref.getError(pref.ERROR_SUCCESS):
-            entry.stdoutFile = "STDOUT_" + str(scriptName) + "_" + str(ID) + ".log" 
-            entry.stderrFile = "STDERR_" + str(scriptName) + "_" + str(ID) + ".log" 
+            entry.stdoutFile = "STDOUT_" + str(scriptName) + "_" + str(ID) + ".log"  # access stdoutFile through entry object after executing this function
+            entry.stderrFile = "STDERR_" + str(scriptName) + "_" + str(ID) + ".log"  # access stderrFile through entry object after executing this function
             # (2) Write names to sql entry
             command2 = """UPDATE sl SET stdoutFile = \"""" + str(entry.stdoutFile) + """\", stderrFile = \"""" + str(entry.stderrFile) + """\" WHERE id = """ + str(ID) + """;"""
             e = sqlFuncs.exeCommand(command2, "add", "ScriptLog")

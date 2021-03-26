@@ -203,16 +203,21 @@ class UserTable(tableOp.Table):
     @staticmethod
     def add(entry: User):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Takes a user object (which has not yet been added to the user SQL table), 
+            adds it to the table and updates user object's ID (ID is automatically 
+            generated using sqlite AUTOINCREMENT) 
+        This function is meant to take a user object generated from a call to the 
+            createEntry function.
+        @param 
+            entry - object of class User
+        @return 
+            e - most recent error when executing function or Success if no error occurs
         '''
         ID = 0
         command = """ INSERT INTO u (id, username, password, dtCreated, dtModified, admin) VALUES (NULL, ?, ?, ?, ?, ?)"""
         data = entry.paramToList()
         e, ID = sqlFuncs.insert(command, data, "add", "User")
-        entry.ID = ID
+        entry.ID = ID # access ID through entry object after executing this function
         return e
 
     # overriding abstract method

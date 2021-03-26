@@ -219,16 +219,21 @@ class ScriptTable(tableOp.Table):
     @staticmethod
     def add(entry: Script): 
         '''
-        #TODO
-        Must take script object from createEntry call.
-        @param *add param*.
-        @return *add return*.
+        Takes a script object (which has not yet been added to the script SQL table), 
+            adds it to the table and updates script object's ID (ID is automatically 
+            generated using sqlite AUTOINCREMENT) 
+        This function is meant to take a script object generated from a call to the 
+            createEntry function.
+        @param 
+            entry - object of class Script
+        @return 
+            e - most recent error when executing function or Success if no error occurs
         '''
         ID = 0
         command = """ INSERT INTO s (id, name, fileName, author, desc, dtCreated, dtModified, size, isAdmin) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)"""
         data = entry.paramToList()
         e, ID = sqlFuncs.insert(command, data, "add", "Script")
-        entry.ID = ID
+        entry.ID = ID # access ID through entry object after executing this function
         return e
 
     # overriding abstract method

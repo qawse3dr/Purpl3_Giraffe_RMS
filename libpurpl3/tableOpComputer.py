@@ -217,16 +217,21 @@ class ComputerTable(tableOp.Table):
     @staticmethod
     def add(entry: Computer):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Takes a computer object (which has not yet been added to the computer SQL table), 
+            adds it to the table and updates computer object's ID (ID is automatically 
+            generated using sqlite AUTOINCREMENT) 
+        This function is meant to take a computer object generated from a call to the 
+            createEntry function.
+        @param 
+            entry - object of class Computer
+        @return 
+            e - most recent error when executing function or Success if no error occurs
         '''
         ID = 0
         command = """ INSERT INTO c (id, userID, name, nickName, desc, username, IP, dtCreated, dtModified, asAdmin) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         data = entry.paramToList()
         e, ID = sqlFuncs.insert(command, data, "add", "Computer")
-        entry.ID = ID
+        entry.ID = ID # access ID through entry object after executing this function
         return e
 
     # overriding abstract method
