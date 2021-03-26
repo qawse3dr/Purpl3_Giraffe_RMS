@@ -245,7 +245,7 @@ class ScriptLogTable(tableOp.Table):
         entry.ID = ID # access ID through entry object after executing this function
         ######### create names/files for stdoutFile, stderrFile - {STDOUT/STDERR}_SCRIPT_ID.log #########
         # (1) Add names to entry object
-        e, scriptName = tos.ScriptTable().getAttrByID("name", ID)
+        e, scriptName = tos.ScriptTable().getAttrByID("name", ID) #FIXME scriptID
         if e == pref.getError(pref.ERROR_SUCCESS):
             entry.stdoutFile = "STDOUT_" + str(scriptName) + "_" + str(ID) + ".log"  # access stdoutFile through entry object after executing this function
             entry.stderrFile = "STDERR_" + str(scriptName) + "_" + str(ID) + ".log"  # access stderrFile through entry object after executing this function
@@ -255,7 +255,7 @@ class ScriptLogTable(tableOp.Table):
             # (3) Create files 
             e = createFile(e, pref.getNoCheck("SCRIPT_LOG_PATH"), entry.stdoutFile)
             e = createFile(e, pref.getNoCheck("SCRIPT_LOG_PATH"), entry.stderrFile)
-        return e #FIXME - should actions be undone if any errors occur along the way *thinking*
+        return e #FIXME - should actions be undone if any errors occur along the way *thinking* - for loop
 
     # overriding abstract method
     @staticmethod
@@ -284,7 +284,10 @@ class ScriptLogTable(tableOp.Table):
 
 def createFile(e, path, filename):
     try:
-        f = open(path + filename, "x")
+        f = open(path + filename, "w")
     except OSError as osE:
-        e = pref.getError(pref.ERROR_CANT_CREATE_FILE, args = (osE, filename))
+        print("osE: ")
+        print(osE)
+        print("filename: " + filename)
+        e = pref.getError(pref.ERROR_CANT_CREATE_FILE, args = (filename))
     return e
