@@ -130,10 +130,12 @@ class ScriptLogTable(tableOp.Table):
     @staticmethod
     def getByID(ID: int):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Retrieves an entry from the scriptLog SQL table based on primary key - ID
+        @param 
+            ID - primary key of scriptLog
+        @return 
+            e - error created during execution of function or Success if no error occurs
+            s - the entry retrieved from the SQL table as a ScriptLog object
         '''
         command = """SELECT * FROM sl WHERE ID = """ + str(ID) + """;"""
         e, slTuple = sqlFuncs.getRow(command, "getByID", "ScriptLog")

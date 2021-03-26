@@ -116,10 +116,12 @@ class UserTable(tableOp.Table):
     @staticmethod
     def getByID(ID: int):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Retrieves an entry from the user SQL table based on primary key - ID
+        @param 
+            ID - primary key of user
+        @return 
+            e - error created during execution of function or Success if no error occurs
+            s - the entry retrieved from the SQL table as a User object
         '''
         command = """SELECT * FROM u WHERE ID = """ + str(ID) + """;"""
         e, uTuple = sqlFuncs.getRow(command, "getByID", "User")

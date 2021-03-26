@@ -120,10 +120,12 @@ class ScriptTable(tableOp.Table):
     @staticmethod 
     def getByID(ID: int):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Retrieves an entry from the script SQL table based on primary key - ID
+        @param 
+            ID - primary key of script
+        @return 
+            e - error created during execution of function or Success if no error occurs
+            s - the entry retrieved from the SQL table as a Script object
         '''
         command = """SELECT * FROM s WHERE ID = """ + str(ID) + """;"""
         e, scriptTuple = sqlFuncs.getRow(command, "getByID", "Script")

@@ -308,6 +308,9 @@ class BaseTestCase(unittest.TestCase):
     # #     primary key is not referenced as a foreign key elsewhere
 
     ################## GETBYID TESTS (SUCCESS) ##################
+    # Tests getByID for script. Confirms there are no errors and 
+    #   that atributes of returned script are the same as entry 
+    #   added in createTable helper function or expected in other way.
     def test_getByIDS(self):
       createTables()
       err, s = tos.ScriptTable().getByID(1)
@@ -321,6 +324,9 @@ class BaseTestCase(unittest.TestCase):
       self.assertEqual(s.size, 0.0)
       self.assertEqual(s.isAdmin, False)
 
+    # Tests getByID for computer. Confirms there are no errors and 
+    #   that atributes of returned computer are the same as entry 
+    #   added in createTable helper function or expected in other way.
     def test_getByIDC(self):
       createTables()
       err, c = toc.ComputerTable().getByID(1)
@@ -335,6 +341,9 @@ class BaseTestCase(unittest.TestCase):
       self.assertEqual(c.IP, "idk how IPs are formatted ya yeet")
       self.assertEqual(c.asAdmin, False)
 
+    # Tests getByID for scriptLog. Confirms there are no errors and 
+    #   that atributes of returned scriptLog are the same as entry 
+    #   added in createTable helper function or expected in other way.
     def test_getByIDSL(self):
       createTables()
       err, sl = tosl.ScriptLogTable().getByID(1)
@@ -351,6 +360,9 @@ class BaseTestCase(unittest.TestCase):
       self.assertEqual(sl.stderrFile, "STDERR_skelScriptName_1.log") # FIXME when getAttrByID implemented - "STDERR_test_script_name_1.log"
       self.assertEqual(sl.asAdmin, False)
 
+    # Tests getByID for user. Confirms there are no errors and 
+    #   that atributes of returned iser are the same as entry added 
+    #   in createTable helper function or expected in other way.
     def test_getByIDU(self):
       createTables()
       err, u = tou.UserTable().getByID(1)
