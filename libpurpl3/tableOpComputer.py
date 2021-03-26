@@ -187,20 +187,9 @@ class ComputerTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        # int
-        if (attr == "ID" or attr == "userID"):
-            return pref.getError(pref.ERROR_SUCCESS), 0
-        # str
-        elif (attr == "name" or attr == "nickName" or attr == "desc" or attr == "IP" or attr == "username"):
-            return pref.getError(pref.ERROR_SUCCESS), ""
-        # datetime
-        elif (attr == "dtCreated" or attr == "dtModified"):
-            return pref.getError(pref.ERROR_SUCCESS), datetime.datetime.now()
-        # bool
-        elif (attr == "asAdmin"):
-            return pref.getError(pref.ERROR_SUCCESS), False
-        else:
-            return pref.getError(pref.ERROR_ATTRIBUTE_NOT_FOUND), None
+        command = """SELECT (""" + attr + """) FROM c WHERE ID = """ + str(ID) + """;"""
+        e, cTuple = sqlFuncs.getRow(command, "getAttrByID", "Computer")
+        return e, cTuple[0]
 
     # overriding abstract method
     @staticmethod

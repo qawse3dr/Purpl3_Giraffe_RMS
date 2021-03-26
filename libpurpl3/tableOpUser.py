@@ -175,20 +175,9 @@ class UserTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        # int
-        if (attr == "ID"):
-            return pref.getError(pref.ERROR_SUCCESS), 0
-        # str
-        elif (attr == "username" or attr == "password"):
-            return pref.getError(pref.ERROR_SUCCESS), ""
-        # datetime
-        elif (attr == "dtCreated" or attr == "dtModified"):
-            return pref.getError(pref.ERROR_SUCCESS), datetime.datetime.now()
-        # bool
-        elif (attr == "admin"):
-            return pref.getError(pref.ERROR_SUCCESS), False
-        else:
-            return pref.getError(pref.ERROR_ATTRIBUTE_NOT_FOUND), None
+        command = """SELECT (""" + attr + """) FROM u WHERE ID = """ + str(ID) + """;"""
+        e, uTuple = sqlFuncs.getRow(command, "getAttrByID", "User")
+        return e, uTuple[0]
 
     # overriding abstract method
     @staticmethod

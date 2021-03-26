@@ -185,25 +185,9 @@ class ScriptTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        # int
-        if(attr == "ID" or attr == "author"):
-            return pref.getError(pref.ERROR_SUCCESS), 0
-        #str
-        elif(attr == "name"):
-            return pref.getError(pref.ERROR_SUCCESS), "skelScriptName"
-        elif(attr == "fileName" or attr == "desc"):
-            return pref.getError(pref.ERROR_SUCCESS), "FIXME"
-        # datetime
-        elif(attr == "dtCreated" or attr == "dtModified"):
-            return pref.getError(pref.ERROR_SUCCESS), datetime.datetime.now()
-        #float
-        elif(attr == "size"):
-            return pref.getError(pref.ERROR_SUCCESS), 0
-        #bool
-        elif(attr == "isAdmin"):
-            return pref.getError(pref.ERROR_SUCCESS), False
-        else:
-            return pref.getError(pref.ERROR_ATTRIBUTE_NOT_FOUND), None
+        command = """SELECT (""" + attr + """) FROM s WHERE ID = """ + str(ID) + """;"""
+        e, sTuple = sqlFuncs.getRow(command, "getAttrByID", "Script")
+        return e, sTuple[0]
 
     # overriding abstract method
     @staticmethod

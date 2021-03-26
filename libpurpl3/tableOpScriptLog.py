@@ -197,21 +197,9 @@ class ScriptLogTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        # int
-        if (attr == "ID" or attr == "scriptID" or attr == "userID" or attr == "compID" or attr == "returnVal" or
-                attr == "errorCode"):
-            return pref.getError(pref.ERROR_SUCCESS), 0
-        # str
-        elif (attr == "stdoutFile" or attr == "stderrFile"):
-            return pref.getError(pref.ERROR_SUCCESS), ""
-        # datetime
-        elif (attr == "startTime" or attr == "endTime"):
-            return pref.getError(pref.ERROR_SUCCESS), datetime.datetime.now()
-        # bool
-        elif (attr == "asAdmin"):
-            return pref.getError(pref.ERROR_SUCCESS), False
-        else:
-            return pref.getError(pref.ERROR_ATTRIBUTE_NOT_FOUND), None
+        command = """SELECT (""" + attr + """) FROM sl WHERE ID = """ + str(ID) + """;"""
+        e, slTuple = sqlFuncs.getRow(command, "getAttrByID", "ScriptLog")
+        return e, slTuple[0]
 
     # overriding abstract method
     @staticmethod
