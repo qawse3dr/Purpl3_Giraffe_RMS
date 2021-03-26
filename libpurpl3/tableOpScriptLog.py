@@ -135,9 +135,10 @@ class ScriptLogTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        skelScriptLog = ScriptLog(ID, 0, 0, 0, datetime.datetime.now(), datetime.datetime.now(), 1, 1, "stdoutFile.txt",
-                                  "stderrFile.txt", False)
-        return pref.getError(pref.ERROR_SUCCESS), skelScriptLog
+        command = """SELECT * FROM sl WHERE ID = """ + str(ID) + """;"""
+        e, slTuple = sqlFuncs.getRow(command, "getByID", "ScriptLog")
+        sl = ScriptLog(slTuple[0], slTuple[1], slTuple[2], slTuple[3], slTuple[4], slTuple[5], slTuple[6], slTuple[7], slTuple[8], slTuple[9], slTuple[10])
+        return e, sl
 
     # overriding abstract method
     @staticmethod
@@ -245,7 +246,7 @@ class ScriptLogTable(tableOp.Table):
         entry.ID = ID # access ID through entry object after executing this function
         ######### create names/files for stdoutFile, stderrFile - {STDOUT/STDERR}_SCRIPT_ID.log #########
         # (1) Add names to entry object
-        e, scriptName = tos.ScriptTable().getAttrByID("name", ID) #FIXME scriptID
+        e, scriptName = tos.ScriptTable().getAttrByID("name", entry.scriptID)
         if e == pref.getError(pref.ERROR_SUCCESS):
             entry.stdoutFile = "STDOUT_" + str(scriptName) + "_" + str(ID) + ".log"  # access stdoutFile through entry object after executing this function
             entry.stderrFile = "STDERR_" + str(scriptName) + "_" + str(ID) + ".log"  # access stderrFile through entry object after executing this function

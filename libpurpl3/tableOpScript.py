@@ -125,8 +125,10 @@ class ScriptTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        skelScript = Script(ID, "SkeletonScriptName", "SkeletonScriptName.py", 1, "Skeleton Script Description", datetime.datetime.now(), datetime.datetime.now(), 0, False)
-        return pref.getError(pref.ERROR_SUCCESS), skelScript
+        command = """SELECT * FROM s WHERE ID = """ + str(ID) + """;"""
+        e, scriptTuple = sqlFuncs.getRow(command, "getByID", "Script")
+        s = Script(scriptTuple[0], scriptTuple[1], scriptTuple[2], scriptTuple[3], scriptTuple[4], scriptTuple[5], scriptTuple[6], scriptTuple[7], scriptTuple[8])
+        return e, s
 
     # overriding abstract method
     @staticmethod

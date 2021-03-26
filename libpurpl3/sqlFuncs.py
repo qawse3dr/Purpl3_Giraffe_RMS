@@ -57,3 +57,27 @@ def insert(command: str, data: tuple, commandName: str, tableName:type):
         con.close()
 
     return e, ret
+
+def getRow(command: str, commandName: str, tableName:type):
+    e = pref.getError(pref.ERROR_SUCCESS)
+    row = None
+    try: # attempt to create connection
+        con = sqlite3.connect(pref.getNoCheck("DB_PATH"))
+        con.execute('PRAGMA foreign_keys = 1') #enable foreign keys
+        try: # attempt to do select command and get row
+            cur = con.cursor()
+            cur.execute(command)
+            row = cur.fetchone()
+        except Error as err: # select failed
+            print(err)
+            e = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args=(commandName, tableName, err)) # return error with specific info
+        finally:
+            cur.close()
+    except Error as err: # connection creation failed
+        print(err)
+        e = pref.getError(pref.ERROR_CREATE_SQLITE3_CONNECTION, args = (command, tableName, err)) # return error with specific info
+    finally:
+        con.commit()
+        con.close()
+
+    return e, row

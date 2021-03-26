@@ -121,8 +121,10 @@ class UserTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        skelUser = User(ID, "username", "hashed password", datetime.datetime.now(), datetime.datetime.now(), False)
-        return pref.getError(pref.ERROR_SUCCESS), skelUser
+        command = """SELECT * FROM u WHERE ID = """ + str(ID) + """;"""
+        e, uTuple = sqlFuncs.getRow(command, "getByID", "User")
+        u = User(uTuple[0], uTuple[1], uTuple[2], uTuple[3], uTuple[4], uTuple[5])
+        return e, u
 
     # overriding abstract method
     @staticmethod

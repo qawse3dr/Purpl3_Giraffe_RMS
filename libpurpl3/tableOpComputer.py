@@ -127,9 +127,10 @@ class ComputerTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        skelComp = Computer(ID, 0, "RachelsComputer", "RaquelsComp", "Rachel's computer description",
-                              "root","127.0.0.1", datetime.datetime.now(), datetime.datetime.now(), False)
-        return pref.getError(pref.ERROR_SUCCESS), skelComp
+        command = """SELECT * FROM c WHERE ID = """ + str(ID) + """;"""
+        e, cTuple = sqlFuncs.getRow(command, "getByID", "Computer")
+        c = Computer(cTuple[0], cTuple[1], cTuple[2], cTuple[3], cTuple[4], cTuple[5], cTuple[6], cTuple[7], cTuple[8], cTuple[9])
+        return e, c
 
     # overriding abstract method
     @staticmethod
