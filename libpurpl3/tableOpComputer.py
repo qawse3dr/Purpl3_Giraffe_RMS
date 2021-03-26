@@ -1,4 +1,5 @@
 import datetime
+from datetime import datetime as dt
 import libpurpl3.preferences as pref
 import libpurpl3.tableOp as tableOp
 import libpurpl3.sqlFuncs as sqlFuncs
@@ -58,6 +59,25 @@ class Computer(tableOp.Entry):
             "asAdmin": str(self.asAdmin)
         }
 
+    def paramToList(self):
+        '''
+        Returns all the parameters of a computer object as a tuple that can be used for SQL calls.
+        Omits id from tuple as id will be automatically generated using AUTOINCREMENT when the script object is added to the table.
+        @param 
+            None.
+        @return 
+            param - tuple of all attribute's values for computer object, omitting ID
+        '''
+        param = ()
+        for attr, value in self.__dict__.items():
+            if attr == "ID":
+                pass
+            elif attr[0:2] == "dt":
+                param = param + (value.strftime('%Y-%m-%d %H:%M:%S'), )
+            else:
+                param = param + (value, )
+        return param
+
 
 class ComputerTable(tableOp.Table):
     # overriding abstract method
@@ -69,11 +89,12 @@ class ComputerTable(tableOp.Table):
         @return errorCode: Error
         '''
         command = """CREATE TABLE IF NOT EXISTS c (
-                       id INTEGER PRIMARY KEY,
+                       id INTEGER PRIMARY KEY AUTOINCREMENT,
                        userId INTEGER,
                        name CHAR(256),
                        nickName CHAR(256),
                        desc CHAR(1024),
+                       username CHAR(256),
                        IP CHAR(256),
                        dtCreated DATETIME,
                        dtModified DATETIME,
@@ -101,14 +122,17 @@ class ComputerTable(tableOp.Table):
     @staticmethod
     def getByID(ID: int):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Retrieves an entry from the computer SQL table based on primary key - ID
+        @param 
+            ID - primary key of computer
+        @return 
+            e - error created during execution of function or Success if no error occurs
+            s - the entry retrieved from the SQL table as a Computer object
         '''
-        skelComp = Computer(ID, 0, "RachelsComputer", "RaquelsComp", "Rachel's computer description",
-                              "root","127.0.0.1", datetime.datetime.now(), datetime.datetime.now(), False)
-        return pref.getError(pref.ERROR_SUCCESS), skelComp
+        command = """SELECT * FROM c WHERE ID = """ + str(ID) + """;"""
+        e, cTuple = sqlFuncs.getRow(command, "getByID", "Computer")
+        c = Computer(cTuple[0], cTuple[1], cTuple[2], cTuple[3], cTuple[4], cTuple[5], cTuple[6], cTuple[7], cTuple[8], cTuple[9])
+        return e, c
 
     # overriding abstract method
     @staticmethod
@@ -130,20 +154,29 @@ class ComputerTable(tableOp.Table):
     @staticmethod
     def createEntry(userID: int, name: str, nickName: str, desc: str, username: str, IP: str, asAdmin: bool):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Creates a computer object. Some parameters must be passed in, some will be calculated 
+        in this function and some can only be filled when the computer is added to the SQL 
+        table (these parameters will be set to None until the computer is added to the SQL table).
+        @param 
+            userID: int - primary key of user table to indicate which user provisioned this computer 
+            name: str - predefined name of computer
+            nickName: str - user defined name for computer 
+            desc: str - user defined computer description 
+            username: str - username of user being accessed on computer 
+            IP: str - IP address of computer
+            asAdmin: bool - whether or not user is accessing computer as admin
+        @return 
+            computer - computer object created
         '''
         # id will be set when object is added to table
+        id = None
         # set dtCreated
+        dtCreated = dt.now()
         # set dtModified (will be same as dtCreated initially)
-        
-
-        # TODO error check what is passed to function (in terms of types?)
-        skelComp = Computer(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7],
-                            values[8],values[9])
-        return pref.getError(pref.ERROR_SUCCESS), skelComp
+        dtModified = dtCreated
+        # create computer object
+        computer = Computer(id, userID, name, nickName, desc, username, IP, dtCreated, dtModified, asAdmin)
+        return computer 
 
     # overriding abstract method
     @staticmethod
@@ -186,13 +219,22 @@ class ComputerTable(tableOp.Table):
     @staticmethod
     def add(entry: Computer):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Takes a computer object (which has not yet been added to the computer SQL table), 
+            adds it to the table and updates computer object's ID (ID is automatically 
+            generated using sqlite AUTOINCREMENT) 
+        This function is meant to take a computer object generated from a call to the 
+            createEntry function.
+        @param 
+            entry - object of class Computer
+        @return 
+            e - most recent error when executing function or Success if no error occurs
         '''
-        ID: int = 0
-        return pref.getError(pref.ERROR_SUCCESS), ID
+        ID = 0
+        command = """ INSERT INTO c (id, userID, name, nickName, desc, username, IP, dtCreated, dtModified, asAdmin) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        data = entry.paramToList()
+        e, ID = sqlFuncs.insert(command, data, "add", "Computer")
+        entry.ID = ID # access ID through entry object after executing this function
+        return e
 
     # overriding abstract method
     @staticmethod
