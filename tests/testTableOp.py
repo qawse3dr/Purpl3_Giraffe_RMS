@@ -281,28 +281,27 @@ class BaseTestCase(unittest.TestCase):
       self.assertEqual(err,errExp)
       self.assertEqual(sl.ID, 1)
 
-    # TODO - these tests will fail until createTables is correctly implemented
     ################## DELETE NON-EMPTY TABLE TESTS (FAILURE) ##################
-    # # Tests deleting user table containing records (expecting failure)
-    # def test_deleteTableU_F(self):
-    #   createTables()
-    #   err = tou.UserTable().deleteTable()
-    #   errExp = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args = ("deleteTable", "User", "message")) #TODO find out what message would be
-    #   self.assertEqual(err,errExp)
+    # Tests deleting user table containing records (expecting failure)
+    def test_deleteTableU_F(self):
+      createTables()
+      err = tou.UserTable().deleteTable()
+      errExp = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args = ("deleteTable", "User", "message")) 
+      self.assertEqual(err,errExp)
 
-    # # Tests deleting script table containing records (expecting failure)
-    # def test_deleteTableS_F(self):
-    #   createTables()
-    #   err = tos.ScriptTable().deleteTable()
-    #   errExp = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args = ("deleteTable", "Script", "message")) #TODO find out what message would be
-    #   self.assertEqual(err,errExp)
+    # Tests deleting script table containing records (expecting failure)
+    def test_deleteTableS_F(self):
+      createTables()
+      err = tos.ScriptTable().deleteTable()
+      errExp = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args = ("deleteTable", "Script", "message")) 
+      self.assertEqual(err,errExp)
 
-    # # Tests deleting computer table containing records (expecting failure)
-    # def test_deleteTableC_F(self):
-    #   createTables()
-    #   err = toc.ComputerTable().deleteTable()
-    #   errExp = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args = ("deleteTable", "Computer", "message")) #TODO find out what message would be
-    #   self.assertEqual(err,errExp)
+    # Tests deleting computer table containing records (expecting failure)
+    def test_deleteTableC_F(self):
+      createTables()
+      err = toc.ComputerTable().deleteTable()
+      errExp = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args = ("deleteTable", "Computer", "message")) 
+      self.assertEqual(err,errExp)
 
     # Tests deleting script log table containing records (expecting success)
     # Note that test_deleteTableSL_F does not exist as the ScriptLog table's
