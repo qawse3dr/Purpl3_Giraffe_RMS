@@ -38,9 +38,9 @@ class Login extends React.Component {
                 }
             }
             }).then((res) => {
-              alert(JSON.stringify(res.data))
+              //alert(JSON.stringify(res.data))
               //Update login status
-              if (res.data == 0){
+              if (res.data.Error.code == 0){
                   this.props.sendLoginStatus(true);
                   this.props.history.push("/run-script")
               } 
