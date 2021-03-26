@@ -138,10 +138,11 @@ class ComputerTable(tableOp.Table):
     @staticmethod
     def getAll():
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Retreives all entries from the computer SQL table and returns them as a list of computer objects
+        @param 
+            None.
+        @return 
+            cList - list of computer objects.
         '''
         command = """SELECT * FROM c;"""
         e, rows = sqlFuncs.getAllRows(command, "getAll", "Computer")
@@ -256,9 +257,10 @@ class ComputerTable(tableOp.Table):
 
 def tupleToComputer(tup: tuple):
     '''
-    #TODO
-    *add description*.
-    @param *add param*.
-    @return *add return*.
+    Seperates a tuple of computer object parameter values to init a computer object
+    @param 
+        tup - a tuple containing values for every parameter of the computer class
+    @return 
+        computer object
     '''
     return Computer(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8], tup[9])

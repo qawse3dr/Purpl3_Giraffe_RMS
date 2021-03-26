@@ -125,17 +125,18 @@ class UserTable(tableOp.Table):
         '''
         command = """SELECT * FROM u WHERE ID = """ + str(ID) + """;"""
         e, uTuple = sqlFuncs.getRow(command, "getByID", "User")
-        u = TupleToUser(uTuple)
+        u = tupleToUser(uTuple)
         return e, u
 
     # overriding abstract method
     @staticmethod
     def getAll():
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Retreives all entries from the user SQL table and returns them as a list of user objects
+        @param 
+            None.
+        @return 
+            uList - list of user objects.
         '''
         command = """SELECT * FROM u;"""
         e, rows = sqlFuncs.getAllRows(command, "getAll", "User")
@@ -244,9 +245,10 @@ class UserTable(tableOp.Table):
 
 def tupleToUser(tup: tuple):
     '''
-    #TODO
-    *add description*.
-    @param *add param*.
-    @return *add return*.
+    Seperates a tuple of user object parameter values to init a user object
+    @param 
+        tup - a tuple containing values for every parameter of the user class
+    @return 
+        user object
     '''
     return User(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5])

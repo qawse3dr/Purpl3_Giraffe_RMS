@@ -139,17 +139,18 @@ class ScriptLogTable(tableOp.Table):
         '''
         command = """SELECT * FROM sl WHERE ID = """ + str(ID) + """;"""
         e, slTuple = sqlFuncs.getRow(command, "getByID", "ScriptLog")
-        sl = TupleToScriptLog(slTuple)
+        sl = tupleToScriptLog(slTuple)
         return e, sl
 
     # overriding abstract method
     @staticmethod
     def getAll():
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Retreives all entries from the scriptLog SQL table and returns them as a list of scriptLog objects
+        @param 
+            None.
+        @return 
+            slList - list of scriptLog objects.
         '''
         command = """SELECT * FROM sl;"""
         e, rows = sqlFuncs.getAllRows(command, "getAll", "ScriptLog")
@@ -298,9 +299,10 @@ def createFile(e, path, filename):
 
 def tupleToScriptLog(tup: tuple):
     '''
-    #TODO
-    *add description*.
-    @param *add param*.
-    @return *add return*.
+    Seperates a tuple of scriptLog object parameter values to init a scriptLog object
+    @param 
+        tup - a tuple containing values for every parameter of the scriptLog class
+    @return 
+        scriptLog object
     '''
     return ScriptLog(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8], tup[9], tup[10])

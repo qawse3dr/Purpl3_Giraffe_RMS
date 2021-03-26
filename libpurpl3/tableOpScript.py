@@ -135,10 +135,11 @@ class ScriptTable(tableOp.Table):
     @staticmethod
     def getAll():
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Retreives all entries from the script SQL table and returns them as a list of script objects
+        @param 
+            None.
+        @return 
+            sList - list of script objects.
         '''
         command = """SELECT * FROM s;"""
         e, rows = sqlFuncs.getAllRows(command, "getAll", "Script")
@@ -255,9 +256,10 @@ class ScriptTable(tableOp.Table):
 
 def tupleToScript(tup: tuple):
     '''
-    #TODO
-    *add description*.
-    @param *add param*.
-    @return *add return*.
+    Seperates a tuple of script object parameter values to init a script object
+    @param 
+        tup - a tuple containing values for every parameter of the script class
+    @return 
+        script object
     '''
     return Script(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8])
