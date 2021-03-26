@@ -180,10 +180,13 @@ class ScriptTable(tableOp.Table):
     @staticmethod
     def getAttrByID(attr: str, ID: int):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Retrieves a specified attrubute from an entry of the script SQL table based on primary key - ID
+        @param 
+            attr - one of the columns of the script table
+            ID - primary key of script
+        @return 
+            e - error created during execution of function or Success if no error occurs
+            s - the specified attribute's value from the entry retrieved from the SQL table 
         '''
         command = """SELECT (""" + attr + """) FROM s WHERE ID = """ + str(ID) + """;"""
         e, sTuple = sqlFuncs.getRow(command, "getAttrByID", "Script")
