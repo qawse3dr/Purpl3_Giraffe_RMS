@@ -61,10 +61,12 @@ class Computer(tableOp.Entry):
 
     def paramToList(self):
         '''
-        #TODO
-        *desc*
-        @param *add param*.
-        @return *add return*.
+        Returns all the parameters of a computer object as a tuple that can be used for SQL calls.
+        Omits id from tuple as id will be automatically generated using AUTOINCREMENT when the script object is added to the table.
+        @param 
+            None.
+        @return 
+            param - tuple of all attribute's values for computer object, omitting ID
         '''
         param = ()
         for attr, value in self.__dict__.items():
