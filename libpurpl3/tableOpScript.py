@@ -20,7 +20,7 @@ class Script(tableOp.Entry):
             desc: str - user defined script description
             dtCreated: datetime.datetime - dateTime when createEntry is called for the script
             dtModified: datetime.datetime - dateTime when createEntry is called for the script or when editEntry is called
-            size: float - size of file containing script (in MB)
+            size: float - size of file containing script (in bytes)
             isAdmin: bool - whether or not the script requires admin access to run
         @return 
             None
@@ -128,7 +128,7 @@ class ScriptTable(tableOp.Table):
         '''
         command = """SELECT * FROM s WHERE ID = """ + str(ID) + """;"""
         e, scriptTuple = sqlFuncs.getRow(command, "getByID", "Script")
-        s = Script(scriptTuple[0], scriptTuple[1], scriptTuple[2], scriptTuple[3], scriptTuple[4], scriptTuple[5], scriptTuple[6], scriptTuple[7], scriptTuple[8])
+        s = tupleToScript(scriptTuple)
         return e, s
 
     # overriding abstract method
@@ -140,10 +140,14 @@ class ScriptTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        skelScript1 = Script(1, "SkeletonScriptName1", "SkeletonScriptName1.py", 1, "Skeleton Script Description 1", datetime.datetime.now(), datetime.datetime.now(), 0, False)
-        skelScript2 = Script(2, "SkeletonScriptName2", "SkeletonScriptName2.py", 1, "Skeleton Script Description 2", datetime.datetime.now(), datetime.datetime.now(), 0, False)
-        scriptTup = (skelScript1, skelScript2)
-        return pref.getError(pref.ERROR_SUCCESS), scriptTup
+        command = """SELECT * FROM s;"""
+        e, rows = sqlFuncs.getAllRows(command, "getAll", "Script")
+        sList = []
+        for row in rows:
+            print(row)
+            sList.append(tupleToScript(row))
+
+        return e, sList
 
     # overriding abstract method
     @staticmethod
@@ -170,10 +174,10 @@ class ScriptTable(tableOp.Table):
         # set size
         filePath = str(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH)) + fileName
         fileStats = os.stat(filePath)
-        fileSizeMB = fileStats.st_size / (1024 * 1024)
+        fileSizeB = fileStats.st_size
         
         # create script object
-        script = Script(None, name, fileName, author, desc, dtCreated, dtModified, fileSizeMB, isAdmin)
+        script = Script(None, name, fileName, author, desc, dtCreated, dtModified, fileSizeB, isAdmin)
         return script 
 
     # overriding abstract method
@@ -249,3 +253,11 @@ class ScriptTable(tableOp.Table):
         return pref.getError(pref.ERROR_SUCCESS), skelScript
 
 
+def tupleToScript(tup: tuple):
+    '''
+    #TODO
+    *add description*.
+    @param *add param*.
+    @return *add return*.
+    '''
+    return Script(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8])

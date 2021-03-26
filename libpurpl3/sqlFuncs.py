@@ -102,5 +102,35 @@ def getRow(command: str, commandName: str, tableName:type):
         print(err)
         e = pref.getError(pref.ERROR_CREATE_SQLITE3_CONNECTION, args = (command, tableName, err)) # return error with specific info
         
-
     return e, row
+
+def getAllRows(command: str, commandName: str, tableName:type):
+    '''
+    Executes a select command for a single row in the SQL database. Requires no extra data and returns the selected row.
+    @param 
+        command - SQL command as a string
+        commandName - name of the function calling exeCommand. Used for error creation.
+        tableName - name of the table command is being executed. Used for error creation. In full word form i.e. script, not s.
+    @return 
+        row - tuple for row selected.
+    '''
+    e = pref.getError(pref.ERROR_SUCCESS)
+    rows = None
+    try: # attempt to create connection
+        con = sqlite3.connect(pref.getNoCheck(pref.CONFIG_DB_PATH))
+        con.execute('PRAGMA foreign_keys = 1') #enable foreign keys
+        try: # attempt to do select command and get row
+            cur = con.cursor()
+            cur.execute(command)
+            rows = cur.fetchall()
+            cur.close()
+        except Error as err: # select failed
+            print(err)
+            e = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args=(commandName, tableName, err)) # return error with specific info
+        con.commit()
+        con.close()
+    except Error as err: # connection creation failed
+        print(err)
+        e = pref.getError(pref.ERROR_CREATE_SQLITE3_CONNECTION, args = (command, tableName, err)) # return error with specific info
+        
+    return e, rows

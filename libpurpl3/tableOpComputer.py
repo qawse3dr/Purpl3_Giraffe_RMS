@@ -131,7 +131,7 @@ class ComputerTable(tableOp.Table):
         '''
         command = """SELECT * FROM c WHERE ID = """ + str(ID) + """;"""
         e, cTuple = sqlFuncs.getRow(command, "getByID", "Computer")
-        c = Computer(cTuple[0], cTuple[1], cTuple[2], cTuple[3], cTuple[4], cTuple[5], cTuple[6], cTuple[7], cTuple[8], cTuple[9])
+        c = tupleToComputer(cTuple)
         return e, c
 
     # overriding abstract method
@@ -143,12 +143,14 @@ class ComputerTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        skelComp1 = Computer(0, 0, "RachelsComputer1", "RaquelsComp1", "Rachel's computer description 1",
-                            "root","127.0.0.1", datetime.datetime.now(), datetime.datetime.now(), False)
-        skelComp2 = Computer(1, 0, "RachelsComputer2", "RaquelsComp2", "Rachel's computer description 2",
-                            "larry","127.0.0.1", datetime.datetime.now(), datetime.datetime.now(), False)
-        compTup = (skelComp1, skelComp2)
-        return pref.getError(pref.ERROR_SUCCESS), compTup
+        command = """SELECT * FROM c;"""
+        e, rows = sqlFuncs.getAllRows(command, "getAll", "Computer")
+        cList = []
+        for row in rows:
+            print(row)
+            cList.append(tupleToComputer(row))
+
+        return e, cList
 
     # overriding abstract method
     @staticmethod
@@ -251,3 +253,12 @@ class ComputerTable(tableOp.Table):
         skelComp = Computer(0, 0, "RachelsComputer1", "RaquelsComp1", "Rachel's computer description 1",
                              "root","127.0.0.1", datetime.datetime.now(), datetime.datetime.now(), False)
         return pref.getError(pref.ERROR_SUCCESS), skelComp
+
+def tupleToComputer(tup: tuple):
+    '''
+    #TODO
+    *add description*.
+    @param *add param*.
+    @return *add return*.
+    '''
+    return Computer(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8], tup[9])

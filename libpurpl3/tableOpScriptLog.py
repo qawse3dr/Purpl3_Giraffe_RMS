@@ -139,7 +139,7 @@ class ScriptLogTable(tableOp.Table):
         '''
         command = """SELECT * FROM sl WHERE ID = """ + str(ID) + """;"""
         e, slTuple = sqlFuncs.getRow(command, "getByID", "ScriptLog")
-        sl = ScriptLog(slTuple[0], slTuple[1], slTuple[2], slTuple[3], slTuple[4], slTuple[5], slTuple[6], slTuple[7], slTuple[8], slTuple[9], slTuple[10])
+        sl = TupleToScriptLog(slTuple)
         return e, sl
 
     # overriding abstract method
@@ -151,12 +151,14 @@ class ScriptLogTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        skelScriptLog1 = ScriptLog(0, 0, 0, 0, datetime.datetime.now(), datetime.datetime.now(), 1, 1,
-                                   "stdoutFile1.txt", "stderrFile1.txt", False)
-        skelScriptLog2 = ScriptLog(1, 0, 0, 0, datetime.datetime.now(), datetime.datetime.now(), 1, 1,
-                                   "stdoutFile2.txt", "stderrFile2.txt", False)
-        scriptLogs = (skelScriptLog1, skelScriptLog2)
-        return pref.getError(pref.ERROR_SUCCESS), scriptLogs
+        command = """SELECT * FROM sl;"""
+        e, rows = sqlFuncs.getAllRows(command, "getAll", "ScriptLog")
+        slList = []
+        for row in rows:
+            print(row)
+            slList.append(tupleToScriptLog(row))
+
+        return e, slList
 
     # overriding abstract method
     @staticmethod
@@ -293,3 +295,12 @@ def createFile(e, path, filename):
         print("filename: " + filename)
         e = pref.getError(pref.ERROR_CANT_CREATE_FILE, args = (filename))
     return e
+
+def tupleToScriptLog(tup: tuple):
+    '''
+    #TODO
+    *add description*.
+    @param *add param*.
+    @return *add return*.
+    '''
+    return ScriptLog(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8], tup[9], tup[10])

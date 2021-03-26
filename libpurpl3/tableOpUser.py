@@ -125,7 +125,7 @@ class UserTable(tableOp.Table):
         '''
         command = """SELECT * FROM u WHERE ID = """ + str(ID) + """;"""
         e, uTuple = sqlFuncs.getRow(command, "getByID", "User")
-        u = User(uTuple[0], uTuple[1], uTuple[2], uTuple[3], uTuple[4], uTuple[5])
+        u = TupleToUser(uTuple)
         return e, u
 
     # overriding abstract method
@@ -137,10 +137,14 @@ class UserTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        skelUser1 = User(0, "username1", "hashed password 1", datetime.datetime.now(), datetime.datetime.now(), False)
-        skelUser2 = User(1, "username2", "hashed password 2", datetime.datetime.now(), datetime.datetime.now(), False)
-        userTup = (skelUser1, skelUser2)
-        return pref.getError(pref.ERROR_SUCCESS), userTup
+        command = """SELECT * FROM u;"""
+        e, rows = sqlFuncs.getAllRows(command, "getAll", "User")
+        uList = []
+        for row in rows:
+            print(row)
+            uList.append(tupleToUser(row))
+
+        return e, uList
 
     # overriding abstract method
     @staticmethod
@@ -237,3 +241,12 @@ class UserTable(tableOp.Table):
         '''
         skelUser = User(0, "username1", "hashed password 1", datetime.datetime.now(), datetime.datetime.now(), False)
         return pref.getError(pref.ERROR_SUCCESS), skelUser
+
+def tupleToUser(tup: tuple):
+    '''
+    #TODO
+    *add description*.
+    @param *add param*.
+    @return *add return*.
+    '''
+    return User(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5])
