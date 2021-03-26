@@ -171,7 +171,6 @@ class ScriptLogTable(tableOp.Table):
             compID: int - primary key of computer table to indictae which computer is having script executed on it
             asAdmin: bool - whether or not the script was executed as admin
         @return 
-            Error - error object indicating if any error was encountered when creating the script object 
             scriptLog - scriptLog object created
         '''
         # id will be set when object is added to table
@@ -187,7 +186,7 @@ class ScriptLogTable(tableOp.Table):
         stderrFile = None
         # create scriptLog object
         scriptLog = ScriptLog(id, scriptID, userID, compID, startTime, endTime, returnVal, errorCode, stdoutFile, stderrFile, asAdmin)
-        return pref.getError(pref.ERROR_SUCCESS), scriptLog #FIXME - error is redundant, take out???
+        return scriptLog 
 
     # overriding abstract method
     @staticmethod
@@ -256,8 +255,8 @@ class ScriptLogTable(tableOp.Table):
             command2 = """UPDATE sl SET stdoutFile = \"""" + str(entry.stdoutFile) + """\", stderrFile = \"""" + str(entry.stderrFile) + """\" WHERE id = """ + str(ID) + """;"""
             e = sqlFuncs.exeCommand(command2, "add", "ScriptLog")
             # (3) Create files 
-            e = createFile(e, pref.getNoCheck("SCRIPT_LOG_PATH"), entry.stdoutFile)
-            e = createFile(e, pref.getNoCheck("SCRIPT_LOG_PATH"), entry.stderrFile)
+            e = createFile(e, pref.CONFIG_SCRIPT_PATH, entry.stdoutFile)
+            e = createFile(e, pref.CONFIG_SCRIPT_PATH, entry.stderrFile)
         return e #FIXME - should actions be undone if any errors occur along the way *thinking* - for loop
 
     # overriding abstract method
@@ -286,6 +285,15 @@ class ScriptLogTable(tableOp.Table):
 
 
 def createFile(e, path, filename):
+    '''
+    Creates a file of name 'filename' located at 'path'. Updates error 'e' with any errors that occur throughout this function.
+    @param 
+        e - current error from where createFile is called
+        path - location of file to be created
+        filename - name of file to be created
+    @return 
+        e - updated error
+    '''
     try:
         f = open(path + filename, "w")
     except OSError as osE:

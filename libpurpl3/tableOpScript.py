@@ -160,7 +160,6 @@ class ScriptTable(tableOp.Table):
             desc: str - user defined script description
             isAdmin: bool - whether or not the script requires admin access to run
         @return 
-            Error - error object indicating if any error was encountered when creating the script object 
             script - script object created
         '''
         # id will be set when object is added to table
@@ -170,13 +169,13 @@ class ScriptTable(tableOp.Table):
         # set dtModified (will be same as dtCreated initially)
         dtModified = dtCreated
         # set size
-        filePath = pref.getNoCheck("SCRIPT_PATH") + fileName
+        filePath = str(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH)) + fileName
         fileStats = os.stat(filePath)
         fileSizeMB = fileStats.st_size / (1024 * 1024)
         
         # create script object
         script = Script(None, name, fileName, author, desc, dtCreated, dtModified, fileSizeMB, isAdmin)
-        return pref.getError(pref.ERROR_SUCCESS), script #FIXME - error is redundant, take out???
+        return script 
 
     # overriding abstract method
     @staticmethod

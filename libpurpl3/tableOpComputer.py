@@ -166,7 +166,6 @@ class ComputerTable(tableOp.Table):
             IP: str - IP address of computer
             asAdmin: bool - whether or not user is accessing computer as admin
         @return 
-            Error - error object indicating if any error was encountered when creating the script object 
             computer - computer object created
         '''
         # id will be set when object is added to table
@@ -177,7 +176,7 @@ class ComputerTable(tableOp.Table):
         dtModified = dtCreated
         # create computer object
         computer = Computer(id, userID, name, nickName, desc, username, IP, dtCreated, dtModified, asAdmin)
-        return pref.getError(pref.ERROR_SUCCESS), computer #FIXME - error is redundant, take out???
+        return computer 
 
     # overriding abstract method
     @staticmethod

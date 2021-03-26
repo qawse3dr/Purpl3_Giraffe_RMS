@@ -154,7 +154,6 @@ class UserTable(tableOp.Table):
             password: str - the user's *hashed* password
             admin: bool - whether or not the user has admin privledges
         @return 
-            Error - error object indicating if any error was encountered when creating the script object 
             user - user object created
         '''
         # id will be set when object is added to table
@@ -165,7 +164,7 @@ class UserTable(tableOp.Table):
         dtModified = dtCreated
         # create user object
         user = User(id, username, password, dtCreated, dtModified, admin)
-        return pref.getError(pref.ERROR_SUCCESS), user #FIXME - error is redundant, take out???
+        return user 
 
     # overriding abstract method
     @staticmethod
