@@ -26,7 +26,7 @@
 }
 
 div.body{
-  min-height: 280px;
+  min-height: 320px;
 }
 
 .column {
@@ -68,6 +68,6 @@ button {
 
 textarea {
     overflow-y: scroll;
-    height: 200px;
+    height: 180px;
     resize: none; /* Remove this if you want the user to resize the textarea */
 }
