@@ -71,6 +71,7 @@ class sshConnection():
         break
       
       #connect to the computer
+      #TODO test self.computer.IP, needs list of blacklisted commands
       try:        
         self.ssh.connect(self.computer.IP, username=self.computer.username, pkey = keyFile, timeout=5, allow_agent=False)
       #Authentication error rerun addComputer on this computer to fix

@@ -112,8 +112,9 @@ def getErrorCodeList() -> dict:
     getAttrName(ERROR_SSH_CONNECTION_LOST): Error(55,"Returned %d: Connection to remote computer %s@%s running script %s lost"),
 
     #James' blacklist commands
-    getAttrName(ERROR_BLACKLISTED_COMMAND): Error(56, "Returned%d, script contained invalid command: %s"),
-    
+    getAttrName(ERROR_BLACKLISTED_COMMAND): Error(56, "Returned %d, script contained invalid command: %s"),
+    getAttrName(ERROR_BLACKLISTED_IP): Error(57, "Returned: %d, ip %s is blacklisted"),
+
     # 66- 72 SQLITE3 ERRORS
     getAttrName(ERROR_CREATE_SQLITE3_CONNECTION): Error(66, "Returned: %d, connection to sqlite3 database failed when executing function %s on table %s with message - \"%s\""),
     getAttrName(ERROR_EXECUTE_SQLITE3_COMMAND): Error(67, "Returned: %d, executing command of type %s failed on table %s with message - \"%s\""),
@@ -155,6 +156,7 @@ ERROR_SSH_CONNECTION_LOST = "ERROR:ERROR_SSH_CONNECTION_LOST"
 
 #James' blacklist commands
 ERROR_BLACKLISTED_COMMAND = "ERROR:ERROR_BLACKLISTED_COMMAND"
+ERROR_BLACKLISTED_IP = "ERROR:ERROR_BLACKLISTED_IP"
 
 ERROR_VAR = "ERROR:VAR"
 ERROR_VAR_CODE = "ERROR:VAR:CODE"
