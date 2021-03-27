@@ -20,7 +20,7 @@ def login(data: dict) -> str:
     @return a json of the error code
     '''
     userName = data[pref.getNoCheck(pref.LOGIN_USERNAME)]
-    password = hashlib.sha256(data[pref.getNoCheck(pref.LOGIN_PASSWORD)]).hexdigest()
+    password = hashlib.sha256(data[pref.getNoCheck(pref.LOGIN_PASSWORD)].encode()).hexdigest()
 
     if " " in userName or ";" in userName:
         return jsonify(pref.getError(pref.ERROR_USERNAME_INVALID).toJson())
