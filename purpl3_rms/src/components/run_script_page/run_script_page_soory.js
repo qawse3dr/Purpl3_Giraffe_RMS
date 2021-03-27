@@ -10,14 +10,24 @@ const RunScriptPage = (props) => {
                 <div className="column">
                     <h1>Select Computer</h1>
                     <div className="scroll">
-                        <Table input={[{name:'soory\'s computer\tIp:123.1234.7777',script:Select_computer_func},{name:'tom\'s computer     Ip:123.1234.7777',script:Select_computer_func},{name:'jeary\'s computer     Ip:123.1234.7777',script:Select_computer_func}]}/>
+                        <Table input={[ {name:'Soory\'s computer\tIp:123.1234.7777',script:Select_computer_func},
+                                        {name:'Larry\'s computer\tIp:123.1234.7777',script:Select_computer_func},
+                                        {name:'Julian\'s computer\tIp:123.1234.7777',script:Select_computer_func},
+                                        {name:'Rachael\'s computer\tIp:123.1234.7777',script:Select_computer_func},
+                                        {name:'Daniela\'s computer\tIp:123.1234.7777',script:Select_computer_func},
+                                        {name:'James\'s computer\tIp:123.1234.7777',script:Select_computer_func}]}/>
                     </div>
                 </div>
 
                 <div className="column">
                     <h1>Select Script</h1>
                     <div className="scroll">
-                        <Table input={[{name:'script_1',script:Select_script_func},{name:'diamond hands script',script:Select_script_func},{name:'monkey see monkey do',script:Select_script_func}]}/>
+                        <Table input={[ {name:'Shutdown Select_Computer_text',script:Select_script_func},
+                                        {name:'Install Libre Office',script:Select_script_func},
+                                        {name:'Send meeting email',script:Select_script_func},
+                                        {name:'Order apple juice',script:Select_script_func},
+                                        {name:'Toggle smart lights',script:Select_script_func},
+                                        {name:'Cancel apple juice',script:Select_script_func}]}/>
                     </div>
                 </div>
 
@@ -28,9 +38,10 @@ const RunScriptPage = (props) => {
             <footer>
                 <div className="Run_Button">
                     <button type="button" onClick={Run_script}>Run Script</button>
+                    <button type="button" >Refresh Output</button>
                 </div>
                 
-                <textarea id="Live_Output" readonly rows="6" cols="200">
+                <textarea id="Live_Output" readonly rows="10" cols="200">
                     Run a program to view it's output!
                 </textarea>
             </footer>
