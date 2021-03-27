@@ -1,12 +1,27 @@
 import datetime
+from datetime import datetime as dt
 import libpurpl3.preferences as pref
 import libpurpl3.tableOp as tableOp
+import libpurpl3.sqlFuncs as sqlFuncs
+import sqlite3
 
 class User(tableOp.Entry):
     #TODO add default values
     # overriding abstract method
     def __init__(self, ID: int, username: str, password: str, dtCreated: datetime.datetime,
                  dtModified: datetime.datetime, admin: bool):
+        '''
+        Creates user object. Contains all info on a user of the system.
+        @param 
+            ID: int - unique identifier automatically generated when user is added to sql table. Will be None until user is added to table.
+            username: str - the given user's username
+            password: str - the user's *hashed* password
+            dtCreated: datetime.datetime - dateTime when createEntry is called for the user
+            dtModified: datetime.datetime - dateTime when createEntry is called for the user or when editEntry is called
+            admin: bool - whether or not the user has admin privledges
+        @return 
+            None.
+        '''
         self.ID = ID
         self.username = username
         self.password = password
@@ -16,6 +31,13 @@ class User(tableOp.Entry):
 
     # overriding abstract method
     def toJson(self):
+        '''
+        Returns a dictionary of all object attributes as strings.
+        @param 
+            None.
+        @return
+            Dictionary of all object attributes as strings.
+        '''
         return {
             "ID": str(self.ID),
             "username": str(self.username),
@@ -25,6 +47,24 @@ class User(tableOp.Entry):
             "admin": str(self.admin)
         }
 
+    def paramToList(self):
+        '''
+        Returns all the parameters of a user object as a tuple that can be used for SQL calls.
+        Omits id from tuple as id will be automatically generated using AUTOINCREMENT when the script object is added to the table.
+        @param 
+            None.
+        @return 
+            param - tuple of all attribute's values for user object, omitting ID
+        '''
+        param = ()
+        for attr, value in self.__dict__.items():
+            if attr == "ID":
+                pass
+            elif attr[0:2] == "dt":
+                param = param + (value.strftime('%Y-%m-%d %H:%M:%S'), )
+            else:
+                param = param + (value, )
+        return param
 
 class UserTable(tableOp.Table):
     # overriding abstract method
@@ -35,8 +75,31 @@ class UserTable(tableOp.Table):
         @param None.
         @return errorCode: Error
         '''
-        return pref.getError(pref.ERROR_SUCCESS)
+        command = """CREATE TABLE IF NOT EXISTS u (
+                       id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                       username CHAR(256),
+                       password CHAR(256),
+                       dtCreated DATETIME,
+                       dtModified DATETIME,
+                       admin BOOL
+                    );"""
+        e = sqlFuncs.exeCommand(command, "createTable", "User")
+        # e = sqlFuncs.createTable(command, "User")
+        return e
     
+    # overriding abstract method
+    @staticmethod
+    def deleteTable():
+        '''
+        Removes the user SQL table from the database. Used for testing principally.
+        @param None.
+        @return e - Error code, returns success if no error occurs.
+        '''
+        command = """DROP TABLE u;
+                  """
+        e = sqlFuncs.exeCommand(command, "deleteTable", "User")
+        return e
+
     @staticmethod
     def checkLogin(userName: str, password: str)->int:
         '''
@@ -47,20 +110,23 @@ class UserTable(tableOp.Table):
         @param password, a hashed password to check against db
         @return user ID, if failed return -1
         '''
-
         return True
 
     # overriding abstract method
     @staticmethod
     def getByID(ID: int):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Retrieves an entry from the user SQL table based on primary key - ID
+        @param 
+            ID - primary key of user
+        @return 
+            e - error created during execution of function or Success if no error occurs
+            s - the entry retrieved from the SQL table as a User object
         '''
-        skelUser = User(ID, "username", "hashed password", datetime.datetime.now(), datetime.datetime.now(), False)
-        return pref.getError(pref.ERROR_SUCCESS), skelUser
+        command = """SELECT * FROM u WHERE ID = """ + str(ID) + """;"""
+        e, uTuple = sqlFuncs.getRow(command, "getByID", "User")
+        u = User(uTuple[0], uTuple[1], uTuple[2], uTuple[3], uTuple[4], uTuple[5])
+        return e, u
 
     # overriding abstract method
     @staticmethod
@@ -78,16 +144,27 @@ class UserTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def createEntry(values: tuple):
+    def createEntry(username: str, password: str, admin: bool):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Creates a user object. Some parameters must be passed in, some will be calculated 
+        in this function and some can only be filled when the user is added to the SQL 
+        table (these parameters will be set to None until the user is added to the SQL table).
+        @param 
+            username: str - the given user's username
+            password: str - the user's *hashed* password
+            admin: bool - whether or not the user has admin privledges
+        @return 
+            user - user object created
         '''
-        # TODO error check what is passed to function (in terms of types?)
-        skelUser = User(values[0], values[1], values[2], values[3], values[4], values[5])
-        return pref.getError(pref.ERROR_SUCCESS), skelUser
+        # id will be set when object is added to table
+        id = None
+        # set dtCreated
+        dtCreated = dt.now()
+        # set dtModified (will be same as dtCreated initially)
+        dtModified = dtCreated
+        # create user object
+        user = User(id, username, password, dtCreated, dtModified, admin)
+        return user 
 
     # overriding abstract method
     @staticmethod
@@ -129,13 +206,22 @@ class UserTable(tableOp.Table):
     @staticmethod
     def add(entry: User):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Takes a user object (which has not yet been added to the user SQL table), 
+            adds it to the table and updates user object's ID (ID is automatically 
+            generated using sqlite AUTOINCREMENT) 
+        This function is meant to take a user object generated from a call to the 
+            createEntry function.
+        @param 
+            entry - object of class User
+        @return 
+            e - most recent error when executing function or Success if no error occurs
         '''
-        ID: int = 0
-        return pref.getError(pref.ERROR_SUCCESS), ID
+        ID = 0
+        command = """ INSERT INTO u (id, username, password, dtCreated, dtModified, admin) VALUES (NULL, ?, ?, ?, ?, ?)"""
+        data = entry.paramToList()
+        e, ID = sqlFuncs.insert(command, data, "add", "User")
+        entry.ID = ID # access ID through entry object after executing this function
+        return e
 
     # overriding abstract method
     @staticmethod
