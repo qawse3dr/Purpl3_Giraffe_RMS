@@ -23,10 +23,10 @@ def login(data: dict) -> str:
     password = hashlib.sha256(data[pref.getNoCheck(pref.LOGIN_PASSWORD)].encode()).hexdigest()
 
     if " " in userName or ";" in userName:
-        return jsonify(pref.getError(pref.ERROR_USERNAME_INVALID).toJson())
+        return jsonify(Error = pref.getError(pref.ERROR_USERNAME_INVALID).toJson())
 
     userID = tableLogin.UserTable.checkLogin(userName=userName, password=password)
-
+    
     # ErrorCode = None
     if userID != -1:
         ErrorCode = pref.Success

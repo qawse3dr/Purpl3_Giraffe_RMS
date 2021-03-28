@@ -67,8 +67,9 @@ def cleanUpCreateTables():
 
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
-      pref.setAttr("DB_PATH", "unit_test.db") # work on seperate clean database so as to not mess up test data in base db
-
+      pref.setAttr(pref.CONFIG_DB_PATH, "tests/res/unittest.db") # work on seperate clean database so as to not mess up test data in base db
+      pref.setAttr(pref.CONFIG_SCRIPT_PATH,"tests/res/data/scripts/")
+      pref.setAttr(pref.CONFIG_SCRIPT_LOG_PATH,"tests/res/data/scriptLogs/")
     # ################## CREATE TABLE TESTS ##################
     # # Tests table creation from user class directly (expecting success)
     # def test_createTableU(self):

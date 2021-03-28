@@ -99,7 +99,7 @@ def getErrorCodeList() -> dict:
     #31-45 account managment
     getAttrName(ERROR_USER_AUTHENTICATION_ERROR): Error(31, "Returned: %d, failed login for %s"),
     getAttrName(ERROR_USERNAME_INVALID): Error(32, "Return: %d, failed login due too invalid username"),
-
+    getAttrName(ERROR_NOT_LOGGED_IN): Error(33,"Returned %d: Not Logged In to user"),
     #46-59 ssh errors
     getAttrName(ERROR_CONNECTION_FAILED): Error(46,"Returned: %d, Connection to %s@%s could not be made."),
 
@@ -141,7 +141,7 @@ ERROR_ATTRIBUTE_NOT_FOUND = "ERROR:ATTRIBUTE_NOT_FOUND"
 #31-45 account managment
 ERROR_USER_AUTHENTICATION_ERROR = "ERROR:ERROR_USER_ATHENTICATION_ERROR"
 ERROR_USERNAME_INVALID = "ERROR:INVALID_USERNAME"
-
+ERROR_NOT_LOGGED_IN = "ERROR:NOT_LOGGED_IN"
 #46-59 ssh errors
 ERROR_CONNECTION_FAILED = "ERROR:CONNECTION_FAILED"
 

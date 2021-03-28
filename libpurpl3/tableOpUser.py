@@ -110,7 +110,7 @@ class UserTable(tableOp.Table):
         @param password, a hashed password to check against db
         @return user ID, if failed return -1
         '''
-        return True
+        return 1
 
     # overriding abstract method
     @staticmethod
