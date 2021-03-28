@@ -4,7 +4,7 @@ Ver 0.01
 09/03/2020
 '''
 
-from flask import jsonify, session
+from flask import jsonify, session, redirect
 import hashlib
 import flask as flask
 import libpurpl3.preferences as pref
@@ -47,6 +47,7 @@ def login(data: dict) -> str:
 def logout(data: dict)-> str:
     if "userID" in session:
         session.pop("userID", None)
+        return redirect("/")
 
     return jsonify(
         Error = pref.Success.toJson()

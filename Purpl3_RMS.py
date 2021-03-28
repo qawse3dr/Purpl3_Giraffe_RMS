@@ -31,6 +31,7 @@ LOGIN_OPS = {
   pref.getNoCheck(pref.LOGIN_LOGIN): login.login,
   pref.getNoCheck(pref.LOGIN_CHANGE_PASSWORD): login.changePassword,
   pref.getNoCheck(pref.LOGIN_RESET_PASSWORD): login.resetPassword,
+  pref.getNoCheck(pref.LOGIN_LOGOUT): login.logout,
 }
 
 OPS = {
@@ -149,6 +150,7 @@ def loginRequest():
         Error = err.toJson(),
         data = {}
       )
+    if op == pref.getNoCheck(pref.LOGIN_LOGOUT): return redirect("/")
     return (returnValue,200)
 
     
