@@ -52,7 +52,7 @@ div.body{
   }
 }
 
-button {
+.button {
   background-color: #4CAF50;
   border: none;
   color: white;
@@ -64,10 +64,24 @@ button {
   margin: 4px 2px;
   cursor: pointer;
   width: 200px;
+  float: right;
 }
 
 textarea {
     overflow-y: scroll;
-    height: 180px;
+    height: 300px;
     resize: none; /* Remove this if you want the user to resize the textarea */
+}
+
+.trapezoid {
+  background-color: transparent;
+  border-bottom: 50px solid #555;
+  border-left: 25px solid transparent;
+  border-right: 25px solid transparent;
+  height: ;
+  width: 125px;
+
+  text-align: center;
+  text-align-last: center;
+
 }

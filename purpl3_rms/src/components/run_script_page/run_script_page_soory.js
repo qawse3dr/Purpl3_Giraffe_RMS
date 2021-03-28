@@ -8,11 +8,14 @@ class RunScriptPage extends React.Component {
     constructor() {
         super();
         this.state = {
-            runningScript: -1
+            runningScript: -1,
+            consoleType: "STDOUT"
         }
 
         this.handleRunScript = this.handleRunScript.bind(this);
         this.handleLiveOutput = this.handleLiveOutput.bind(this);
+        this.handleDisplaySTDOUT = this.handleDisplaySTDOUT.bind(this);
+        this.handleDisplaySTDERR = this.handleDisplaySTDERR.bind(this);
     }
 
     handleRunScript(){
@@ -50,15 +53,15 @@ class RunScriptPage extends React.Component {
     }
 
     //Call to backend to retrieve script output.
-    handleLiveOutput(parms){
+    handleLiveOutput(){
         //Only run if the is a script actually running.
         if (this.state.runningScript != -1) {
             axios.post("/api", {
                 body: {
                     op:"GET_FILE",
                     data:{
-                        Id: parms,
-                        Filetype: "ENUM"
+                        Id: this.state.runningScript,
+                        Filetype: this.state.consoleType
                     }
                 }
             }).then((res) => {
@@ -67,12 +70,26 @@ class RunScriptPage extends React.Component {
                 //Set the live output textarea
                 document.getElementById("Live_Output").value = res.data.entry
             }).catch((res) =>{
-                alert("Post Failed")
                 document.getElementById("Live_Output").value = "Something went wrong with getting the live output :C. Please try again."
+                alert("Post Failed")
             })
         } else {
             document.getElementById("Live_Output").value = "Run a script first before checking the live output!"
         }
+    }
+
+    handleDisplaySTDOUT() {
+        this.setState(state => ({
+            consoleType: "STDOUT"
+        }));
+        document.getElementById("displayLabel").innerHTML = "Displaying: STDOUT";
+    }
+
+    handleDisplaySTDERR() {
+        this.setState(state => ({
+            consoleType: "STDERR"
+        }));
+        document.getElementById("displayLabel").innerHTML = "Displaying: STDERR";
     }
 
     render() {
@@ -109,10 +126,15 @@ class RunScriptPage extends React.Component {
 
                 <footer>
                     <div className="Run_Button">
-                        <button type="button" onClick={this.handleRunScript}>Run Script</button>
-                        <button type="button" onClick={this.handleLiveOutput}>Refresh Output</button>
+                        <button class="button" type="button" onClick={this.handleRunScript}>Run Script</button>
+                        <button class="button" type="button" onClick={this.handleLiveOutput}>Refresh Output</button>
                     </div>
                     
+                    <button class="tab" onClick={this.handleDisplaySTDOUT}>stdout</button>
+                    <button class="tab" onClick={this.handleDisplaySTDERR}>stderr</button>
+                    
+                    <p id="displayLabel">Displaying:</p>
+
                     <textarea id="Live_Output" readonly rows="10" cols="200">
                         Run a program to view it's output!
                     </textarea>
@@ -134,5 +156,4 @@ function Select_script_func(parms){
     text.value = parms;
 }
   
-
 export default RunScriptPage
