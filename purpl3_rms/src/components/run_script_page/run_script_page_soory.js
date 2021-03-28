@@ -1,7 +1,6 @@
 import './run_script_page.css';
 import axios from "axios";
 import Table from '../table/table_soory.js';
-import LiveOutput from './LiveOutput.js';
 import React from "react";
 
 class RunScriptPage extends React.Component {
@@ -9,7 +8,8 @@ class RunScriptPage extends React.Component {
         super();
         this.state = {
             runningScript: -1,
-            consoleType: "STDOUT"
+            consoleType: "STDOUT",
+            filePosition: 0
         }
 
         this.handleRunScript = this.handleRunScript.bind(this);
@@ -60,17 +60,24 @@ class RunScriptPage extends React.Component {
                 body: {
                     op:"GET_FILE",
                     data:{
-                        Id: this.state.runningScript,
-                        Filetype: this.state.consoleType
+                        Id: this.state.runningScript, //return value of soory's handleRunScript()
+                        Filetype: this.state.consoleType, //default of STDOUT
+                        FP: this.state.filePosition //default of 0
                     }
                 }
             }).then((res) => {
                 alert(JSON.stringify(res.data))
 
-                //Set the live output textarea
+                //Update newest file position
+                this.setState(state => ({
+                    filePosition: res.data.FP
+                }));
+
+                //Update output textarea
                 document.getElementById("Live_Output").value = res.data.entry
             }).catch((res) =>{
                 document.getElementById("Live_Output").value = "Something went wrong with getting the live output :C. Please try again."
+                this.state.filePosition = 0;
                 alert("Post Failed")
             })
         } else {
@@ -87,7 +94,7 @@ class RunScriptPage extends React.Component {
 
     handleDisplaySTDERR() {
         this.setState(state => ({
-            consoleType: "STDERR"
+            consoleType: "STDERR",
         }));
         document.getElementById("displayLabel").innerHTML = "Displaying: STDERR";
     }
@@ -111,7 +118,7 @@ class RunScriptPage extends React.Component {
                     <div className="column">
                         <h1>Select Script</h1>
                         <div className="scroll">
-                            <Table input={[ {name:'Shutdown Select_Computer_text',script:Select_script_func},
+                            <Table input={[ {name:'Shutdown computer',script:Select_script_func},
                                             {name:'Install Libre Office',script:Select_script_func},
                                             {name:'Send meeting email',script:Select_script_func},
                                             {name:'Order apple juice',script:Select_script_func},
@@ -130,10 +137,9 @@ class RunScriptPage extends React.Component {
                         <button class="button" type="button" onClick={this.handleLiveOutput}>Refresh Output</button>
                     </div>
                     
-                    <button class="tab" onClick={this.handleDisplaySTDOUT}>stdout</button>
-                    <button class="tab" onClick={this.handleDisplaySTDERR}>stderr</button>
-                    
                     <p id="displayLabel">Displaying:</p>
+                    <button class="tab" onClick={this.handleDisplaySTDOUT}>stdout</button>
+                    <button class="tab" onClick={this.handleDisplaySTDERR}>stderr</button>  
 
                     <textarea id="Live_Output" readonly rows="10" cols="200">
                         Run a program to view it's output!
