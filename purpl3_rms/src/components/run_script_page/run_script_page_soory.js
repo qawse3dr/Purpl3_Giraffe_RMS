@@ -146,20 +146,18 @@ class RunScriptPage extends React.Component {
                     </textarea>
                 </footer>
             </div>
-        );
-    }
 }
 
 function Select_computer_func(parms){
     let text = document.getElementById("Select_Computer_text");
-    text.textContent = "Selected Computer : " + parms;
-    text.value = parms;
+    text.textContent = "Selected Computer : "+ parms.name;
+    text.value = parms.name;
 }
 
 function Select_script_func(parms){
     let text = document.getElementById("Select_Script_text");
-    text.textContent = "Selected Script : " + parms;
-    text.value = parms;
+    text.textContent = "Selected Script : "+ parms.name;
+    text.value = parms.name;
 }
   
 export default RunScriptPage

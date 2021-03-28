@@ -15,3 +15,11 @@ class blackListTesting(unittest.TestCase):
         holder = blacklist.confirmValidCommads("tests/res/blackListTestScript", ["pooooooop", "lmao", "delete"])
         self.assertEqual(holder, pref.getError(pref.ERROR_BLACKLISTED_COMMAND))
     
+    def testValidIP(self):
+        holder = blacklist.confirmValidIP("192.168.1.0", ["192.545.0.1", "192.989.1.1"])
+        self.assertEqual(holder, pref.Success)
+    
+    def testBlackListedIP(self):
+        holder = blacklist.confirmValidIP("192.168.1.0", ["192.168.1.0", "192.989.1.1"])
+        self.assertEqual(holder, pref.getError(pref.ERROR_BLACKLISTED_IP))
+    
