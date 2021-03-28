@@ -255,8 +255,8 @@ class ScriptLogTable(tableOp.Table):
             command2 = """UPDATE sl SET stdoutFile = \"""" + str(entry.stdoutFile) + """\", stderrFile = \"""" + str(entry.stderrFile) + """\" WHERE id = """ + str(ID) + """;"""
             e = sqlFuncs.exeCommand(command2, "add", "ScriptLog")
             # (3) Create files 
-            e = createFile(e, pref.CONFIG_SCRIPT_PATH, entry.stdoutFile)
-            e = createFile(e, pref.CONFIG_SCRIPT_PATH, entry.stderrFile)
+            e = createFile(e, pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH), entry.stdoutFile)
+            e = createFile(e, pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH), entry.stderrFile)
         return e #FIXME - should actions be undone if any errors occur along the way *thinking* - for loop
 
     # overriding abstract method

@@ -31,7 +31,7 @@ def login(data: dict) -> str:
         return jsonify(Error = pref.getError(pref.ERROR_USERNAME_INVALID).toJson())
 
     userID = tableLogin.UserTable.checkLogin(userName=userName, password=password)
-
+    
     # ErrorCode = None
     if userID != -1:
         ErrorCode = pref.Success

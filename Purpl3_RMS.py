@@ -6,14 +6,18 @@ import libpurpl3.operations as op
 import libpurpl3.sshServer as sshServer
 
 
-#Creates application
-app = Flask(__name__)
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-app.secret_key = "any random string"
-#TODO get better key larry
 
 #Load preferences #TODO change to command line arg
 pref.setConfigFile("config.yaml")
+
+
+#Creates application
+app = Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.secret_key = pref.getNoCheck(pref.CONFIG_SESSION_KEY)
+#TODO get better key larry
+
+
 
 
 #sets loggers level
@@ -53,7 +57,7 @@ def ping():
         ping:pong
       }
     '''
-    print("ping request: ", request.json)
+    logger.info("ping request: {}".format(request.json))
     return (jsonify(ping="pong"),200)
 
 @app.route(pref.getNoCheck(pref.CONFIG_API_ENDPOINT), methods=['POST'])
@@ -78,10 +82,16 @@ def apiRequest():
         Error:
       }
     '''
-    print("api request: ", request.json)
+    logger.info("api request: {}".format(request.json))
     # if not("userID" in session):
     #     session.pop("userID", None)
 
+    #Makes sure user is logged in if not redirect to login
+    userID = None
+    try:
+      userID = session[pref.getNoCheck(pref.REQ_VAR_USER_ID)]
+    except:
+      return redirect(pref.getNoCheck("/#/"))
 
     err = pref.Success
 
@@ -115,7 +125,7 @@ def apiRequest():
 
 @app.route(pref.getNoCheck(pref.CONFIG_LOGIN_ENDPOINT), methods=['POST'])
 def loginRequest():
-    print("login request: ", request.json)
+    logger.info("login request: {}".format(request.json))
 
     #names of request vars
     bodyName = pref.getNoCheck(pref.REQ_VAR_BODY)
