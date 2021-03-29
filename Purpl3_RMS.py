@@ -126,7 +126,7 @@ def apiRequest():
 
 @app.route(pref.getNoCheck(pref.CONFIG_LOGIN_ENDPOINT), methods=['POST'])
 def loginRequest():
-    logger.info("login request: {}".format(request.json))
+    logger.info("login request")
 
     #names of request vars
     bodyName = pref.getNoCheck(pref.REQ_VAR_BODY)

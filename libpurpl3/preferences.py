@@ -208,6 +208,7 @@ CONFIG_REMOTE_FOLDER ="REMOTE_FOLDER"
 
 #Whitelist blacklist
 CONFIG_BLACKLIST_CMD_FILE = "BLACKLIST_CMD_FILE"
+CONFIG_BLACKLIST_IP_FILE  = "BLACKLIST_IP_FILE"
 
 #session key for flask
 CONFIG_SESSION_KEY = "SESSION_KEY"
@@ -386,6 +387,7 @@ def defaultConfig() -> dict:
 
     #Whitelist blacklist
     CONFIG_BLACKLIST_CMD_FILE: "res/blacklistCMD.txt",
+    CONFIG_BLACKLIST_IP_FILE : "res/blacklistIP.txt",
 
     #built in script names (will be assumed to be in res folder)
     CONFIG_ADD_COMPUTER_SCRIPT: "addSSHKey.sh",
