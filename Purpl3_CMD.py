@@ -140,13 +140,16 @@ if(val["create"]):
 if(val["add"] != None):
   if val["add"] == "computer":
     entry = createComputer(val["obj"])
-    computerTable.ComputerTable.add(entry)
+    if(entry):
+      computerTable.ComputerTable.add(entry)
   elif val["add"] == "script":
     entry = createScript(val["obj"])
-    scriptTable.ScriptTable.add(entry)
+    if(entry):
+      scriptTable.ScriptTable.add(entry)
   elif val["add"] == "user":
     entry = createUser(val["obj"])
-    userTable.UserTable.add(entry)
+    if(entry):
+      userTable.UserTable.add(entry)
   else:
     print("TABLE COULD NOT BE FOUND")
 #edit TODO implement

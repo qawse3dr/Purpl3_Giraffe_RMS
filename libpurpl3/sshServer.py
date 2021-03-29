@@ -53,6 +53,21 @@ class sshConnection():
     err = pref.Success
 
     for _ in range(1):
+      #make sure ip isnt Blacklisted
+      blackListFileName = pref.getNoCheck(pref.CONFIG_BLACKLIST_IP_FILE)
+      if(blackListFileName != ""):
+        blackList = None
+        try:
+          blackList = [line.rstrip("\n") for line in open(blackListFileName)]
+        except:
+          tempErr = pref.getError(pref.ERROR_FILE_NOT_FOUND, args=(blackListFileName))
+          logger.error(tempErr)
+          break
+
+        err = whitelistBlackList.confirmValidIP(self.computer.IP, blackList)
+      else:
+        logger.warning("no ip blacklist no filtering")
+
       #Create ssh client with basic autoadd settings
       self.ssh = paramiko.SSHClient()
       self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -115,6 +130,9 @@ class sshConnection():
             break
 
           err = whitelistBlackList.confirmValidCommads("{}{}".format(scriptFolder,self.script.fileName), blackList)
+          if(err != pref.Success):
+            logger.error(err)
+            break
         else:
           logger.warning("no cmd blacklist no filtering")
 
@@ -214,7 +232,6 @@ class sshConnection():
     stdoutFile.close()
     stderrFile.close()
 
-
     #gets returnValue
     stdoutFile = open("{}{}".format(logFolder, self.scriptLog.stdoutFile), "r+")
     stdoutFile.seek(0,os.SEEK_END)
@@ -237,10 +254,13 @@ class sshConnection():
     else:
       returnValue = returnValue[-1]
       logger.info("Complete script {} with return value {}".format(self.script.name, returnValue))
-    EndTime = datetime.datetime.now()
-    ErrorCode = err.code
-    
+    self.scriptLog.endTime = datetime.datetime.now()
+    self.scriptLog.errorCode = err.code
+    self.scriptLog.returnVal = returnValue
+    self.ssh.close()
+
     #Writes return value to db
+    scriptLogTable.ScriptLogTable.editEntry(self.scriptLog)
     
   @staticmethod
   def addNewComputer(computerIP: str,username: str, password:str) -> pref.Error:
@@ -262,11 +282,29 @@ class sshConnection():
     stderr = None
 
     for _ in range(1):
+      #make sure ip isnt Blacklisted
+      blackListFileName = pref.getNoCheck(pref.CONFIG_BLACKLIST_IP_FILE)
+      if(blackListFileName != ""):
+        blackList = None
+        try:
+          blackList = [line.rstrip("\n") for line in open(blackListFileName)]
+        except:
+          tempErr = pref.getError(pref.ERROR_FILE_NOT_FOUND, args=(blackListFileName))
+          logger.error(tempErr)
+          break
+
+        err = whitelistBlackList.confirmValidIP(computerIP, blackList)
+        if(err != pref.Success):
+          logger.error(err)
+          break
+      else:
+        logger.warning("no ip blacklist no filtering")
+
       #get shh public key
       sshKey = pref.getNoCheck(pref.CONFIG_PUBLIC_SSH_KEY)
 
       #if its empty row public sshkey empty
-      if(sshKey == ""):
+      if(sshKey == None or sshKey.strip().strip("\n") == ""):
         err = pref.getError(pref.ERROR_EMPTY_SSH_PUBLIC_KEY)
         logger.error(err)
         break
@@ -344,6 +382,8 @@ def copyFileToComputer(ftp_client: paramiko.SFTPClient, remoteFolder: str,resFol
     #couldn't find script on sever.
     err = pref.getError(pref.ERROR_FILE_NOT_FOUND, args=(resFolder+filename))
     logger.error(err)
-
+  
+  if(ftp_client):
+    ftp_client.close()
   return err
 
