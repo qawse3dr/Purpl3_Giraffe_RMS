@@ -42,6 +42,7 @@ def createComputer(obj: str):
   #input given in obj
   else:
     values = obj.split(",")
+    values.insert(1, "name")
     for x in range(len(values)):
       values[x] = values[x].strip()
 

@@ -370,19 +370,22 @@ def copyFileToComputer(ftp_client: paramiko.SFTPClient, remoteFolder: str,resFol
   #creates folder if it doesn't exist
   try:
     ftp_client.mkdir(remoteFolder, mode=0o777)
+    ftp_client.chmod(remoteFolder, mode=0o777)
   except: #This is happen if the folder already exists .
     pass
 
   #copies file
   try:
     ftp_client.put("{}{}".format(resFolder,filename),"{}{}".format(remoteFolder,filename))
-    ftp_client.chmod("{}{}".format(remoteFolder,filename), 0o777)
   except Exception as e:
     print(e)
     #couldn't find script on sever.
     err = pref.getError(pref.ERROR_FILE_NOT_FOUND, args=(resFolder+filename))
     logger.error(err)
   
+  try:
+    ftp_client.chmod("{}{}".format(remoteFolder,filename), 0o777)
+  except: pass
   if(ftp_client):
     ftp_client.close()
   return err
