@@ -61,7 +61,7 @@ class User(tableOp.Entry):
             if attr == "ID":
                 pass
             elif attr[0:2] == "dt":
-                param = param + (value.strftime('%Y-%m-%d %H:%M:%S'), )
+                param = param + (value.strftime('%Y-%m-%d %H:%M:%S.%f'), )
             else:
                 param = param + (value, )
         return param
@@ -110,6 +110,7 @@ class UserTable(tableOp.Table):
         @param password, a hashed password to check against db
         @return user ID, if failed return -1
         '''
+        # TODO do a select with this info and see if it gets anythikng back
         return True
 
     # overriding abstract method
@@ -123,9 +124,11 @@ class UserTable(tableOp.Table):
             e - error created during execution of function or Success if no error occurs
             s - the entry retrieved from the SQL table as a User object
         '''
+        u = None
         command = """SELECT * FROM u WHERE ID = """ + str(ID) + """;"""
         e, uTuple = sqlFuncs.getRow(command, "getByID", "User")
-        u = tupleToUser(uTuple)
+        if (e == pref.getError(pref.ERROR_SUCCESS)):
+            e, u = tupleToUser(uTuple, "getByID")
         return e, u
 
     # overriding abstract method
@@ -141,9 +144,11 @@ class UserTable(tableOp.Table):
         command = """SELECT * FROM u;"""
         e, rows = sqlFuncs.getAllRows(command, "getAll", "User")
         uList = []
-        for row in rows:
-            print(row)
-            uList.append(tupleToUser(row))
+        if(e == pref.getError(pref.ERROR_SUCCESS)):
+            for row in rows:
+                e, u = tupleToUser(row, "getAll")
+                if(e == pref.getError(pref.ERROR_SUCCESS)):
+                    uList.append(u)
 
         return e, uList
 
@@ -233,17 +238,49 @@ class UserTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def editEntry(values: tuple):
+    def editEntry(entry: User):
         '''
         #TODO
         *add description*.
         @param *add param*.
         @return *add return*.
         '''
-        skelUser = User(0, "username1", "hashed password 1", datetime.datetime.now(), datetime.datetime.now(), False)
-        return pref.getError(pref.ERROR_SUCCESS), skelUser
+        u = entry
 
-def tupleToUser(tup: tuple):
+        if(entry.ID == None):
+            e = pref.getError(pref.ERROR_NO_ID_PROVIDED, args=("editEntry", "User"))
+
+        else:
+            command = """UPDATE u SET """
+            for attr, value in entry.__dict__.items():
+                if (attr == "ID"):
+                    pass
+                else:
+                    command = command + str(attr)
+                    if(value == None):
+                        command = command + """ = NULL"""
+                    elif attr[0:2] == "dt":
+                        command = command + """ = """ + """\"""" + str(value.strftime('%Y-%m-%d %H:%M:%S.%f')) + """\""""
+                    elif isinstance(value, str):
+                        command = command + """ = """ + """\"""" + str(value) + """\""""
+                    else:
+                        command = command + """ = """ + str(value)
+                    command = command + """, """
+            command = command[:-2] #remove last ' ,'
+            command = command + """ WHERE ID = """ + str(entry.ID) + """;"""
+            print(command)
+
+            e = sqlFuncs.exeCommand(command, "editEntry", "User")
+
+            if(e == pref.getError(pref.ERROR_SUCCESS)):
+                command2 = """SELECT * FROM u WHERE ID = """ + str(entry.ID) + """;"""
+                e, row = sqlFuncs.getRow(command2, "editEntry", "User")
+                if(e == pref.getError(pref.ERROR_SUCCESS)):
+                    e, u = tupleToUser(row, "editEntry")
+
+        return e, u
+
+def tupleToUser(tup: tuple, commandName: str):
     '''
     Seperates a tuple of user object parameter values to init a user object
     @param 
@@ -251,4 +288,48 @@ def tupleToUser(tup: tuple):
     @return 
         user object
     '''
-    return User(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5])
+    # ID: int, username: str, password: str, dtCreated: datetime.datetime,
+    # dtModified: datetime.datetime, admin: bool
+    e = pref.getError(pref.ERROR_SUCCESS)
+    if(len(tup) != 6):
+        e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=(commandName, "User", len(tup), 6))
+        u = None
+    else:
+        try:
+            if(tup[0] == None):
+                ID = None
+            else:
+                ID = int(tup[0])
+
+            if(tup[1] == None):
+                username = None
+            else:
+                username = str(tup[1])
+
+            if(tup[2] == None):
+                password = None
+            else:
+                password = str(tup[2])
+
+            if(tup[3] == None):
+                dtCreated = None
+            else:
+                dtCreated = datetime.datetime.strptime(tup[3], '%Y-%m-%d %H:%M:%S.%f')
+
+            if(tup[4] == None):
+                dtModified = None
+            else:
+                dtModified = datetime.datetime.strptime(tup[4], '%Y-%m-%d %H:%M:%S.%f')
+
+            if(tup[5] == None):
+                isAdmin = None
+            else:
+                isAdmin = bool(tup[5])
+
+            u = User(ID, username, password, dtCreated, dtModified, isAdmin)
+        except ValueError as err:
+            print(err)
+            e = pref.getError(pref.ERROR_SQL_RETURN_CAST, args=(commandName, "User", err))
+            u = None
+
+    return e, u

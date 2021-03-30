@@ -73,7 +73,7 @@ class Computer(tableOp.Entry):
             if attr == "ID":
                 pass
             elif attr[0:2] == "dt":
-                param = param + (value.strftime('%Y-%m-%d %H:%M:%S'), )
+                param = param + (value.strftime('%Y-%m-%d %H:%M:%S.%f'), )
             else:
                 param = param + (value, )
         return param
@@ -129,9 +129,11 @@ class ComputerTable(tableOp.Table):
             e - error created during execution of function or Success if no error occurs
             s - the entry retrieved from the SQL table as a Computer object
         '''
+        c = None
         command = """SELECT * FROM c WHERE ID = """ + str(ID) + """;"""
         e, cTuple = sqlFuncs.getRow(command, "getByID", "Computer")
-        c = tupleToComputer(cTuple)
+        if(e == pref.getError(pref.ERROR_SUCCESS)):
+            e, c = tupleToComputer(cTuple, "getByID")
         return e, c
 
     # overriding abstract method
@@ -147,9 +149,12 @@ class ComputerTable(tableOp.Table):
         command = """SELECT * FROM c;"""
         e, rows = sqlFuncs.getAllRows(command, "getAll", "Computer")
         cList = []
-        for row in rows:
-            print(row)
-            cList.append(tupleToComputer(row))
+        if(e == pref.getError(pref.ERROR_SUCCESS)):
+            for row in rows:
+                print(row)
+                e, c = tupleToComputer(row, "getAll")
+                if(e == pref.getError(pref.ERROR_SUCCESS)):
+                    cList.append(c)
 
         return e, cList
 
@@ -244,18 +249,49 @@ class ComputerTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def editEntry(values: tuple):
+    def editEntry(entry: Computer):
         '''
         #TODO
         *add description*.
         @param *add param*.
         @return *add return*.
         '''
-        skelComp = Computer(0, 0, "RachelsComputer1", "RaquelsComp1", "Rachel's computer description 1",
-                             "root","127.0.0.1", datetime.datetime.now(), datetime.datetime.now(), False)
-        return pref.getError(pref.ERROR_SUCCESS), skelComp
+        c = entry
 
-def tupleToComputer(tup: tuple):
+        if(entry.ID == None):
+            e = pref.getError(pref.ERROR_NO_ID_PROVIDED, args=("editEntry", "Computer"))
+
+        else:
+            command = """UPDATE c SET """
+            for attr, value in entry.__dict__.items():
+                if (attr == "ID"):
+                    pass
+                else:
+                    command = command + str(attr)
+                    if(value == None):
+                        command = command + """ = NULL"""
+                    elif attr[0:2] == "dt":
+                        command = command + """ = """ + """\"""" + str(value.strftime('%Y-%m-%d %H:%M:%S.%f')) + """\""""
+                    elif isinstance(value, str):
+                        command = command + """ = """ + """\"""" + str(value) + """\""""
+                    else:
+                        command = command + """ = """ + str(value)
+                    command = command + """, """
+            command = command[:-2] #remove last ' ,'
+            command = command + """ WHERE ID = """ + str(entry.ID) + """;"""
+            print(command)
+
+            e = sqlFuncs.exeCommand(command, "editEntry", "Computer")
+
+            if(e == pref.getError(pref.ERROR_SUCCESS)):
+                command2 = """SELECT * FROM c WHERE ID = """ + str(entry.ID) + """;"""
+                e, row = sqlFuncs.getRow(command2, "editEntry", "Computer")
+                if(e == pref.getError(pref.ERROR_SUCCESS)):
+                    e, c = tupleToComputer(row, "editEntry")
+
+        return e, c
+
+def tupleToComputer(tup: tuple, commandName: str):
     '''
     Seperates a tuple of computer object parameter values to init a computer object
     @param 
@@ -263,4 +299,68 @@ def tupleToComputer(tup: tuple):
     @return 
         computer object
     '''
-    return Computer(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8], tup[9])
+    # ID: int, name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime,dtModified: datetime.datetime, size: float, isAdmin: bool
+    e = pref.getError(pref.ERROR_SUCCESS)
+    if(len(tup) != 10):
+        e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=(commandName, "Computer", len(tup), 10))
+        c = None
+    else:
+        try:
+            # ID: int, userID: int, name: str, nickName: str, desc: str, username: str, IP: str, 
+            # dtCreated: datetime.datetime, dtModified: datetime.datetime, asAdmin: bool
+            if(tup[0] == None):
+                ID = None
+            else:
+                ID = int(tup[0])
+
+            if(tup[1] == None):
+                userID = None
+            else:
+                userID = int(tup[1])
+
+            if(tup[2] == None):
+                name = None
+            else:
+                name = str(tup[2])
+
+            if(tup[3] == None):
+                nickName = None
+            else:
+                nickName = str(tup[3])
+
+            if(tup[4] == None):
+                desc = None
+            else:
+                desc = str(tup[4])
+
+            if(tup[5] == None):
+                username = None
+            else:
+                username = str(tup[5])
+
+            if(tup[6] == None):
+                IP = None
+            else:
+                IP = str(tup[6])
+
+            if(tup[7] == None):
+                dtCreated = None
+            else:
+                dtCreated = datetime.datetime.strptime(tup[7], '%Y-%m-%d %H:%M:%S.%f')
+
+            if(tup[8] == None):
+                dtModified = None
+            else:
+                dtModified = datetime.datetime.strptime(tup[8], '%Y-%m-%d %H:%M:%S.%f')
+
+            if(tup[9] == None):
+                asAdmin = None
+            else:
+                asAdmin = bool(tup[9])
+
+            c = Computer(ID, userID, name, nickName, desc, username, IP, dtCreated, dtModified, asAdmin)
+        except ValueError as err:
+            e = pref.getError(pref.ERROR_SQL_RETURN_CAST, args=(commandName, "Computer", err))
+            c = None
+
+    return e, c

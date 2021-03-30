@@ -99,6 +99,7 @@ def getRow(command: str, commandName: str, tableName:type):
         con.commit()
         con.close()
     except Error as err: # connection creation failed
+        print("exeCommand error:")
         print(err)
         e = pref.getError(pref.ERROR_CREATE_SQLITE3_CONNECTION, args = (command, tableName, err)) # return error with specific info
         

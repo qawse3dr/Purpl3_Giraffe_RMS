@@ -78,7 +78,7 @@ class ScriptLog(tableOp.Entry):
             if attr == "ID":
                 pass
             elif attr[0:2] == "dt":
-                param = param + (value.strftime('%Y-%m-%d %H:%M:%S'), )
+                param = param + (value.strftime('%Y-%m-%d %H:%M:%S.%f'), )
             else:
                 param = param + (value, )
         return param
@@ -137,9 +137,12 @@ class ScriptLogTable(tableOp.Table):
             e - error created during execution of function or Success if no error occurs
             s - the entry retrieved from the SQL table as a ScriptLog object
         '''
+        sl = None
         command = """SELECT * FROM sl WHERE ID = """ + str(ID) + """;"""
         e, slTuple = sqlFuncs.getRow(command, "getByID", "ScriptLog")
-        sl = tupleToScriptLog(slTuple)
+        # Also check error is pref.success
+        if (e == pref.getError(pref.ERROR_SUCCESS)): 
+            e, sl = tupleToScriptLog(slTuple, "getByID")
         return e, sl
 
     # overriding abstract method
@@ -155,9 +158,11 @@ class ScriptLogTable(tableOp.Table):
         command = """SELECT * FROM sl;"""
         e, rows = sqlFuncs.getAllRows(command, "getAll", "ScriptLog")
         slList = []
-        for row in rows:
-            print(row)
-            slList.append(tupleToScriptLog(row))
+        if(e == pref.getError(pref.ERROR_SUCCESS)):
+            for row in rows:
+                e, sl = tupleToScriptLog(row, "getAll")
+                if(e == pref.getError(pref.ERROR_SUCCESS)):
+                    slList.append(sl)
 
         return e, slList
 
@@ -266,16 +271,47 @@ class ScriptLogTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def editEntry(values: tuple):
+    def editEntry(entry: ScriptLog):
         '''
         #TODO
         *add description*.
         @param *add param*.
         @return *add return*.
         '''
-        skelScriptLog = ScriptLog(0, 0, 0, 0, datetime.datetime.now(), datetime.datetime.now(), 1, 1, "stdoutFile1.txt",
-                                  "stderrFile1.txt", False)
-        return pref.getError(pref.ERROR_SUCCESS), skelScriptLog
+        sl = entry
+
+        if(entry.ID == None):
+            e = pref.getError(pref.ERROR_NO_ID_PROVIDED, args=("editEntry", "ScriptLog"))
+
+        else:
+            command = """UPDATE sl SET """
+            for attr, value in entry.__dict__.items():
+                if (attr == "ID"):
+                    pass
+                else:
+                    command = command + str(attr)
+                    if(value == None):
+                        command = command + """ = NULL"""
+                    elif attr[-4:] == "Time":
+                        command = command + """ = """ + """\"""" + str(value.strftime('%Y-%m-%d %H:%M:%S.%f')) + """\""""
+                    elif isinstance(value, str):
+                        command = command + """ = """ + """\"""" + str(value) + """\""""
+                    else:
+                        command = command + """ = """ + str(value)
+                    command = command + """, """
+            command = command[:-2] #remove last ' ,'
+            command = command + """ WHERE ID = """ + str(entry.ID) + """;"""
+            print(command)
+
+            e = sqlFuncs.exeCommand(command, "editEntry", "ScriptLog")
+
+            if(e == pref.getError(pref.ERROR_SUCCESS)):
+                command2 = """SELECT * FROM sl WHERE ID = """ + str(entry.ID) + """;"""
+                e, row = sqlFuncs.getRow(command2, "editEntry", "ScriptLog")
+                if(e == pref.getError(pref.ERROR_SUCCESS)):
+                    e, sl = tupleToScriptLog(row, "editEntry")
+
+        return e, sl
 
 
 def createFile(e, path, filename):
@@ -297,7 +333,7 @@ def createFile(e, path, filename):
         e = pref.getError(pref.ERROR_CANT_CREATE_FILE, args = (filename))
     return e
 
-def tupleToScriptLog(tup: tuple):
+def tupleToScriptLog(tup: tuple, commandName: str):
     '''
     Seperates a tuple of scriptLog object parameter values to init a scriptLog object
     @param 
@@ -305,4 +341,73 @@ def tupleToScriptLog(tup: tuple):
     @return 
         scriptLog object
     '''
-    return ScriptLog(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6], tup[7], tup[8], tup[9], tup[10])
+    # ID: int, scriptID: int, userID: int, compID: int, startTime: datetime.datetime,
+    # endTime: datetime.datetime, returnVal: int, errorCode: int, stdoutFile: str, stderrFile: str,
+    # asAdmin: bool 
+    e = pref.getError(pref.ERROR_SUCCESS)
+    if(len(tup) != 11):
+        e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=(commandName, "ScriptLog", len(tup), 11))
+        sl = None
+    else:
+        try:
+            if(tup[0] == None):
+                ID = None
+            else:
+                ID = int(tup[0])
+
+            if(tup[1] == None):
+                scriptID = None
+            else:
+                scriptID = int(tup[1])
+
+            if(tup[2] == None):
+                userID = None
+            else:
+                userID = int(tup[2])
+
+            if(tup[3] == None):
+                compID = None
+            else:
+                compID = int(tup[3])
+
+            if(tup[4] == None):
+                startTime = None
+            else:
+                startTime = datetime.datetime.strptime(tup[4], '%Y-%m-%d %H:%M:%S.%f')
+
+            if(tup[5] == None):
+                endTime = None
+            else:
+                endTime = datetime.datetime.strptime(tup[5], '%Y-%m-%d %H:%M:%S.%f')
+
+            if(tup[6] == None):
+                returnVal = None
+            else:
+                returnVal = int(tup[6])
+
+            if(tup[7] == None):
+                errorCode = None
+            else:
+                errorCode = int(tup[7])
+
+            if(tup[8] == None):
+                stdoutFile = None
+            else:
+                stdoutFile = str(tup[8])
+
+            if(tup[9] == None):
+                stderrFile = None
+            else:
+                stderrFile = str(tup[9])
+
+            if(tup[10] == None):
+                asAdmin = None
+            else:
+                asAdmin = bool(tup[10])
+
+            sl = ScriptLog(ID, scriptID, userID, compID, startTime, endTime, returnVal, errorCode, stdoutFile, stderrFile, asAdmin)
+        except ValueError as err:
+            e = pref.getError(pref.ERROR_SQL_RETURN_CAST, args=(commandName, "ScriptLog", err))
+            sl = None
+
+    return e, sl
