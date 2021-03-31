@@ -114,26 +114,16 @@ class BaseTestCase(unittest.TestCase):
       pref.setAttr(pref.CONFIG_SCRIPT_PATH,"tests/res/data/scripts/")
       pref.setAttr(pref.CONFIG_SCRIPT_LOG_PATH,"tests/res/data/scriptLogs/")
 
-    ################## CHECK LOGIN TESTS ##################
-    # Tests checkLogin function of UserTable (expecting success)
-    def test_checkLogin_S(self):
-      createTablesBig()
-      u_id_1 = tou.UserTable().checkLogin("rbroders", "hella_secure_hashed_password")
-      u_id_2 = tou.UserTable().checkLogin("lmilne", "ya_yeet")
-      u_id_3 = tou.UserTable().checkLogin("jbusch", "beer-brand")
-      self.assertEqual(u_id_1, 1)
-      self.assertEqual(u_id_2, 2)
-      self.assertEqual(u_id_3, 3)
-
-    # Tests checkLogin function of UserTable (expecting failure)
-    def test_checkLogin_F(self):
-      createTablesBig()
-      u_id_1 = tou.UserTable().checkLogin("rbroders", "wrong_password")
-      u_id_2 = tou.UserTable().checkLogin("non-existent user", "ya_yeet")
-      u_id_3 = tou.UserTable().checkLogin("rbroders", "ya_yeet") #user with other users' password
-      self.assertEqual(u_id_1, -1)
-      self.assertEqual(u_id_2, -1)
-      self.assertEqual(u_id_3, -1)
+    ################## DELETE ENTRY TESTS ##################
+    # def test_deleteS(self):
+    #   createTablesBig()
+    #   err = tos.ScriptTable().delete(1)
+    #   errExp = pref.getError(pref.ERROR_SUCCESS)
+    #   print(err)
+    #   err2, s = tos.ScriptTable.getByID(1)
+    #   errExp2 = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=("getAttrByID", "Script", 0, 9))
+    #   self.assertEqual(err,errExp)
+    #   self.assertEqual(err2,errExp2)
 
 
     ################## CREATE TABLE TESTS ##################
@@ -340,30 +330,7 @@ class BaseTestCase(unittest.TestCase):
       self.assertEqual(sl.ID, 1)
 
     ################## DELETE NON-EMPTY TABLE TESTS (FAILURE) ##################
-    # Tests deleting user table containing records (expecting failure)
-    def test_deleteTableU_F(self):
-      createTables()
-      err = tou.UserTable().deleteTable()
-      errExp = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args = ("deleteTable", "User", "message")) 
-      self.assertEqual(err,errExp)
-
-    # Tests deleting script table containing records (expecting failure)
-    def test_deleteTableS_F(self):
-      createTables()
-      err = tos.ScriptTable().deleteTable()
-      errExp = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args = ("deleteTable", "Script", "message")) 
-      self.assertEqual(err,errExp)
-
-    # Tests deleting computer table containing records (expecting failure)
-    def test_deleteTableC_F(self):
-      createTables()
-      err = toc.ComputerTable().deleteTable()
-      errExp = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args = ("deleteTable", "Computer", "message")) 
-      self.assertEqual(err,errExp)
-
-    # Tests deleting script log table containing records (expecting success)
-    # Note that test_deleteTableSL_F does not exist as the ScriptLog table's
-    #     primary key is not referenced as a foreign key elsewhere
+    # These will no longer fail due to implementation of ON DELETE CASCADE for foreign keys :)
 
     ################## GETBYID TESTS (SUCCESS) ##################
     # Tests getByID for script. Confirms there are no errors and 
@@ -754,6 +721,28 @@ class BaseTestCase(unittest.TestCase):
       self.assertEqual(u.dtCreated, u2.dtCreated)
       self.assertEqual(u.dtModified, u2.dtModified)
       self.assertEqual(u.admin, u2.admin)
+
+    ################## CHECK LOGIN TESTS ##################
+    # Tests checkLogin function of UserTable (expecting success)
+    def test_checkLogin_S(self):
+      createTablesBig()
+      u_id_1 = tou.UserTable().checkLogin("rbroders", "hella_secure_hashed_password")
+      u_id_2 = tou.UserTable().checkLogin("lmilne", "ya_yeet")
+      u_id_3 = tou.UserTable().checkLogin("jbusch", "beer-brand")
+      self.assertEqual(u_id_1, 1)
+      self.assertEqual(u_id_2, 2)
+      self.assertEqual(u_id_3, 3)
+
+    # Tests checkLogin function of UserTable (expecting failure)
+    def test_checkLogin_F(self):
+      createTablesBig()
+      u_id_1 = tou.UserTable().checkLogin("rbroders", "wrong_password")
+      u_id_2 = tou.UserTable().checkLogin("non-existent user", "ya_yeet")
+      u_id_3 = tou.UserTable().checkLogin("rbroders", "ya_yeet") #user with other users' password
+      self.assertEqual(u_id_1, -1)
+      self.assertEqual(u_id_2, -1)
+      self.assertEqual(u_id_3, -1)
+
 
   
     # This function must stay at the bottom of the unit tests

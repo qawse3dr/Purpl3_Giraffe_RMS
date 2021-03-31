@@ -99,7 +99,9 @@ class ComputerTable(tableOp.Table):
                        dtCreated DATETIME,
                        dtModified DATETIME,
                        asAdmin BOOL,
-                       FOREIGN KEY (userId) REFERENCES u(id)
+                       FOREIGN KEY (userId) 
+                        REFERENCES u(id)
+                        ON DELETE CASCADE
                     );"""
         e = sqlFuncs.exeCommand(command, "createTable", "Computer")
         # e = sqlFuncs.createTable(command, "Computer")

@@ -96,9 +96,9 @@ class ScriptTable(tableOp.Table):
                        dtModified DATETIME,
                        size FLOAT(5, 3),
                        isAdmin BOOL,
-                       CONSTRAINT author
-                        FOREIGN KEY (author)
+                       FOREIGN KEY (author)
                         REFERENCES u(id)
+                        ON DELETE CASCADE
                     );"""
         e = sqlFuncs.exeCommand(command, "createTable", "Script")
         return e
@@ -252,7 +252,18 @@ class ScriptTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        return pref.getError(pref.ERROR_SUCCESS)
+        # e, fileName = ScriptTable.getAttrByID("fileName", ID)
+        # if(e == pref.getError(pref.ERROR_SUCCESS)):
+        #     command = """DELETE FROM s WHERE ID = """ + str(ID) + """;"""
+        #     e = sqlFuncs.exeCommand(command, "delete", "Script")
+        #     if(e == pref.getError(pref.ERROR_SUCCESS)):
+        #         path = pref.CONFIG_SCRIPT_PATH
+        #         try:
+        #             os.remove(path + fileName)
+        #         except OSError as err:
+        #             e = pref.getError(pref.ERROR_FILE_NOT_FOUND, args = (fileName))
+
+        return pref.getError(pref.ERROR_SUCCESS) # FIXME
 
     # overriding abstract method
     @staticmethod
@@ -319,10 +330,11 @@ def tupleToScript(tup: tuple, commandName: str):
     '''
     # ID: int, name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime,dtModified: datetime.datetime, size: float, isAdmin: bool
     e = pref.getError(pref.ERROR_SUCCESS)
-
-    if(len(tup) != 9):
+    s = None
+    if(tup == None):
+        e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=(commandName, "Script", 0, 9))
+    elif(len(tup) != 9):
         e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=(commandName, "Script", len(tup), 9))
-        s = None
     else:
         try:
             if(tup[0] == None):

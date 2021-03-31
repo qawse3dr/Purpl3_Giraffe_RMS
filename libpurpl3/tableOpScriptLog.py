@@ -105,9 +105,15 @@ class ScriptLogTable(tableOp.Table):
                        stdoutFile CHAR(256),
                        stderrFile CHAR(256),
                        asAdmin BOOL,
-                       FOREIGN KEY (scriptId) REFERENCES s(id),
-                       FOREIGN KEY (userId) REFERENCES u(id),
-                       FOREIGN KEY (compId) REFERENCES c(id)
+                       FOREIGN KEY (scriptId) 
+                        REFERENCES s(id)
+                        ON DELETE CASCADE,
+                       FOREIGN KEY (userId) 
+                        REFERENCES u(id)
+                        ON DELETE CASCADE,
+                       FOREIGN KEY (compId) 
+                        REFERENCES c(id)
+                        ON DELETE CASCADE
                     );"""
         # e = sqlFuncs.createTable(command, "ScriptLog")
         e = sqlFuncs.exeCommand(command, "createTable", "ScriptLog")
