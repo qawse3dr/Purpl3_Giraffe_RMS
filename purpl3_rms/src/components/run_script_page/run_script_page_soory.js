@@ -66,7 +66,7 @@ class RunScriptPage extends React.Component {
                     }
                 }
             }).then((res) => {
-                alert(JSON.stringify(res.data))
+                //alert(JSON.stringify(res.data))
 
                 //Update newest file position
                 this.setState(state => ({
