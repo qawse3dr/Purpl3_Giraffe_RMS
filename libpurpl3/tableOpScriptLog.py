@@ -208,9 +208,12 @@ class ScriptLogTable(tableOp.Table):
             e - error created during execution of function or Success if no error occurs
             s - the specified attribute's value from the entry retrieved from the SQL table 
         '''
+        attr = None
         command = """SELECT (""" + attr + """) FROM sl WHERE ID = """ + str(ID) + """;"""
         e, slTuple = sqlFuncs.getRow(command, "getAttrByID", "ScriptLog")
-        return e, slTuple[0]
+        if(e == pref.getError(pref.ERROR_SUCCESS)):
+            attr = slTuple[0]
+        return e, attr
 
     # overriding abstract method
     @staticmethod

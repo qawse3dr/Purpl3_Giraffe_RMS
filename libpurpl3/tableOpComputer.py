@@ -198,9 +198,12 @@ class ComputerTable(tableOp.Table):
             e - error created during execution of function or Success if no error occurs
             s - the specified attribute's value from the entry retrieved from the SQL table 
         '''
+        attr = None
         command = """SELECT (""" + attr + """) FROM c WHERE ID = """ + str(ID) + """;"""
         e, cTuple = sqlFuncs.getRow(command, "getAttrByID", "Computer")
-        return e, cTuple[0]
+        if(e == pref.getError(pref.ERROR_SUCCESS)):
+            attr = cTuple[0]
+        return e, attr
 
     # overriding abstract method
     @staticmethod

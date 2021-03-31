@@ -188,9 +188,12 @@ class UserTable(tableOp.Table):
             e - error created during execution of function or Success if no error occurs
             s - the specified attribute's value from the entry retrieved from the SQL table 
         '''
+        attr = None
         command = """SELECT (""" + attr + """) FROM u WHERE ID = """ + str(ID) + """;"""
         e, uTuple = sqlFuncs.getRow(command, "getAttrByID", "User")
-        return e, uTuple[0]
+        if (e == pref.getError(pref.ERROR_SUCCESS)):
+            attr = uTuple[0]
+        return e, attr
 
     # overriding abstract method
     @staticmethod

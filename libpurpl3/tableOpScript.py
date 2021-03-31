@@ -198,9 +198,12 @@ class ScriptTable(tableOp.Table):
             e - error created during execution of function or Success if no error occurs
             s - the specified attribute's value from the entry retrieved from the SQL table 
         '''
+        attr = None
         command = """SELECT (""" + attr + """) FROM s WHERE ID = """ + str(ID) + """;"""
         e, sTuple = sqlFuncs.getRow(command, "getAttrByID", "Script")
-        return e, sTuple[0]
+        if(e == pref.getError(pref.ERROR_SUCCESS)):
+            attr = sTuple[0]
+        return e, attr
 
     # overriding abstract method
     @staticmethod
