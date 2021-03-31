@@ -8,7 +8,7 @@ __pycache__
 key
 key.pub
 .idea
-*.db
-purpl3_rms.db
+
+unittest.db
 sqlite
 *.log
