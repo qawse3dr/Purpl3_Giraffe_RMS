@@ -252,7 +252,9 @@ class ScriptTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        return pref.getError(pref.ERROR_SUCCESS)
+        command = """DELETE FROM s WHERE ID = """ + str(ID) + """;"""
+        e = exeCommand(command, "delete", "Script")
+        return e
 
     # overriding abstract method
     @staticmethod

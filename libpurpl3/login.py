@@ -21,23 +21,23 @@ def login(data: dict) -> str:
     '''
     #makesure the prefs contain a username and password
     try:
-        userName = data[pref.getNoCheck(pref.LOGIN_USERNAME)]
+        username = data[pref.getNoCheck(pref.LOGIN_USERNAME)]
         password = hashlib.sha256(data[pref.getNoCheck(pref.LOGIN_PASSWORD)].encode()).hexdigest()
     except:
         return jsonify(Error = pref.getError(pref.ERROR_ATTRIBUTE_NOT_FOUND).toJson())
     
 
-    if " " in userName or ";" in userName:
+    if " " in username or ";" in username:
         return jsonify(Error = pref.getError(pref.ERROR_USERNAME_INVALID).toJson())
 
-    userID = tableLogin.UserTable.checkLogin(userName=userName, password=password)
+    userID = tableLogin.UserTable.checkLogin(username=username, password=password)
     
     # ErrorCode = None
     if userID != -1:
         ErrorCode = pref.Success
         session["userID"] = userID
     else:
-        ErrorCode = pref.getError(pref.ERROR_USER_AUTHENTICATION_ERROR, args=(userName))
+        ErrorCode = pref.getError(pref.ERROR_USER_AUTHENTICATION_ERROR, args=(username))
     
     
     return jsonify(
