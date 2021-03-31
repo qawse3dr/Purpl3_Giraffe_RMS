@@ -301,11 +301,14 @@ class ComputerTable(tableOp.Table):
 
 def tupleToComputer(tup: tuple, commandName: str):
     '''
-    Seperates a tuple of computer object parameter values to init a computer object
+    Seperates a tuple of Computer object parameter values to init a Computer object. 
+    Does error checking to confirm that the tuple contains elements for all attributes of the Computer class.
+    Casts all attributes to correct type. 
     @param 
-        tup - a tuple containing values for every parameter of the computer class
+        tup - a tuple containing values for every parameter of the Computer class
     @return 
-        computer object
+        e - most recent error when executing function or Success if no error occurs 
+        c - the Computer object created
     '''
     # ID: int, name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime,dtModified: datetime.datetime, size: float, isAdmin: bool
     e = pref.getError(pref.ERROR_SUCCESS)

@@ -290,11 +290,14 @@ class UserTable(tableOp.Table):
 
 def tupleToUser(tup: tuple, commandName: str):
     '''
-    Seperates a tuple of user object parameter values to init a user object
+    Seperates a tuple of User object parameter values to init a User object. 
+    Does error checking to confirm that the tuple contains elements for all attributes of the User class.
+    Casts all attributes to correct type. 
     @param 
-        tup - a tuple containing values for every parameter of the user class
+        tup - a tuple containing values for every parameter of the User class
     @return 
-        user object
+        e - most recent error when executing function or Success if no error occurs 
+        s - the User object created
     '''
     # ID: int, username: str, password: str, dtCreated: datetime.datetime,
     # dtModified: datetime.datetime, admin: bool

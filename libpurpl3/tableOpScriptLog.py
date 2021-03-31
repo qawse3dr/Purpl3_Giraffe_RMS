@@ -344,11 +344,14 @@ def createFile(e, path, filename):
 
 def tupleToScriptLog(tup: tuple, commandName: str):
     '''
-    Seperates a tuple of scriptLog object parameter values to init a scriptLog object
+    Seperates a tuple of ScriptLog object parameter values to init a ScriptLog object. 
+    Does error checking to confirm that the tuple contains elements for all attributes of the ScriptLog class.
+    Casts all attributes to correct type. 
     @param 
-        tup - a tuple containing values for every parameter of the scriptLog class
+        tup - a tuple containing values for every parameter of the ScriptLog class
     @return 
-        scriptLog object
+        e - most recent error when executing function or Success if no error occurs 
+        s - the ScriptLog object created
     '''
     # ID: int, scriptID: int, userID: int, compID: int, startTime: datetime.datetime,
     # endTime: datetime.datetime, returnVal: int, errorCode: int, stdoutFile: str, stderrFile: str,

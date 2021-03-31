@@ -301,11 +301,14 @@ class ScriptTable(tableOp.Table):
 
 def tupleToScript(tup: tuple, commandName: str):
     '''
-    Seperates a tuple of script object parameter values to init a script object
+    Seperates a tuple of script object parameter values to init a script object. 
+    Does error checking to confirm that the tuple contains elements for all attributes of the script class.
+    Casts all attributes to correct type. 
     @param 
-        tup - a tuple containing values for every parameter of the script class
+        tup - a tuple containing values for every parameter of the Script class
     @return 
-        script object
+        e - most recent error when executing function or Success if no error occurs 
+        s - the Script object created
     '''
     # ID: int, name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime,dtModified: datetime.datetime, size: float, isAdmin: bool
     e = pref.getError(pref.ERROR_SUCCESS)
