@@ -152,10 +152,11 @@ class ComputerTable(tableOp.Table):
         e, rows = sqlFuncs.getAllRows(command, "getAll", "Computer")
         cList = []
         if(e == pref.getError(pref.ERROR_SUCCESS)):
-            for row in rows:
-                e, c = tupleToComputer(row, "getAll")
-                if(e == pref.getError(pref.ERROR_SUCCESS)):
-                    cList.append(c)
+            if (rows != None):
+                for row in rows:
+                    e, c = tupleToComputer(row, "getAll")
+                    if(e == pref.getError(pref.ERROR_SUCCESS)):
+                        cList.append(c)
 
         return e, cList
 

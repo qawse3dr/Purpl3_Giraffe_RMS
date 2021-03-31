@@ -166,10 +166,11 @@ class ScriptLogTable(tableOp.Table):
         e, rows = sqlFuncs.getAllRows(command, "getAll", "ScriptLog")
         slList = []
         if(e == pref.getError(pref.ERROR_SUCCESS)):
-            for row in rows:
-                e, sl = tupleToScriptLog(row, "getAll")
-                if(e == pref.getError(pref.ERROR_SUCCESS)):
-                    slList.append(sl)
+            if (rows != None):
+                for row in rows:
+                    e, sl = tupleToScriptLog(row, "getAll")
+                    if(e == pref.getError(pref.ERROR_SUCCESS)):
+                        slList.append(sl)
 
         return e, slList
 

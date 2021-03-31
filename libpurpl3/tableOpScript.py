@@ -148,10 +148,11 @@ class ScriptTable(tableOp.Table):
         e, rows = sqlFuncs.getAllRows(command, "getAll", "Script")
         sList = []
         if(e == pref.getError(pref.ERROR_SUCCESS)):
-            for row in rows:
-                e, s = tupleToScript(row, "getAll")
-                if(e == pref.getError(pref.ERROR_SUCCESS)):
-                    sList.append(s)
+            if (rows != None):
+                for row in rows:
+                    e, s = tupleToScript(row, "getAll")
+                    if(e == pref.getError(pref.ERROR_SUCCESS)):
+                        sList.append(s)
 
         return e, sList
 

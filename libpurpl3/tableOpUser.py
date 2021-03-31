@@ -152,10 +152,11 @@ class UserTable(tableOp.Table):
         e, rows = sqlFuncs.getAllRows(command, "getAll", "User")
         uList = []
         if(e == pref.getError(pref.ERROR_SUCCESS)):
-            for row in rows:
-                e, u = tupleToUser(row, "getAll")
-                if(e == pref.getError(pref.ERROR_SUCCESS)):
-                    uList.append(u)
+            if (rows != None):
+                for row in rows:
+                    e, u = tupleToUser(row, "getAll")
+                    if(e == pref.getError(pref.ERROR_SUCCESS)):
+                        uList.append(u)
 
         return e, uList
 
