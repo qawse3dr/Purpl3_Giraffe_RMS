@@ -169,10 +169,8 @@ class ScriptTable(tableOp.Table):
             desc: str - user defined script description
             isAdmin: bool - whether or not the script requires admin access to run
         @return 
-            e - error created during execution of function or Success if no error occurs
             script - script object created
         '''
-        e = pref.getError(pref.ERROR_SUCCESS)
         script = None
         # id will be set when object is added to table
         id = None
@@ -186,14 +184,12 @@ class ScriptTable(tableOp.Table):
             fileStats = os.stat(filePath)
             fileSizeB = fileStats.st_size
         except OSError as err:
-            print(err)
-            e = pref.getError(pref.ERROR_CREATE_SCRIPT_DNE, args = (err))
+            fileSizeB = 0.0 # set size to zero script file does not exist
 
-        if(e == pref.getError(pref.ERROR_SUCCESS)):
-            # create script object
-            script = Script(None, name, fileName, author, desc, dtCreated, dtModified, fileSizeB, isAdmin)
+        # create script object
+        script = Script(None, name, fileName, author, desc, dtCreated, dtModified, fileSizeB, isAdmin)
 
-        return e, script 
+        return script 
 
     # overriding abstract method
     @staticmethod

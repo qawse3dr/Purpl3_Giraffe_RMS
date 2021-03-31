@@ -164,7 +164,6 @@ class UserTable(tableOp.Table):
             password: str - the user's *hashed* password
             admin: bool - whether or not the user has admin privledges
         @return 
-            e - will always be Success. ScriptTable createEntry function can have error, so this will return a dummy error to be consistent
             user - user object created
         '''
         # id will be set when object is added to table
@@ -175,7 +174,7 @@ class UserTable(tableOp.Table):
         dtModified = dtCreated
         # create user object
         user = User(id, username, password, dtCreated, dtModified, admin)
-        return pref.getError(pref.ERROR_SUCCESS), user  
+        return user  
 
     # overriding abstract method
     @staticmethod

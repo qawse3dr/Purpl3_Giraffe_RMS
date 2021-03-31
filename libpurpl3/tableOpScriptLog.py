@@ -179,7 +179,6 @@ class ScriptLogTable(tableOp.Table):
             compID: int - primary key of computer table to indictae which computer is having script executed on it
             asAdmin: bool - whether or not the script was executed as admin
         @return 
-            e - will always be Success. ScriptTable createEntry function can have error, so this will return a dummy error to be consistent
             scriptLog - scriptLog object created
         '''
         # id will be set when object is added to table
@@ -195,7 +194,7 @@ class ScriptLogTable(tableOp.Table):
         stderrFile = None
         # create scriptLog object
         scriptLog = ScriptLog(id, scriptID, userID, compID, startTime, endTime, returnVal, errorCode, stdoutFile, stderrFile, asAdmin)
-        return pref.getError(pref.ERROR_SUCCESS), scriptLog 
+        return scriptLog 
 
     # overriding abstract method
     @staticmethod
