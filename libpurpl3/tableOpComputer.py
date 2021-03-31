@@ -232,7 +232,7 @@ class ComputerTable(tableOp.Table):
         @return 
             e - most recent error when executing function or Success if no error occurs
         '''
-        ID = 0
+        ID = None
         command = """ INSERT INTO c (id, userID, name, nickName, desc, username, IP, dtCreated, dtModified, asAdmin) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         data = entry.paramToList()
         e, ID = sqlFuncs.insert(command, data, "add", "Computer")
@@ -254,10 +254,15 @@ class ComputerTable(tableOp.Table):
     @staticmethod
     def editEntry(entry: Computer):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Updates a row in the computer SQL table based on the entry object passed. 
+        Overwrites all attributes of the row with the values of the entry object.
+        Overwrites row based on the ID of the entry object.
+        @param 
+            entry: Computer - Computer object, must have ID != None or error will be thrown
+        @return 
+            e - most recent error when executing function or Success if no error occurs
+            c - Computer object corresponding to row updated in SQL table. Should be the 
+                same as entry passed to function if no error occured
         '''
         c = entry
 

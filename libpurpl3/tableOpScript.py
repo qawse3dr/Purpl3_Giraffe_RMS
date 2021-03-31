@@ -231,7 +231,7 @@ class ScriptTable(tableOp.Table):
         @return 
             e - most recent error when executing function or Success if no error occurs
         '''
-        ID = 0
+        ID = None
         command = """ INSERT INTO s (id, name, fileName, author, desc, dtCreated, dtModified, size, isAdmin) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)"""
         data = entry.paramToList()
         e, ID = sqlFuncs.insert(command, data, "add", "Script")
@@ -251,12 +251,17 @@ class ScriptTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def editEntry(entry: Script): # TODO - change this to accept an entry type object and overwrite the entire row based on ID
+    def editEntry(entry: Script):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Updates a row in the script SQL table based on the entry object passed. 
+        Overwrites all attributes of the row with the values of the entry object.
+        Overwrites row based on the ID of the entry object.
+        @param 
+            entry: Script - Script object, must have ID != None or error will be thrown
+        @return 
+            e - most recent error when executing function or Success if no error occurs
+            s - Script object corresponding to row updated in SQL table. Should be the 
+                same as entry passed to function if no error occured
         '''
         s = entry
 

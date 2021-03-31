@@ -221,7 +221,7 @@ class UserTable(tableOp.Table):
         @return 
             e - most recent error when executing function or Success if no error occurs
         '''
-        ID = 0
+        ID = None
         command = """ INSERT INTO u (id, username, password, dtCreated, dtModified, admin) VALUES (NULL, ?, ?, ?, ?, ?)"""
         data = entry.paramToList()
         e, ID = sqlFuncs.insert(command, data, "add", "User")
@@ -243,10 +243,15 @@ class UserTable(tableOp.Table):
     @staticmethod
     def editEntry(entry: User):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Updates a row in the user SQL table based on the entry object passed. 
+        Overwrites all attributes of the row with the values of the entry object.
+        Overwrites row based on the ID of the entry object.
+        @param 
+            entry: User - User object, must have ID != None or error will be thrown
+        @return 
+            e - most recent error when executing function or Success if no error occurs
+            u - User object corresponding to row updated in SQL table. Should be the 
+                same as entry passed to function if no error occured
         '''
         u = entry
 

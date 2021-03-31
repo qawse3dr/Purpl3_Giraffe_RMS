@@ -242,23 +242,24 @@ class ScriptLogTable(tableOp.Table):
         @return 
             e - most recent error when executing function or Success if no error occurs
         '''
-        ID = 0
+        ID = None
         command = """ INSERT INTO sl (id, scriptID, userID, compID, startTime, endTime, returnVal, errorCode, stdoutFile, stderrFile, asAdmin) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         data = entry.paramToList()
         e, ID = sqlFuncs.insert(command, data, "add", "ScriptLog")
         entry.ID = ID # access ID through entry object after executing this function
         ######### create names/files for stdoutFile, stderrFile - {STDOUT/STDERR}_SCRIPT_ID.log #########
         # (1) Add names to entry object
-        e, scriptName = tos.ScriptTable().getAttrByID("name", entry.scriptID)
-        if e == pref.getError(pref.ERROR_SUCCESS):
-            entry.stdoutFile = "STDOUT_" + str(scriptName) + "_" + str(ID) + ".log"  # access stdoutFile through entry object after executing this function
-            entry.stderrFile = "STDERR_" + str(scriptName) + "_" + str(ID) + ".log"  # access stderrFile through entry object after executing this function
-            # (2) Write names to sql entry
-            command2 = """UPDATE sl SET stdoutFile = \"""" + str(entry.stdoutFile) + """\", stderrFile = \"""" + str(entry.stderrFile) + """\" WHERE id = """ + str(ID) + """;"""
-            e = sqlFuncs.exeCommand(command2, "add", "ScriptLog")
-            # (3) Create files 
-            e = createFile(e, pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH), entry.stdoutFile)
-            e = createFile(e, pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH), entry.stderrFile)
+        if(e == pref.getError(pref.ERROR_SUCCESS)):
+            e, scriptName = tos.ScriptTable().getAttrByID("name", entry.scriptID)
+            if e == pref.getError(pref.ERROR_SUCCESS):
+                entry.stdoutFile = "STDOUT_" + str(scriptName) + "_" + str(ID) + ".log"  # access stdoutFile through entry object after executing this function
+                entry.stderrFile = "STDERR_" + str(scriptName) + "_" + str(ID) + ".log"  # access stderrFile through entry object after executing this function
+                # (2) Write names to sql entry
+                command2 = """UPDATE sl SET stdoutFile = \"""" + str(entry.stdoutFile) + """\", stderrFile = \"""" + str(entry.stderrFile) + """\" WHERE id = """ + str(ID) + """;"""
+                e = sqlFuncs.exeCommand(command2, "add", "ScriptLog")
+                # (3) Create files 
+                e = createFile(e, pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH), entry.stdoutFile)
+                e = createFile(e, pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH), entry.stderrFile)
         return e #FIXME - should actions be undone if any errors occur along the way *thinking* - for loop
 
     # overriding abstract method
@@ -276,10 +277,15 @@ class ScriptLogTable(tableOp.Table):
     @staticmethod
     def editEntry(entry: ScriptLog):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Updates a row in the scriptLog SQL table based on the entry object passed. 
+        Overwrites all attributes of the row with the values of the entry object.
+        Overwrites row based on the ID of the entry object.
+        @param 
+            entry: ScriptLog - ScriptLog object, must have ID != None or error will be thrown
+        @return 
+            e - most recent error when executing function or Success if no error occurs
+            sl - ScriptLog object corresponding to row updated in SQL table. Should be the 
+                same as entry passed to function if no error occured
         '''
         sl = entry
 
