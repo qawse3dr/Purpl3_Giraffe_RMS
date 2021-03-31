@@ -199,7 +199,12 @@ class UserTable(tableOp.Table):
         command = """SELECT (""" + attr + """) FROM u WHERE ID = """ + str(ID) + """;"""
         e, uTuple = sqlFuncs.getRow(command, "getAttrByID", "User")
         if (e == pref.getError(pref.ERROR_SUCCESS)):
-            val = uTuple[0]
+            if(uTuple == None):
+                e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=("getAttrByID", "User", 0, 1))
+            elif(len(uTuple) != 1):
+                e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=("getAttrByID", "User", len(uTuple), 1))
+            else:
+                val = uTuple[0]
         return e, val
 
     # overriding abstract method
@@ -244,7 +249,11 @@ class UserTable(tableOp.Table):
         @param *add param*.
         @return *add return*.
         '''
-        return pref.getError(pref.ERROR_SUCCESS)
+        command = """DELETE FROM u WHERE ID = """ + str(ID) + """;"""
+        e = sqlFuncs.exeCommand(command, "delete", "User")
+
+        return e
+
 
     # overriding abstract method
     @staticmethod
@@ -313,9 +322,11 @@ def tupleToUser(tup: tuple, commandName: str):
     # ID: int, username: str, password: str, dtCreated: datetime.datetime,
     # dtModified: datetime.datetime, admin: bool
     e = pref.getError(pref.ERROR_SUCCESS)
-    if(len(tup) != 6):
+    u = None
+    if(tup == None):
+        e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=(commandName, "User", 0, 6))
+    elif(len(tup) != 6):
         e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=(commandName, "User", len(tup), 6))
-        u = None
     else:
         try:
             if(tup[0] == None):

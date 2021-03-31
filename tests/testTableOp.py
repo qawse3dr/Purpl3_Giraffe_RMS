@@ -10,6 +10,8 @@ import datetime
 from datetime import datetime as dt
 import unittest
 import os
+from os import path
+
 
 def clearTables():
     '''
@@ -83,7 +85,7 @@ def createTablesBig():
   err = tos.ScriptTable().add(s)
   s = tos.ScriptTable().createEntry("solve_world_hunger", "shutdown.sh", 1, "crazy scritpt", False)
   err = tos.ScriptTable().add(s)
-  s = tos.ScriptTable().createEntry("leprechan_script", "sleepScript.sh", 1, "found at end of rainbow", True)
+  s = tos.ScriptTable().createEntry("leprechan_script", "sleepScript copy.sh", 1, "found at end of rainbow", True)
   err = tos.ScriptTable().add(s)
   # computer entries 
   c = toc.ComputerTable().createEntry(1, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
@@ -113,18 +115,6 @@ class BaseTestCase(unittest.TestCase):
       pref.setAttr(pref.CONFIG_DB_PATH, "tests/res/unittest.db") # work on seperate clean database so as to not mess up test data in base db
       pref.setAttr(pref.CONFIG_SCRIPT_PATH,"tests/res/data/scripts/")
       pref.setAttr(pref.CONFIG_SCRIPT_LOG_PATH,"tests/res/data/scriptLogs/")
-
-    ################## DELETE ENTRY TESTS ##################
-    # def test_deleteS(self):
-    #   createTablesBig()
-    #   err = tos.ScriptTable().delete(1)
-    #   errExp = pref.getError(pref.ERROR_SUCCESS)
-    #   print(err)
-    #   err2, s = tos.ScriptTable.getByID(1)
-    #   errExp2 = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=("getAttrByID", "Script", 0, 9))
-    #   self.assertEqual(err,errExp)
-    #   self.assertEqual(err2,errExp2)
-
 
     ################## CREATE TABLE TESTS ##################
     # Tests table creation from user class directly (expecting success)
@@ -742,6 +732,100 @@ class BaseTestCase(unittest.TestCase):
       self.assertEqual(u_id_1, -1)
       self.assertEqual(u_id_2, -1)
       self.assertEqual(u_id_3, -1)
+
+    ################# DELETE ENTRY TESTS (SUCCESS) ##################
+    def test_deleteS(self):
+      createTablesBig()
+      open(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH) + "test_script_name.sh", "a") # create file to be deleted
+      existsBefore = path.exists(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH) + 'test_script_name.sh')
+      err = tos.ScriptTable().delete(1)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      err2, s = tos.ScriptTable.getByID(1)
+      errExp2 = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=("getByID", "Script", 0, 9))
+      existsAfter = path.exists(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH) + "test_script_name.sh")
+      self.assertEqual(existsBefore, True)
+      self.assertEqual(err,errExp)
+      self.assertEqual(err2,errExp2)
+      self.assertEqual(existsAfter, False)
+      self.assertEqual(s, None)
+      open(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH) + "test_script_name.sh", "a") # recreate deleted file
+
+    def test_deleteS2(self):
+      createTablesBig()
+      open(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH) + "sleepScript copy.sh", "a") # create file to be deleted
+      existsBefore = path.exists(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH) + "sleepScript copy.sh")
+      err = tos.ScriptTable().delete(4)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      err2, s = tos.ScriptTable.getByID(4)
+      errExp2 = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=("getByID", "Script", 0, 9))
+      existsAfter = path.exists(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH) + "sleepScript copy.sh")
+      self.assertEqual(existsBefore, True)
+      self.assertEqual(err,errExp)
+      self.assertEqual(err2,errExp2)
+      self.assertEqual(existsAfter, False)
+      self.assertEqual(s, None)
+      open(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH) + "sleepScript copy.sh", "a") # recreate deleted file
+
+    def test_deleteC(self):
+      createTablesBig()
+      err = toc.ComputerTable().delete(1)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      err2, c = toc.ComputerTable.getByID(1)
+      errExp2 = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=("getByID", "Computer", 0, 10))
+      self.assertEqual(err,errExp)
+      self.assertEqual(err2,errExp2)
+      self.assertEqual(c, None)
+
+    def test_deleteSL(self):
+      createTablesBig()
+      stdoutFile = pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH) + "STDOUT_test_script_name_3.log"
+      stderrFile = pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH) + "STDERR_test_script_name_3.log"
+      open(stdoutFile, "a") # create files to be deleted
+      open(stderrFile, "a") # create files to be deleted
+      existsBefore1 = path.exists(stdoutFile)
+      existsBefore2 = path.exists(stderrFile)
+      err = tosl.ScriptLogTable().delete(3)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      err2, sl = tosl.ScriptLogTable.getByID(3)
+      errExp2 = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=("getByID", "ScriptLog", 0, 11))
+      existsAfter1 = path.exists(stdoutFile)
+      existsAfter2 = path.exists(stderrFile)
+      self.assertEqual(existsBefore1, True)
+      self.assertEqual(existsBefore2, True)
+      self.assertEqual(err,errExp)
+      self.assertEqual(err2,errExp2)
+      self.assertEqual(existsAfter1, False)
+      self.assertEqual(existsAfter2, False)
+      self.assertEqual(sl, None)
+      open(stdoutFile, "a") # recreate deleted files
+      open(stderrFile, "a")
+
+    def test_deleteU(self):
+      createTablesBig()
+      err = tou.UserTable().delete(2)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      err2, u = tou.UserTable.getByID(2)
+      errExp2 = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=("getByID", "User", 0, 6))
+      self.assertEqual(err,errExp)
+      self.assertEqual(err2,errExp2)
+      self.assertEqual(u, None)
+
+    ################# DELETE ENTRY TESTS (FAILURE) ##################
+    def test_deleteS_F(self):
+      createTablesBig()
+      err = tos.ScriptTable().delete(99) # delete non-existent script
+      errExp = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args = ("getAttrByID", "Script", 0, 9))
+      self.assertEqual(err,errExp)
+
+    # no files correspond to computer/user entries and deleting non-existent entries will not cause an error
+
+    def test_deleteSL_F(self):
+      createTablesBig()
+      err = tosl.ScriptLogTable().delete(99) # delete non-existent computer
+      errExp = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args = ("getAttrByID", "ScriptLog", 0, 11))
+      # print(err)
+      # print(errExp)
+      self.assertEqual(err,errExp)
 
 
   
