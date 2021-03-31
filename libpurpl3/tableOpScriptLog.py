@@ -5,6 +5,7 @@ import libpurpl3.tableOp as tableOp
 import libpurpl3.sqlFuncs as sqlFuncs
 import libpurpl3.tableOpScript as tos
 import sqlite3
+import os
 
 class ScriptLog(tableOp.Entry):
     # TODO add default values
@@ -165,10 +166,11 @@ class ScriptLogTable(tableOp.Table):
         e, rows = sqlFuncs.getAllRows(command, "getAll", "ScriptLog")
         slList = []
         if(e == pref.getError(pref.ERROR_SUCCESS)):
-            for row in rows:
-                e, sl = tupleToScriptLog(row, "getAll")
-                if(e == pref.getError(pref.ERROR_SUCCESS)):
-                    slList.append(sl)
+            if (rows != None):
+                for row in rows:
+                    e, sl = tupleToScriptLog(row, "getAll")
+                    if(e == pref.getError(pref.ERROR_SUCCESS)):
+                        slList.append(sl)
 
         return e, slList
 
@@ -218,7 +220,12 @@ class ScriptLogTable(tableOp.Table):
         command = """SELECT (""" + attr + """) FROM sl WHERE ID = """ + str(ID) + """;"""
         e, slTuple = sqlFuncs.getRow(command, "getAttrByID", "ScriptLog")
         if(e == pref.getError(pref.ERROR_SUCCESS)):
-            val = slTuple[0]
+            if(slTuple == None):
+                e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=("getAttrByID", "ScriptLog", 0, 1))
+            elif(len(slTuple) != 1):
+                e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=("getAttrByID", "ScriptLog", len(slTuple), 1))
+            else:
+                val = slTuple[0]
         return e, val
 
     # overriding abstract method
@@ -277,12 +284,27 @@ class ScriptLogTable(tableOp.Table):
     @staticmethod
     def delete(ID: int):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Removes a scriptLog entry from the database based on it's ID. 
+        Also removes the corresponding files (stdout/stderr) from directory.
+        @param 
+            ID: int - primary key of scriptLog
+        @return 
+            e - most recent error when executing function or Success if no error occurs
         '''
-        return pref.getError(pref.ERROR_SUCCESS)
+        e, stdoutFile = ScriptLogTable.getAttrByID("stdoutFile", ID)
+        e, stderrFile = ScriptLogTable.getAttrByID("stderrFile", ID)
+        if(e == pref.getError(pref.ERROR_SUCCESS)):
+            command = """DELETE FROM sl WHERE ID = """ + str(ID) + """;"""
+            e = sqlFuncs.exeCommand(command, "delete", "ScriptLog")
+            if(e == pref.getError(pref.ERROR_SUCCESS)): # If deleted from db successfully, remove corresponding stdout/stderr files
+                path = pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH)
+                try:
+                    os.remove(path + stdoutFile)
+                    os.remove(path + stderrFile)
+                except OSError as err:
+                    e = pref.getError(pref.ERROR_FILE_NOT_FOUND, args = (str(stdoutFile) + "/" + str(stderrFile)))
+
+        return e
 
     # overriding abstract method
     @staticmethod
@@ -366,10 +388,12 @@ def tupleToScriptLog(tup: tuple, commandName: str):
     # ID: int, scriptID: int, userID: int, compID: int, startTime: datetime.datetime,
     # endTime: datetime.datetime, returnVal: int, errorCode: int, stdoutFile: str, stderrFile: str,
     # asAdmin: bool 
+    sl = None
     e = pref.getError(pref.ERROR_SUCCESS)
-    if(len(tup) != 11):
+    if(tup == None):
+        e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=(commandName, "ScriptLog", 0, 11))
+    elif(len(tup) != 11):
         e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=(commandName, "ScriptLog", len(tup), 11))
-        sl = None
     else:
         try:
             if(tup[0] == None):

@@ -152,10 +152,11 @@ class ComputerTable(tableOp.Table):
         e, rows = sqlFuncs.getAllRows(command, "getAll", "Computer")
         cList = []
         if(e == pref.getError(pref.ERROR_SUCCESS)):
-            for row in rows:
-                e, c = tupleToComputer(row, "getAll")
-                if(e == pref.getError(pref.ERROR_SUCCESS)):
-                    cList.append(c)
+            if (rows != None):
+                for row in rows:
+                    e, c = tupleToComputer(row, "getAll")
+                    if(e == pref.getError(pref.ERROR_SUCCESS)):
+                        cList.append(c)
 
         return e, cList
 
@@ -203,7 +204,12 @@ class ComputerTable(tableOp.Table):
         command = """SELECT (""" + attr + """) FROM c WHERE ID = """ + str(ID) + """;"""
         e, cTuple = sqlFuncs.getRow(command, "getAttrByID", "Computer")
         if(e == pref.getError(pref.ERROR_SUCCESS)):
-            val = cTuple[0]
+            if(cTuple == None):
+                e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=("getAttrByID", "Computer", 0, 1))
+            elif(len(cTuple) != 1):
+                e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=("getAttrByID", "Computer", len(cTuple), 1))
+            else:
+                val = cTuple[0]
         return e, val
 
     # overriding abstract method
@@ -244,12 +250,16 @@ class ComputerTable(tableOp.Table):
     @staticmethod
     def delete(ID: int):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Removes a computer entry from the database based on it's ID. 
+        @param 
+            ID: int - primary key of computer 
+        @return 
+            e - most recent error when executing function or Success if no error occurs
         '''
-        return pref.getError(pref.ERROR_SUCCESS)
+        command = """DELETE FROM c WHERE ID = """ + str(ID) + """;"""
+        e = sqlFuncs.exeCommand(command, "delete", "Computer")
+
+        return e
 
     # overriding abstract method
     @staticmethod
@@ -314,10 +324,12 @@ def tupleToComputer(tup: tuple, commandName: str):
         c - the Computer object created
     '''
     # ID: int, name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime,dtModified: datetime.datetime, size: float, isAdmin: bool
+    c = None
     e = pref.getError(pref.ERROR_SUCCESS)
-    if(len(tup) != 10):
+    if(tup == None):
+        e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=(commandName, "Computer", 0, 10))
+    elif(len(tup) != 10):
         e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=(commandName, "Computer", len(tup), 10))
-        c = None
     else:
         try:
             # ID: int, userID: int, name: str, nickName: str, desc: str, username: str, IP: str, 

@@ -148,10 +148,11 @@ class ScriptTable(tableOp.Table):
         e, rows = sqlFuncs.getAllRows(command, "getAll", "Script")
         sList = []
         if(e == pref.getError(pref.ERROR_SUCCESS)):
-            for row in rows:
-                e, s = tupleToScript(row, "getAll")
-                if(e == pref.getError(pref.ERROR_SUCCESS)):
-                    sList.append(s)
+            if (rows != None):
+                for row in rows:
+                    e, s = tupleToScript(row, "getAll")
+                    if(e == pref.getError(pref.ERROR_SUCCESS)):
+                        sList.append(s)
 
         return e, sList
 
@@ -207,7 +208,12 @@ class ScriptTable(tableOp.Table):
         command = """SELECT (""" + attr + """) FROM s WHERE ID = """ + str(ID) + """;"""
         e, sTuple = sqlFuncs.getRow(command, "getAttrByID", "Script")
         if(e == pref.getError(pref.ERROR_SUCCESS)):
-            val = sTuple[0]
+            if(sTuple == None):
+                e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=("getAttrByID", "Script", 0, 1))
+            elif(len(sTuple) != 1):
+                e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=("getAttrByID", "Script", len(sTuple), 1))
+            else:
+                val = sTuple[0]
         return e, val
 
     # overriding abstract method
@@ -247,23 +253,25 @@ class ScriptTable(tableOp.Table):
     @staticmethod
     def delete(ID: int):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Removes a script entry from the database based on it's ID. 
+        Also removes the corresponding file from directory.
+        @param 
+            ID: int - primary key of script
+        @return 
+            e - most recent error when executing function or Success if no error occurs
         '''
-        # e, fileName = ScriptTable.getAttrByID("fileName", ID)
-        # if(e == pref.getError(pref.ERROR_SUCCESS)):
-        #     command = """DELETE FROM s WHERE ID = """ + str(ID) + """;"""
-        #     e = sqlFuncs.exeCommand(command, "delete", "Script")
-        #     if(e == pref.getError(pref.ERROR_SUCCESS)):
-        #         path = pref.CONFIG_SCRIPT_PATH
-        #         try:
-        #             os.remove(path + fileName)
-        #         except OSError as err:
-        #             e = pref.getError(pref.ERROR_FILE_NOT_FOUND, args = (fileName))
+        e, fileName = ScriptTable.getAttrByID("fileName", ID)
+        if(e == pref.getError(pref.ERROR_SUCCESS)):
+            command = """DELETE FROM s WHERE ID = """ + str(ID) + """;"""
+            e = sqlFuncs.exeCommand(command, "delete", "Script")
+            if(e == pref.getError(pref.ERROR_SUCCESS)): # If deleted from db successfully, remove corresponding file
+                path = pref.getNoCheck(pref.CONFIG_SCRIPT_PATH)
+                try:
+                    os.remove(path + fileName)
+                except OSError as err:
+                    e = pref.getError(pref.ERROR_FILE_NOT_FOUND, args = (fileName))
 
-        return pref.getError(pref.ERROR_SUCCESS) # FIXME
+        return e
 
     # overriding abstract method
     @staticmethod
