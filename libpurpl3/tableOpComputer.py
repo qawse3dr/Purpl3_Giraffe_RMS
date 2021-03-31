@@ -151,7 +151,6 @@ class ComputerTable(tableOp.Table):
         cList = []
         if(e == pref.getError(pref.ERROR_SUCCESS)):
             for row in rows:
-                print(row)
                 e, c = tupleToComputer(row, "getAll")
                 if(e == pref.getError(pref.ERROR_SUCCESS)):
                     cList.append(c)
@@ -174,6 +173,7 @@ class ComputerTable(tableOp.Table):
             IP: str - IP address of computer
             asAdmin: bool - whether or not user is accessing computer as admin
         @return 
+            e - will always be Success. ScriptTable createEntry function can have error, so this will return a dummy error to be consistent
             computer - computer object created
         '''
         # id will be set when object is added to table
@@ -184,7 +184,7 @@ class ComputerTable(tableOp.Table):
         dtModified = dtCreated
         # create computer object
         computer = Computer(id, userID, name, nickName, desc, username, IP, dtCreated, dtModified, asAdmin)
-        return computer 
+        return pref.getError(pref.ERROR_SUCCESS), computer  
 
     # overriding abstract method
     @staticmethod
@@ -287,7 +287,6 @@ class ComputerTable(tableOp.Table):
                     command = command + """, """
             command = command[:-2] #remove last ' ,'
             command = command + """ WHERE ID = """ + str(entry.ID) + """;"""
-            print(command)
 
             e = sqlFuncs.exeCommand(command, "editEntry", "Computer")
 

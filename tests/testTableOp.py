@@ -50,16 +50,16 @@ def createTables():
   '''
   createEmptyTables()
   # user entry 
-  u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
+  e, u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
   err = tou.UserTable().add(u) # uID will be 1
   # script entry 
-  s = tos.ScriptTable().createEntry("test_script_name", "test_script_name.sh", 1, "empty script used for testing", False)
+  e, s = tos.ScriptTable().createEntry("test_script_name", "test_script_name.sh", 1, "empty script used for testing", False)
   err = tos.ScriptTable().add(s)
   # computer entry 
-  c = toc.ComputerTable().createEntry(1, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
+  e, c = toc.ComputerTable().createEntry(1, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
   err = toc.ComputerTable().add(c)
   # scriptLog entry
-  sl = tosl.ScriptLogTable().createEntry(1, 1, 1, False)
+  e, sl = tosl.ScriptLogTable().createEntry(1, 1, 1, False)
   err = tosl.ScriptLogTable().add(sl)
 
 def createTablesBig():
@@ -70,38 +70,38 @@ def createTablesBig():
   '''
   createEmptyTables()
   # user entries
-  u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
+  e, u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
   err = tou.UserTable().add(u) 
-  u = tou.UserTable().createEntry("lmilne", "ya_yeet", False)
+  e, u = tou.UserTable().createEntry("lmilne", "ya_yeet", False)
   err = tou.UserTable().add(u) 
-  u = tou.UserTable().createEntry("jbusch", "beer-brand", True)
+  e, u = tou.UserTable().createEntry("jbusch", "beer-brand", True)
   err = tou.UserTable().add(u) 
   # script entries
-  s = tos.ScriptTable().createEntry("test_script_name", "test_script_name.sh", 1, "empty script used for testing", False)
+  e, s = tos.ScriptTable().createEntry("test_script_name", "test_script_name.sh", 1, "empty script used for testing", False)
   err = tos.ScriptTable().add(s)
-  s = tos.ScriptTable().createEntry("create_happiness", "reboot.sh", 1, "doggies and kitties", True)
+  e, s = tos.ScriptTable().createEntry("create_happiness", "reboot.sh", 1, "doggies and kitties", True)
   err = tos.ScriptTable().add(s)
-  s = tos.ScriptTable().createEntry("solve_world_hunger", "shutdown.sh", 1, "crazy scritpt", False)
-  err = tos.ScriptTable().add(s)
-  s = tos.ScriptTable().createEntry("leprechan_script", "sleepScript.sh", 1, "found at end of rainbow", True)
+  # e, s = tos.ScriptTable().createEntry("solve_world_hunger", "shutdown.sh", 1, "crazy scritpt", False)
+  # err = tos.ScriptTable().add(s)
+  e, s = tos.ScriptTable().createEntry("leprechan_script", "sleepScript.sh", 1, "found at end of rainbow", True)
   err = tos.ScriptTable().add(s)
   # computer entries 
-  c = toc.ComputerTable().createEntry(1, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
+  e, c = toc.ComputerTable().createEntry(1, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
   err = toc.ComputerTable().add(c)
-  c = toc.ComputerTable().createEntry(1, "Rachels Air", "Old computer", "dusty computer in closet", "rbroders22", "idk how IPs are formatted ya yeet... we can dream", True)
+  e, c = toc.ComputerTable().createEntry(1, "Rachels Air", "Old computer", "dusty computer in closet", "rbroders22", "idk how IPs are formatted ya yeet... we can dream", True)
   err = toc.ComputerTable().add(c)
-  c = toc.ComputerTable().createEntry(2, "Larry's Pi", "Raspberry Pie", "yum love pie", "lmilne", "idk how IPs are formatted ya yeet ... maybe one day", False)
+  e, c = toc.ComputerTable().createEntry(2, "Larry's Pi", "Raspberry Pie", "yum love pie", "lmilne", "idk how IPs are formatted ya yeet ... maybe one day", False)
   err = toc.ComputerTable().add(c)
-  c = toc.ComputerTable().createEntry(3, "James' Computer", "JB Computer", "its a computer what can I say", "jbusch", "idk how IPs are formatted ya yeet...still", False)
+  e, c = toc.ComputerTable().createEntry(3, "James' Computer", "JB Computer", "its a computer what can I say", "jbusch", "idk how IPs are formatted ya yeet...still", False)
   err = toc.ComputerTable().add(c)
   # scriptLog entries
-  sl = tosl.ScriptLogTable().createEntry(1, 1, 3, False)
+  e, sl = tosl.ScriptLogTable().createEntry(1, 1, 3, False)
   err = tosl.ScriptLogTable().add(sl)
-  sl = tosl.ScriptLogTable().createEntry(2, 2, 4, False)
+  e, sl = tosl.ScriptLogTable().createEntry(2, 2, 4, False)
   err = tosl.ScriptLogTable().add(sl)
-  sl = tosl.ScriptLogTable().createEntry(3, 4, 2, False)
+  e, sl = tosl.ScriptLogTable().createEntry(3, 4, 2, False)
   err = tosl.ScriptLogTable().add(sl)
-  sl = tosl.ScriptLogTable().createEntry(1, 3, 1, False)
+  e, sl = tosl.ScriptLogTable().createEntry(1, 3, 1, False)
   err = tosl.ScriptLogTable().add(sl)
 
 def cleanUpCreateTables():
@@ -213,7 +213,9 @@ class BaseTestCase(unittest.TestCase):
     # Tests creating a script entry (expecting success).
     def test_createEntryS(self):
       createEmptyTables()
-      s = tos.ScriptTable().createEntry("test_script_name", "test_script_name.sh", 0, "emptry script used for testing", False)
+      err, s = tos.ScriptTable().createEntry("test_script_name", "test_script_name.sh", 0, "emptry script used for testing", False)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err, errExp)
       self.assertEqual(s.name, "test_script_name")
       self.assertEqual(s.fileName, "test_script_name.sh")
       self.assertEqual(s.author, 0)
@@ -223,7 +225,9 @@ class BaseTestCase(unittest.TestCase):
     # Tests creating a computer entry (expecting success).
     def test_createEntryC(self):
       createEmptyTables()
-      c = toc.ComputerTable().createEntry(0, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
+      err, c = toc.ComputerTable().createEntry(0, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err, errExp)
       self.assertEqual(c.userID, 0)
       self.assertEqual(c.name, "RachelsSurface")
       self.assertEqual(c.nickName, "Raquels Computer")
@@ -235,7 +239,9 @@ class BaseTestCase(unittest.TestCase):
     # Tests creating a scriptLog entry (expecting success).
     def test_createEntrySL(self):
       createEmptyTables()
-      sl = tosl.ScriptLogTable().createEntry(0, 0, 0, False)
+      err, sl = tosl.ScriptLogTable().createEntry(0, 0, 0, False)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err, errExp)
       self.assertEqual(sl.scriptID, 0)
       self.assertEqual(sl.userID, 0)
       self.assertEqual(sl.compID, 0)
@@ -244,7 +250,9 @@ class BaseTestCase(unittest.TestCase):
     # Tests creating a user entry (expecting success).
     def test_createEntryU(self):
       createEmptyTables()
-      u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
+      err, u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      self.assertEqual(err, errExp)
       self.assertEqual(u.username, "rbroders")
       self.assertEqual(u.password, "hella_secure_hashed_password")
       self.assertEqual(u.admin, True)
@@ -254,7 +262,7 @@ class BaseTestCase(unittest.TestCase):
     # Must first create the entry then add it (expecting success).
     def test_addEntryU(self):
       createEmptyTables()
-      u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
+      err, u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
       err = tou.UserTable().add(u)
       errExp = pref.getError(pref.ERROR_SUCCESS)
       self.assertEqual(err,errExp)
@@ -266,10 +274,10 @@ class BaseTestCase(unittest.TestCase):
     def test_addEntryS(self):
       createEmptyTables()
       # need user entry first for foreign key
-      u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
+      err, u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
       err = tou.UserTable().add(u) # uID will be 1
       # script entry
-      s = tos.ScriptTable().createEntry("test_script_name", "test_script_name.sh", 1, "emptry script used for testing", False)
+      err, s = tos.ScriptTable().createEntry("test_script_name", "test_script_name.sh", 1, "emptry script used for testing", False)
       err = tos.ScriptTable().add(s)
       errExp = pref.getError(pref.ERROR_SUCCESS)
       self.assertEqual(err,errExp)
@@ -281,10 +289,10 @@ class BaseTestCase(unittest.TestCase):
     def test_addEntryC(self):
       createEmptyTables()
       # need user entry first for foreign key
-      u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
+      err, u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
       err = tou.UserTable().add(u) # uID will be 1
       # computer entry
-      c = toc.ComputerTable().createEntry(1, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
+      err, c = toc.ComputerTable().createEntry(1, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
       err = toc.ComputerTable().add(c)
       errExp = pref.getError(pref.ERROR_SUCCESS)
       self.assertEqual(err,errExp)
@@ -296,18 +304,17 @@ class BaseTestCase(unittest.TestCase):
     def test_addEntrySL(self):
       createEmptyTables()
       # need user entry first for foreign key
-      u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
+      err, u = tou.UserTable().createEntry("rbroders", "hella_secure_hashed_password", True)
       err = tou.UserTable().add(u) # uID will be 1
       # need script entry for foreign key
-      s = tos.ScriptTable().createEntry("test_script_name", "test_script_name.sh", 1, "emptry script used for testing", False)
+      err, s = tos.ScriptTable().createEntry("test_script_name", "test_script_name.sh", 1, "emptry script used for testing", False)
       err = tos.ScriptTable().add(s)
       # need computer entry for foreign key
-      c = toc.ComputerTable().createEntry(1, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
+      err, c = toc.ComputerTable().createEntry(1, "RachelsSurface", "Raquels Computer", "Rachel's wonderful awful computer", "rbroders", "idk how IPs are formatted ya yeet", False)
       err = toc.ComputerTable().add(c)
       # scriptLog entry
-      sl = tosl.ScriptLogTable().createEntry(1, 1, 1, False)
+      err, sl = tosl.ScriptLogTable().createEntry(1, 1, 1, False)
       err = tosl.ScriptLogTable().add(sl)
-      print(err)
       errExp = pref.getError(pref.ERROR_SUCCESS)
       # check stdout/stderr file creation
       outPath = pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH) + sl.stdoutFile

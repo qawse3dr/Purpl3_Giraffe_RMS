@@ -23,11 +23,9 @@ def exeCommand(command: str, commandName: str, tableName:type):
             cur.execute(command)
             con.commit()
         except Error as err: # command execution failed
-            print(err)
             e = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args=(commandName, tableName, err)) # return error with specific info
         con.close()
     except Error as err: # connection creation failed
-        print(err)
         e = pref.getError(pref.ERROR_CREATE_SQLITE3_CONNECTION, args = (command, tableName, err)) # return error with specific info
 
     return e
@@ -52,7 +50,6 @@ def insert(command: str, data: tuple, commandName: str, tableName:type):
             cur = con.cursor()
             cur.execute(command, data)
         except Error as err: # command execution failed
-            print(err)
             e = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args=(commandName, tableName, err)) # return error with specific info
         
         try: # attempt to get return data
@@ -63,12 +60,10 @@ def insert(command: str, data: tuple, commandName: str, tableName:type):
                 ret = row[0]
             cur.close()
         except Error as err: # return gathering failed
-            print(err)
             e = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args=(commandName, tableName, err)) # return error with specific info
         con.commit()
         con.close()  
     except Error as err: # connection creation failed
-        print(err)
         e = pref.getError(pref.ERROR_CREATE_SQLITE3_CONNECTION, args = (command, tableName, err)) # return error with specific info        
 
     return e, ret
@@ -94,13 +89,10 @@ def getRow(command: str, commandName: str, tableName:type):
             row = cur.fetchone()
             cur.close()
         except Error as err: # select failed
-            print(err)
             e = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args=(commandName, tableName, err)) # return error with specific info
         con.commit()
         con.close()
     except Error as err: # connection creation failed
-        print("exeCommand error:")
-        print(err)
         e = pref.getError(pref.ERROR_CREATE_SQLITE3_CONNECTION, args = (command, tableName, err)) # return error with specific info
         
     return e, row
@@ -126,12 +118,10 @@ def getAllRows(command: str, commandName: str, tableName:type):
             rows = cur.fetchall()
             cur.close()
         except Error as err: # select failed
-            print(err)
             e = pref.getError(pref.ERROR_EXECUTE_SQLITE3_COMMAND, args=(commandName, tableName, err)) # return error with specific info
         con.commit()
         con.close()
     except Error as err: # connection creation failed
-        print(err)
         e = pref.getError(pref.ERROR_CREATE_SQLITE3_CONNECTION, args = (command, tableName, err)) # return error with specific info
         
     return e, rows

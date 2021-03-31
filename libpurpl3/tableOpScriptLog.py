@@ -179,6 +179,7 @@ class ScriptLogTable(tableOp.Table):
             compID: int - primary key of computer table to indictae which computer is having script executed on it
             asAdmin: bool - whether or not the script was executed as admin
         @return 
+            e - will always be Success. ScriptTable createEntry function can have error, so this will return a dummy error to be consistent
             scriptLog - scriptLog object created
         '''
         # id will be set when object is added to table
@@ -194,7 +195,7 @@ class ScriptLogTable(tableOp.Table):
         stderrFile = None
         # create scriptLog object
         scriptLog = ScriptLog(id, scriptID, userID, compID, startTime, endTime, returnVal, errorCode, stdoutFile, stderrFile, asAdmin)
-        return scriptLog 
+        return pref.getError(pref.ERROR_SUCCESS), scriptLog 
 
     # overriding abstract method
     @staticmethod
@@ -258,8 +259,13 @@ class ScriptLogTable(tableOp.Table):
                 command2 = """UPDATE sl SET stdoutFile = \"""" + str(entry.stdoutFile) + """\", stderrFile = \"""" + str(entry.stderrFile) + """\" WHERE id = """ + str(ID) + """;"""
                 e = sqlFuncs.exeCommand(command2, "add", "ScriptLog")
                 # (3) Create files 
-                e = createFile(e, pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH), entry.stdoutFile)
-                e = createFile(e, pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH), entry.stderrFile)
+                if(e == pref.getError(pref.ERROR_SUCCESS)):
+                    e = createFile(e, pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH), entry.stdoutFile)
+                    if(e == pref.getError(pref.ERROR_SUCCESS)):
+                        e = createFile(e, pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH), entry.stderrFile)
+        if(e != pref.getError(pref.ERROR_SUCCESS)): # if any errors occured along the way, revert any potential changes (catch all)
+            entry.stdoutFile = None
+            entry.stderrFile = None
         return e #FIXME - should actions be undone if any errors occur along the way *thinking* - for loop
 
     # overriding abstract method
@@ -310,7 +316,6 @@ class ScriptLogTable(tableOp.Table):
                     command = command + """, """
             command = command[:-2] #remove last ' ,'
             command = command + """ WHERE ID = """ + str(entry.ID) + """;"""
-            print(command)
 
             e = sqlFuncs.exeCommand(command, "editEntry", "ScriptLog")
 
@@ -339,9 +344,6 @@ def createFile(e, path, filename):
     try:
         f = open(path + filename, "w")
     except OSError as osE:
-        print("osE: ")
-        print(osE)
-        print("filename: " + filename)
         e = pref.getError(pref.ERROR_CANT_CREATE_FILE, args = (filename))
     return e
 

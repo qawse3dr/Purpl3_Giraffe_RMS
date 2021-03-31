@@ -129,7 +129,7 @@ class ScriptTable(tableOp.Table):
         '''
         command = """SELECT * FROM s WHERE ID = """ + str(ID) + """;"""
         s = None
-        e, scriptTuple = sqlFuncs.getRow(command, "getByID", "Script") # TODO error checking here
+        e, scriptTuple = sqlFuncs.getRow(command, "getByID", "Script") 
         if(e == pref.getError(pref.ERROR_SUCCESS)):
             e, s = tupleToScript(scriptTuple, "getByID")
         return e, s
@@ -169,8 +169,11 @@ class ScriptTable(tableOp.Table):
             desc: str - user defined script description
             isAdmin: bool - whether or not the script requires admin access to run
         @return 
+            e - error created during execution of function or Success if no error occurs
             script - script object created
         '''
+        e = pref.getError(pref.ERROR_SUCCESS)
+        script = None
         # id will be set when object is added to table
         id = None
         # set dtCreated
@@ -179,12 +182,18 @@ class ScriptTable(tableOp.Table):
         dtModified = dtCreated
         # set size
         filePath = str(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH)) + fileName
-        fileStats = os.stat(filePath)
-        fileSizeB = fileStats.st_size
-        
-        # create script object
-        script = Script(None, name, fileName, author, desc, dtCreated, dtModified, fileSizeB, isAdmin)
-        return script 
+        try:
+            fileStats = os.stat(filePath)
+            fileSizeB = fileStats.st_size
+        except OSError as err:
+            print(err)
+            e = pref.getError(pref.ERROR_CREATE_SCRIPT_DNE, args = (err))
+
+        if(e == pref.getError(pref.ERROR_SUCCESS)):
+            # create script object
+            script = Script(None, name, fileName, author, desc, dtCreated, dtModified, fileSizeB, isAdmin)
+
+        return e, script 
 
     # overriding abstract method
     @staticmethod
@@ -286,7 +295,6 @@ class ScriptTable(tableOp.Table):
                     command = command + """, """
             command = command[:-2] #remove last ' ,'
             command = command + """ WHERE ID = """ + str(entry.ID) + """;"""
-            print(command)
 
             e = sqlFuncs.exeCommand(command, "editEntry", "Script")
 

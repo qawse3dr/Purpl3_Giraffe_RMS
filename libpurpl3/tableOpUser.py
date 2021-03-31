@@ -164,6 +164,7 @@ class UserTable(tableOp.Table):
             password: str - the user's *hashed* password
             admin: bool - whether or not the user has admin privledges
         @return 
+            e - will always be Success. ScriptTable createEntry function can have error, so this will return a dummy error to be consistent
             user - user object created
         '''
         # id will be set when object is added to table
@@ -174,7 +175,7 @@ class UserTable(tableOp.Table):
         dtModified = dtCreated
         # create user object
         user = User(id, username, password, dtCreated, dtModified, admin)
-        return user 
+        return pref.getError(pref.ERROR_SUCCESS), user  
 
     # overriding abstract method
     @staticmethod
@@ -276,7 +277,6 @@ class UserTable(tableOp.Table):
                     command = command + """, """
             command = command[:-2] #remove last ' ,'
             command = command + """ WHERE ID = """ + str(entry.ID) + """;"""
-            print(command)
 
             e = sqlFuncs.exeCommand(command, "editEntry", "User")
 
@@ -344,7 +344,6 @@ def tupleToUser(tup: tuple, commandName: str):
 
             u = User(ID, username, password, dtCreated, dtModified, isAdmin)
         except ValueError as err:
-            print(err)
             e = pref.getError(pref.ERROR_SQL_RETURN_CAST, args=(commandName, "User", err))
             u = None
 
