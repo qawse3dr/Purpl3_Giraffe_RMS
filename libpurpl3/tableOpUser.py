@@ -101,17 +101,24 @@ class UserTable(tableOp.Table):
         return e
 
     @staticmethod
-    def checkLogin(userName: str, password: str)->int:
+    def checkLogin(username: str, password: str)->int:
         '''
-        checks username and password against db
-        will return false if username is not in db or if
-        password given does not match db password
-        @param userName, the userName of the user cannot contain " " or ";"
-        @param password, a hashed password to check against db
-        @return user ID, if failed return -1
+        Checks username and password against database.
+        Will return -1 if username is not in database or password given does not match database password
+        @param 
+            username: str - the username of the user cannot contain " " or ";"
+            password: str - a hashed password to check against database
+        @return 
+            userID: int - userID corresponding to username and password passed or -1 if failed
         '''
-        # TODO do a select with this info and see if it gets anythikng back
-        return 1
+        userID = -1
+        command = """SELECT * FROM u WHERE (username = \"""" + str(username) + """\" AND password = \"""" + str(password) + """\");"""
+        e, rows = sqlFuncs.getAllRows(command, "checkLogin", "User")
+        if(e == pref.getError(pref.ERROR_SUCCESS)):
+            if(len(rows) == 1): # if a  single user was found
+                userID = rows[0][0] # take first (and only) row  =and first element (userID) of this row
+
+        return userID
 
     # overriding abstract method
     @staticmethod
