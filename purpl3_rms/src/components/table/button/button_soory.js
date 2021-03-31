@@ -2,7 +2,7 @@ import './button.css'
 
 const Button = (props) => {
     const onClick = () => {
-        props.func(props.name)
+        props.func(props)
         //console.log(props.name)
     }
     return (

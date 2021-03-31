@@ -4,7 +4,7 @@ Ver 0.01
 09/03/2020
 '''
 
-from flask import jsonify, session
+from flask import jsonify, session, redirect
 import hashlib
 import flask as flask
 import libpurpl3.preferences as pref
@@ -19,14 +19,19 @@ def login(data: dict) -> str:
     @param dict data, the dictonary of the users input data
     @return a json of the error code
     '''
-    userName = data[pref.getNoCheck(pref.LOGIN_USERNAME)]
-    password = hashlib.sha256(data[pref.getNoCheck(pref.LOGIN_PASSWORD)]).hexdigest()
+    #makesure the prefs contain a username and password
+    try:
+        userName = data[pref.getNoCheck(pref.LOGIN_USERNAME)]
+        password = hashlib.sha256(data[pref.getNoCheck(pref.LOGIN_PASSWORD)].encode()).hexdigest()
+    except:
+        return jsonify(Error = pref.getError(pref.ERROR_ATTRIBUTE_NOT_FOUND).toJson())
+    
 
     if " " in userName or ";" in userName:
-        return jsonify(pref.getError(pref.ERROR_USERNAME_INVALID).toJson())
+        return jsonify(Error = pref.getError(pref.ERROR_USERNAME_INVALID).toJson())
 
     userID = tableLogin.UserTable.checkLogin(userName=userName, password=password)
-
+    
     # ErrorCode = None
     if userID != -1:
         ErrorCode = pref.Success
@@ -42,6 +47,7 @@ def login(data: dict) -> str:
 def logout(data: dict)-> str:
     if "userID" in session:
         session.pop("userID", None)
+        return redirect("/")
 
     return jsonify(
         Error = pref.Success.toJson()

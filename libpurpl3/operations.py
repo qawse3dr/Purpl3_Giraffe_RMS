@@ -1,10 +1,14 @@
 import logging
-from flask import jsonify
+from flask import jsonify, session, redirect
 import libpurpl3.preferences as pref 
+import libpurpl3.login as login
 import libpurpl3.sshServer as ssh
+import libpurpl3.tableOp as tableOp
 import libpurpl3.tableOpComputer as computerTable
 import libpurpl3.tableOpScript as scriptTable
+import libpurpl3.tableOpScriptLog as scriptLogTable
 import libpurpl3.tableOpUser as userTable
+import libpurpl3.tableReqHelpers as tableReqHelpers
 
 
 #Creates logger
@@ -57,42 +61,18 @@ def runScripts(data: dict) -> str:
     err, script = scriptTable.ScriptTable.getByID(scriptID)
     if(err != pref.Success):
       break
-    #TODO change onces usersessions are ready
-    user = None
-    
-    #TODO remove once db is up
-    
-    if computerID == 0:
-      computer.username = "larry"
-      computer.IP = 'localhost'
-    elif computerID == 1:
-      computer.username = "root"
-      computer.IP = 'localhost'
-    elif computerID == 2:
-      computer.username = "pi"
-      computer.IP = '192.168.100.146'
-    else:
-      computer.username = "larry"
-      computer.IP = 'localhost'
 
-    #temp scripts till db is done #TODO get rid when db is done
-    if scriptID == 0:
-      script.fileName = "sleepScript.sh"
-    elif scriptID == 1:
-      script.fileName = "updateComputerArch.sh"
-    elif scriptID == 2:
-      script.fileName = "backupHome.sh"
-    elif scriptID == 3:
-      script.fileName = "reboot.sh"
-    elif scriptID == 4:
-      script.fileName = "shutdown.sh"
-    elif scriptID == 5:
-      script.fileName = "ls.sh"
-    else:
-      script.fileName = "sleepScript.sh"
     
+    #Makes sure user is logged in
+    userID = None
+    try:
+      userID = session[pref.getNoCheck(pref.REQ_VAR_USER_ID)]
+    except:
+      err = pref.getError(pref.ERROR_NOT_LOGGED_IN)
+      break
+
     #Create ssh connection
-    conn = ssh.sshConnection(computer,user,script)
+    conn = ssh.sshConnection(computer, userID, script)
 
     #Connect to computer
     err = conn.connect()
@@ -115,29 +95,40 @@ def runScripts(data: dict) -> str:
 
 
 def manageScripts(data: dict) -> str:
-  return jsonify(
-    Error = pref.Success.toJson(),
-    data = {
-      "Success": True
-    }
-  )
+
+  logger.info("Processing Manage Script Request")
+  
+  #Get vars names
+  tableName = pref.getNoCheck(pref.TABLE_SCRIPT)
+
+  #Convert to general request
+  jsonData = manageTable(tableName, data)
+
+  return jsonData
 
 def manageComputers(data: dict) -> str:
-  err = pref.Success
-  return jsonify(
-    Error = err.toJson(),
-    data = {
-      "Success": True
-    }
-  )
+
+  logger.info("Processing Manage Computer Request")
+
+  #Get vars names
+  tableName = pref.getNoCheck(pref.TABLE_COMPUTER)
+
+  #Convert to general request
+  jsonData = manageTable(tableName, data)
+
+  return jsonData
 
 def manageScriptLogs(data: dict) -> str:
-    return jsonify(
-        Error = pref.Success.toJson(),
-        data = {
-            "Success": True
-        }
-    )
+
+  logger.info("Processing Manage Script Log Request")
+
+  #Get vars names
+  tableName = pref.getNoCheck(pref.TABLE_SCRIPT_LOGS)
+
+  #Convert to general request
+  jsonData = manageTable(tableName, data)
+
+  return jsonData
 
 def scheduleScript(data: dict) -> str:
   return jsonify(
@@ -148,4 +139,23 @@ def scheduleScript(data: dict) -> str:
   )
 
 
-    
+def manageTable(tableName: str, data: dict):
+  err = pref.Success
+  opName = pref.getNoCheck(pref.REQ_VAR_FUNC_OP)
+  op = None
+  opDataName = pref.getNoCheck(pref.REQ_VAR_DATA)
+  opData = None
+  #gets data from dict
+  try:
+    opData = data[opDataName]
+    op = data[opName]
+  except:
+    err = pref.getError(pref.ERROR_INVALID_REQUEST, args=(data))
+    logger.error(err)
+  
+  if(err == pref.Success):
+    jsonData = tableReqHelpers.processRequest(tableName,op,opData)
+  else:
+    jsonData = jsonify(Error = err.toJson())
+
+  return jsonData
