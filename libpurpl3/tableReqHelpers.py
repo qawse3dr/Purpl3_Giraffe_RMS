@@ -151,7 +151,9 @@ def processRequest(tableName: pref.prefENUM, tableOP: pref.prefENUM, data: dict)
       err, entry = table.getByID(id)
 
     #Creates return request
-    returnVal = jsonify(Error=err.toJson(), entry=entry.toJson())
+    entryResponse = None
+    if(err == pref.Success): entryResponse = entry.toJson()
+    returnVal = jsonify(Error=err.toJson(), entry=entryResponse)
 
   elif(tableOP == pref.getNoCheck(pref.TABLE_OP_EDIT)):
     err, entry = createObjFromReq(tableName, table, data)

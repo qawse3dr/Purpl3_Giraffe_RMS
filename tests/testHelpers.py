@@ -7,6 +7,7 @@ import libpurpl3.tableOpUser as userTable
 from Purpl3_RMS import app
 import datetime
 import unittest
+import hashlib
 
 '''
 Helpers for unit testing application
@@ -32,7 +33,8 @@ def clearDB():
   userTable.UserTable.deleteTable()
   
 def createUserAccount():
-  entry = userTable.UserTable.createEntry("Unittest","unitTest",False)
+  password = hashlib.sha256("unittest".encode()).hexdigest()
+  entry = userTable.UserTable.createEntry("unittest",password,False)
   userTable.UserTable.add(entry)
   return entry
 

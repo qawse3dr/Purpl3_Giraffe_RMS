@@ -196,3 +196,82 @@ class BaseTestCase(unittest.TestCase):
     rv = self.c.post('/api', json=params)
     self.assertEqual(rv.get_json()["Error"]["code"],0)
     self.assertEqual(rv.get_json()["entry"],fileString)
+
+  def test_login_request_success(self):
+    '''
+    Tests a login request with a valid login
+    '''
+
+    params = {
+      pref.getNoCheck(pref.REQ_VAR_BODY):{
+        pref.getNoCheck(pref.REQ_VAR_OP): pref.getAttrName(pref.getNoCheck(pref.LOGIN_LOGIN)),
+        pref.getNoCheck(pref.REQ_VAR_DATA):{
+          pref.getNoCheck(pref.LOGIN_USERNAME): "unittest",
+          pref.getNoCheck(pref.LOGIN_PASSWORD): "unittest"
+        }
+      }
+    }
+
+    rv = self.c.post('/login', json=params)
+    self.assertEqual(rv.get_json()["Error"]["code"],0)
+
+  def test_login_request_fail(self):
+    '''
+    Tests a login request with a invalid login due to invalid password
+    '''
+
+    params = {
+      pref.getNoCheck(pref.REQ_VAR_BODY):{
+        pref.getNoCheck(pref.REQ_VAR_OP): pref.getAttrName(pref.getNoCheck(pref.LOGIN_LOGIN)),
+        pref.getNoCheck(pref.REQ_VAR_DATA):{
+          pref.getNoCheck(pref.LOGIN_USERNAME): "unittest",
+          pref.getNoCheck(pref.LOGIN_PASSWORD): "IncorrectPassword"
+        }
+      }
+    }
+
+
+    rv = self.c.post('/login', json=params)
+    self.assertEqual(rv.get_json()["Error"]["code"],pref.getError(pref.ERROR_USER_AUTHENTICATION_ERROR).code)
+
+  def test_get_by_ID(self):
+    '''
+    Tests get by id for an object that exists
+    '''
+    params = {
+      pref.getNoCheck(pref.REQ_VAR_BODY):{
+        pref.getNoCheck(pref.REQ_VAR_OP): pref.getAttrName(pref.getNoCheck(pref.OPERATION_MANAGE_SCRIPT)),
+        pref.getNoCheck(pref.REQ_VAR_DATA):{
+          pref.getNoCheck(pref.REQ_VAR_FUNC_OP): pref.getNoCheck(pref.TABLE_OP_GET_BY_ID),
+          pref.getNoCheck(pref.REQ_VAR_DATA):{
+            pref.getNoCheck(pref.REQ_VAR_ID): 1,
+          }
+        }
+      }
+    }
+
+    rv = self.c.post("/api", json=params)
+    
+    self.assertEqual(rv.get_json()["Error"]["code"],0)
+    self.assertEqual(rv.get_json()["entry"]["ID"],'1')
+
+  def test_get_by_ID_DNE(self):
+    '''
+    Tests get by id for an object that doesnt exist
+    '''
+    params = {
+      pref.getNoCheck(pref.REQ_VAR_BODY):{
+        pref.getNoCheck(pref.REQ_VAR_OP): pref.getAttrName(pref.getNoCheck(pref.OPERATION_MANAGE_SCRIPT)),
+        pref.getNoCheck(pref.REQ_VAR_DATA):{
+          pref.getNoCheck(pref.REQ_VAR_FUNC_OP): pref.getNoCheck(pref.TABLE_OP_GET_BY_ID),
+          pref.getNoCheck(pref.REQ_VAR_DATA):{
+            pref.getNoCheck(pref.REQ_VAR_ID): 99,
+          }
+        }
+      }
+    }
+
+    rv = self.c.post("/api", json=params)
+    
+    self.assertEqual(rv.get_json()["Error"]["code"],pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR).code)
+
