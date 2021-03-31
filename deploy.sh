@@ -2,6 +2,7 @@
 
 #build react
 cd purpl3_rms
+npm install
 npm run-script build
 cd ..
 
