@@ -188,12 +188,12 @@ class UserTable(tableOp.Table):
             e - error created during execution of function or Success if no error occurs
             s - the specified attribute's value from the entry retrieved from the SQL table 
         '''
-        attr = None
+        val = None
         command = """SELECT (""" + attr + """) FROM u WHERE ID = """ + str(ID) + """;"""
         e, uTuple = sqlFuncs.getRow(command, "getAttrByID", "User")
         if (e == pref.getError(pref.ERROR_SUCCESS)):
-            attr = uTuple[0]
-        return e, attr
+            val = uTuple[0]
+        return e, val
 
     # overriding abstract method
     @staticmethod
@@ -288,6 +288,11 @@ class UserTable(tableOp.Table):
 
         return e, u
 
+
+######################################################################################################
+############################ Functions relating to User/UserTable classes ############################
+######################################################################################################
+
 def tupleToUser(tup: tuple, commandName: str):
     '''
     Seperates a tuple of User object parameter values to init a User object. 
@@ -297,7 +302,7 @@ def tupleToUser(tup: tuple, commandName: str):
         tup - a tuple containing values for every parameter of the User class
     @return 
         e - most recent error when executing function or Success if no error occurs 
-        s - the User object created
+        u - the User object created
     '''
     # ID: int, username: str, password: str, dtCreated: datetime.datetime,
     # dtModified: datetime.datetime, admin: bool

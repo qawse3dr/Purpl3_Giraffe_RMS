@@ -112,189 +112,6 @@ class BaseTestCase(unittest.TestCase):
     def setUp(self):
       pref.setAttr("DB_PATH", "unit_test.db") # work on seperate clean database so as to not mess up test data in base db
 
-    ################## EDITENTRY TESTS (SUCCESS) ##################
-    def test_editEntryS(self):
-      createTablesBig()
-      err, s = tos.ScriptTable().getByID(2)
-      # change some of s's attribute
-      s.name = "newName"
-      s.fileName = "newFilename.sh"
-      s.author = 1
-      s.desc = "New desc"
-      s.size = 200.0
-      s.isAdmin = False
-      s.dtModified = dt.now()
-      # write these edits to table
-      err, s2 = tos.ScriptTable().editEntry(s)
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      # checks
-      self.assertEqual(err, errExp)
-      self.assertEqual(s.ID, s2.ID)
-      self.assertEqual(s.name, s2.name)
-      self.assertEqual(s.fileName, s2.fileName)
-      self.assertEqual(s.author, s2.author)
-      self.assertEqual(s.desc, s2.desc)
-      self.assertEqual(s.dtCreated, s2.dtCreated)
-      self.assertEqual(s.dtModified, s2.dtModified)
-      self.assertEqual(s.size, s2.size)
-      self.assertEqual(s.isAdmin, s2.isAdmin)
-
-    def test_editEntryC(self):
-      createTablesBig()
-      err, c = toc.ComputerTable().getByID(2)
-      # change some of c's attribute
-      c.userID = 2
-      c.name = "newName"
-      c.nickName = "newNickName"
-      c.desc = "newDesc"
-      c.username = "newUsername"
-      c.IP = "newIP"
-      c.dtModified = dt.now()
-      c.asAdmin = True
-      # write these edits to table
-      err, c2 = toc.ComputerTable().editEntry(c)
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      # checks
-      self.assertEqual(err, errExp)
-      self.assertEqual(c.userID, c2.userID)
-      self.assertEqual(c.name, c2.name)
-      self.assertEqual(c.nickName, c2.nickName)
-      self.assertEqual(c.desc, c2.desc)
-      self.assertEqual(c.username, c2.username)
-      self.assertEqual(c.IP, c2.IP)
-      self.assertEqual(c.dtCreated, c2.dtCreated)
-      self.assertEqual(c.dtModified, c2.dtModified)
-      self.assertEqual(c.asAdmin, c2.asAdmin)
-
-    def test_editEntrySL(self):
-      createTablesBig()
-      err, sl = tosl.ScriptLogTable().getByID(2)
-      # change some of s's attribute
-      sl.scriptID = 1
-      sl.userID = 1
-      sl.compID = 1
-      sl.startTime = dt.now()
-      sl.endTime = dt.now()
-      sl.returnVal = -1
-      sl.errorCode = 0
-      sl.stdoutFile = "stdoutFile new"
-      sl.stderrFile = "stderrFile new"
-      sl.asAdmin = False
-      # write these edits to table
-      err, sl2 = tosl.ScriptLogTable().editEntry(sl)
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      # checks
-      self.assertEqual(err, errExp)
-      self.assertEqual(sl.ID, sl2.ID)
-      self.assertEqual(sl.scriptID, sl.scriptID)
-      self.assertEqual(sl.userID, sl.userID)
-      self.assertEqual(sl.compID, sl.compID)
-      self.assertEqual(sl.startTime, sl.startTime)
-      self.assertEqual(sl.endTime, sl.endTime)
-      self.assertEqual(sl.returnVal, sl.returnVal)
-      self.assertEqual(sl.errorCode, sl.errorCode)
-      self.assertEqual(sl.stdoutFile, sl.stdoutFile)
-      self.assertEqual(sl.stderrFile, sl.stderrFile)
-      self.assertEqual(sl.asAdmin, sl.asAdmin)
-
-    def test_editEntryU(self):
-      createTablesBig()
-      err, u = tou.UserTable().getByID(2)
-      # change some of s's attribute
-      u.username = "new username"
-      u.password = "new password"
-      u.dtCreated = dt.now()
-
-      # write these edits to table
-      err, u2 = tou.UserTable().editEntry(u)
-      errExp = pref.getError(pref.ERROR_SUCCESS)
-      # checks
-      self.assertEqual(err, errExp)
-      self.assertEqual(u.username, u2.username)
-      self.assertEqual(u.password, u2.password)
-      self.assertEqual(u.dtCreated, u2.dtCreated)
-      self.assertEqual(u.dtModified, u2.dtModified)
-      self.assertEqual(u.admin, u2.admin)
-
-    ################## EDITENTRY TESTS (FAILURE) ##################
-    def test_editEntryS_F(self):
-      createTablesBig()
-      err, s = tos.ScriptTable().getByID(2)
-      # change some of s's attribute
-      s.ID = None
-      # write these edits to table
-      err, s2 = tos.ScriptTable().editEntry(s)
-      errExp = pref.getError(pref.ERROR_NO_ID_PROVIDED, args=("editEntry", "Script"))
-      # checks
-      self.assertEqual(err, errExp)
-      self.assertEqual(s.ID, s2.ID)
-      self.assertEqual(s.name, s2.name)
-      self.assertEqual(s.fileName, s2.fileName)
-      self.assertEqual(s.author, s2.author)
-      self.assertEqual(s.desc, s2.desc)
-      self.assertEqual(s.dtCreated, s2.dtCreated)
-      self.assertEqual(s.dtModified, s2.dtModified)
-      self.assertEqual(s.size, s2.size)
-      self.assertEqual(s.isAdmin, s2.isAdmin)
-
-    def test_editEntryC_F(self):
-      createTablesBig()
-      err, c = toc.ComputerTable().getByID(2)
-      # change some of c's attribute
-      c.ID = None
-      # write these edits to table
-      err, c2 = toc.ComputerTable().editEntry(c)
-      errExp = pref.getError(pref.ERROR_NO_ID_PROVIDED, args=("editEntry", "Computer"))
-      # checks
-      self.assertEqual(err, errExp)
-      self.assertEqual(c.userID, c2.userID)
-      self.assertEqual(c.name, c2.name)
-      self.assertEqual(c.nickName, c2.nickName)
-      self.assertEqual(c.desc, c2.desc)
-      self.assertEqual(c.username, c2.username)
-      self.assertEqual(c.IP, c2.IP)
-      self.assertEqual(c.dtCreated, c2.dtCreated)
-      self.assertEqual(c.dtModified, c2.dtModified)
-      self.assertEqual(c.asAdmin, c2.asAdmin)
-
-    def test_editEntrySL_F(self):
-      createTablesBig()
-      err, sl = tosl.ScriptLogTable().getByID(2)
-      # change some of s's attribute
-      sl.ID = None
-      # write these edits to table
-      err, sl2 = tosl.ScriptLogTable().editEntry(sl)
-      errExp = pref.getError(pref.ERROR_NO_ID_PROVIDED, args=("editEntry", "ScriptLog"))
-      self.assertEqual(err, errExp)
-      self.assertEqual(sl.ID, sl2.ID)
-      self.assertEqual(sl.scriptID, sl.scriptID)
-      self.assertEqual(sl.userID, sl.userID)
-      self.assertEqual(sl.compID, sl.compID)
-      self.assertEqual(sl.startTime, sl.startTime)
-      self.assertEqual(sl.endTime, sl.endTime)
-      self.assertEqual(sl.returnVal, sl.returnVal)
-      self.assertEqual(sl.errorCode, sl.errorCode)
-      self.assertEqual(sl.stdoutFile, sl.stdoutFile)
-      self.assertEqual(sl.stderrFile, sl.stderrFile)
-      self.assertEqual(sl.asAdmin, sl.asAdmin)
-
-    def test_editEntryU_F(self):
-      createTablesBig()
-      err, u = tou.UserTable().getByID(2)
-      # change some of s's attribute
-      u.ID = None
-      # write these edits to table
-      err, u2 = tou.UserTable().editEntry(u)
-      errExp = pref.getError(pref.ERROR_NO_ID_PROVIDED, args=("editEntry", "User"))
-      # checks
-      self.assertEqual(err, errExp)
-      self.assertEqual(u.ID, u2.ID)
-      self.assertEqual(u.username, u2.username)
-      self.assertEqual(u.password, u2.password)
-      self.assertEqual(u.dtCreated, u2.dtCreated)
-      self.assertEqual(u.dtModified, u2.dtModified)
-      self.assertEqual(u.admin, u2.admin)
-
     ################## CREATE TABLE TESTS ##################
     # Tests table creation from user class directly (expecting success)
     def test_createTableU(self):
@@ -719,6 +536,201 @@ class BaseTestCase(unittest.TestCase):
       err, u = tou.UserTable().getAll()
       errExp = pref.getError(pref.ERROR_SUCCESS)
       self.assertEqual(err, errExp)
+
+    
+    ################## EDITENTRY TESTS (SUCCESS) ##################
+    # Tests editing an entry of the script table (expects success)
+    def test_editEntryS(self):
+      createTablesBig()
+      err, s = tos.ScriptTable().getByID(2)
+      # change some of s's attributes
+      s.name = "newName"
+      s.fileName = "newFilename.sh"
+      s.author = 1
+      s.desc = "New desc"
+      s.size = 200.0
+      s.isAdmin = False
+      s.dtModified = dt.now()
+      # write these edits to table
+      err, s2 = tos.ScriptTable().editEntry(s)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      # checks
+      self.assertEqual(err, errExp)
+      self.assertEqual(s.ID, s2.ID)
+      self.assertEqual(s.name, s2.name)
+      self.assertEqual(s.fileName, s2.fileName)
+      self.assertEqual(s.author, s2.author)
+      self.assertEqual(s.desc, s2.desc)
+      self.assertEqual(s.dtCreated, s2.dtCreated)
+      self.assertEqual(s.dtModified, s2.dtModified)
+      self.assertEqual(s.size, s2.size)
+      self.assertEqual(s.isAdmin, s2.isAdmin)
+
+    # Tests editing an entry of the computer table (expects success)
+    def test_editEntryC(self):
+      createTablesBig()
+      err, c = toc.ComputerTable().getByID(2)
+      # change some of c's attributes
+      c.userID = 2
+      c.name = "newName"
+      c.nickName = "newNickName"
+      c.desc = "newDesc"
+      c.username = "newUsername"
+      c.IP = "newIP"
+      c.dtModified = dt.now()
+      c.asAdmin = True
+      # write these edits to table
+      err, c2 = toc.ComputerTable().editEntry(c)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      # checks
+      self.assertEqual(err, errExp)
+      self.assertEqual(c.userID, c2.userID)
+      self.assertEqual(c.name, c2.name)
+      self.assertEqual(c.nickName, c2.nickName)
+      self.assertEqual(c.desc, c2.desc)
+      self.assertEqual(c.username, c2.username)
+      self.assertEqual(c.IP, c2.IP)
+      self.assertEqual(c.dtCreated, c2.dtCreated)
+      self.assertEqual(c.dtModified, c2.dtModified)
+      self.assertEqual(c.asAdmin, c2.asAdmin)
+
+    # Tests editing an entry of the scriptLog table (expects success)
+    def test_editEntrySL(self):
+      createTablesBig()
+      err, sl = tosl.ScriptLogTable().getByID(2)
+      # change some of sl's attributes
+      sl.scriptID = 1
+      sl.userID = 1
+      sl.compID = 1
+      sl.startTime = dt.now()
+      sl.endTime = dt.now()
+      sl.returnVal = -1
+      sl.errorCode = 0
+      sl.stdoutFile = "stdoutFile new"
+      sl.stderrFile = "stderrFile new"
+      sl.asAdmin = False
+      # write these edits to table
+      err, sl2 = tosl.ScriptLogTable().editEntry(sl)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      # checks
+      self.assertEqual(err, errExp)
+      self.assertEqual(sl.ID, sl2.ID)
+      self.assertEqual(sl.scriptID, sl.scriptID)
+      self.assertEqual(sl.userID, sl.userID)
+      self.assertEqual(sl.compID, sl.compID)
+      self.assertEqual(sl.startTime, sl.startTime)
+      self.assertEqual(sl.endTime, sl.endTime)
+      self.assertEqual(sl.returnVal, sl.returnVal)
+      self.assertEqual(sl.errorCode, sl.errorCode)
+      self.assertEqual(sl.stdoutFile, sl.stdoutFile)
+      self.assertEqual(sl.stderrFile, sl.stderrFile)
+      self.assertEqual(sl.asAdmin, sl.asAdmin)
+
+    # Tests editing an entry of the user table (expects success)
+    def test_editEntryU(self):
+      createTablesBig()
+      err, u = tou.UserTable().getByID(2)
+      # change some of u's attributes
+      u.username = "new username"
+      u.password = "new password"
+      u.dtCreated = dt.now()
+      # write these edits to table
+      err, u2 = tou.UserTable().editEntry(u)
+      errExp = pref.getError(pref.ERROR_SUCCESS)
+      # checks
+      self.assertEqual(err, errExp)
+      self.assertEqual(u.username, u2.username)
+      self.assertEqual(u.password, u2.password)
+      self.assertEqual(u.dtCreated, u2.dtCreated)
+      self.assertEqual(u.dtModified, u2.dtModified)
+      self.assertEqual(u.admin, u2.admin)
+
+    ################## EDITENTRY TESTS (FAILURE) ##################
+    # Tests editing an entry of the script table (expects failure)
+    # Failure because passed entry has ID = None
+    def test_editEntryS_F(self):
+      createTablesBig()
+      err, s = tos.ScriptTable().getByID(2)
+      # change some of s's attributes
+      s.ID = None
+      # write these edits to table
+      err, s2 = tos.ScriptTable().editEntry(s)
+      errExp = pref.getError(pref.ERROR_NO_ID_PROVIDED, args=("editEntry", "Script"))
+      # checks
+      self.assertEqual(err, errExp)
+      self.assertEqual(s.ID, s2.ID)
+      self.assertEqual(s.name, s2.name)
+      self.assertEqual(s.fileName, s2.fileName)
+      self.assertEqual(s.author, s2.author)
+      self.assertEqual(s.desc, s2.desc)
+      self.assertEqual(s.dtCreated, s2.dtCreated)
+      self.assertEqual(s.dtModified, s2.dtModified)
+      self.assertEqual(s.size, s2.size)
+      self.assertEqual(s.isAdmin, s2.isAdmin)
+
+    # Tests editing an entry of the computer table (expects failure)
+    # Failure because passed entry has ID = None
+    def test_editEntryC_F(self):
+      createTablesBig()
+      err, c = toc.ComputerTable().getByID(2)
+      # change some of c's attributes
+      c.ID = None
+      # write these edits to table
+      err, c2 = toc.ComputerTable().editEntry(c)
+      errExp = pref.getError(pref.ERROR_NO_ID_PROVIDED, args=("editEntry", "Computer"))
+      # checks
+      self.assertEqual(err, errExp)
+      self.assertEqual(c.userID, c2.userID)
+      self.assertEqual(c.name, c2.name)
+      self.assertEqual(c.nickName, c2.nickName)
+      self.assertEqual(c.desc, c2.desc)
+      self.assertEqual(c.username, c2.username)
+      self.assertEqual(c.IP, c2.IP)
+      self.assertEqual(c.dtCreated, c2.dtCreated)
+      self.assertEqual(c.dtModified, c2.dtModified)
+      self.assertEqual(c.asAdmin, c2.asAdmin)
+
+    # Tests editing an entry of the scriptLog table (expects failure)
+    # Failure because passed entry has ID = None
+    def test_editEntrySL_F(self):
+      createTablesBig()
+      err, sl = tosl.ScriptLogTable().getByID(2)
+      # change some of sl's attributes
+      sl.ID = None
+      # write these edits to table
+      err, sl2 = tosl.ScriptLogTable().editEntry(sl)
+      errExp = pref.getError(pref.ERROR_NO_ID_PROVIDED, args=("editEntry", "ScriptLog"))
+      self.assertEqual(err, errExp)
+      self.assertEqual(sl.ID, sl2.ID)
+      self.assertEqual(sl.scriptID, sl.scriptID)
+      self.assertEqual(sl.userID, sl.userID)
+      self.assertEqual(sl.compID, sl.compID)
+      self.assertEqual(sl.startTime, sl.startTime)
+      self.assertEqual(sl.endTime, sl.endTime)
+      self.assertEqual(sl.returnVal, sl.returnVal)
+      self.assertEqual(sl.errorCode, sl.errorCode)
+      self.assertEqual(sl.stdoutFile, sl.stdoutFile)
+      self.assertEqual(sl.stderrFile, sl.stderrFile)
+      self.assertEqual(sl.asAdmin, sl.asAdmin)
+
+    # Tests editing an entry of the user table (expects failure)
+    # Failure because passed entry has ID = None
+    def test_editEntryU_F(self):
+      createTablesBig()
+      err, u = tou.UserTable().getByID(2)
+      # change some of u's attributes
+      u.ID = None
+      # write these edits to table
+      err, u2 = tou.UserTable().editEntry(u)
+      errExp = pref.getError(pref.ERROR_NO_ID_PROVIDED, args=("editEntry", "User"))
+      # checks
+      self.assertEqual(err, errExp)
+      self.assertEqual(u.ID, u2.ID)
+      self.assertEqual(u.username, u2.username)
+      self.assertEqual(u.password, u2.password)
+      self.assertEqual(u.dtCreated, u2.dtCreated)
+      self.assertEqual(u.dtModified, u2.dtModified)
+      self.assertEqual(u.admin, u2.admin)
 
   
     # This function must stay at the bottom of the unit tests

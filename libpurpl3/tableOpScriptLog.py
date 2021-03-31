@@ -208,12 +208,12 @@ class ScriptLogTable(tableOp.Table):
             e - error created during execution of function or Success if no error occurs
             s - the specified attribute's value from the entry retrieved from the SQL table 
         '''
-        attr = None
+        val = None
         command = """SELECT (""" + attr + """) FROM sl WHERE ID = """ + str(ID) + """;"""
         e, slTuple = sqlFuncs.getRow(command, "getAttrByID", "ScriptLog")
         if(e == pref.getError(pref.ERROR_SUCCESS)):
-            attr = slTuple[0]
-        return e, attr
+            val = slTuple[0]
+        return e, val
 
     # overriding abstract method
     @staticmethod
@@ -322,6 +322,9 @@ class ScriptLogTable(tableOp.Table):
 
         return e, sl
 
+######################################################################################################
+####################### Functions relating to ScriptLog/ScriptLogTable classes #######################
+######################################################################################################
 
 def createFile(e, path, filename):
     '''
@@ -351,7 +354,7 @@ def tupleToScriptLog(tup: tuple, commandName: str):
         tup - a tuple containing values for every parameter of the ScriptLog class
     @return 
         e - most recent error when executing function or Success if no error occurs 
-        s - the ScriptLog object created
+        sl - the ScriptLog object created
     '''
     # ID: int, scriptID: int, userID: int, compID: int, startTime: datetime.datetime,
     # endTime: datetime.datetime, returnVal: int, errorCode: int, stdoutFile: str, stderrFile: str,

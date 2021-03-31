@@ -198,12 +198,12 @@ class ScriptTable(tableOp.Table):
             e - error created during execution of function or Success if no error occurs
             s - the specified attribute's value from the entry retrieved from the SQL table 
         '''
-        attr = None
+        val = None
         command = """SELECT (""" + attr + """) FROM s WHERE ID = """ + str(ID) + """;"""
         e, sTuple = sqlFuncs.getRow(command, "getAttrByID", "Script")
         if(e == pref.getError(pref.ERROR_SUCCESS)):
-            attr = sTuple[0]
-        return e, attr
+            val = sTuple[0]
+        return e, val
 
     # overriding abstract method
     @staticmethod
@@ -298,6 +298,9 @@ class ScriptTable(tableOp.Table):
 
         return e, s
 
+######################################################################################################
+########################## Functions relating to Script/ScriptTable classes ##########################
+######################################################################################################
 
 def tupleToScript(tup: tuple, commandName: str):
     '''

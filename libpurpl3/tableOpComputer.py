@@ -198,12 +198,12 @@ class ComputerTable(tableOp.Table):
             e - error created during execution of function or Success if no error occurs
             s - the specified attribute's value from the entry retrieved from the SQL table 
         '''
-        attr = None
+        val = None
         command = """SELECT (""" + attr + """) FROM c WHERE ID = """ + str(ID) + """;"""
         e, cTuple = sqlFuncs.getRow(command, "getAttrByID", "Computer")
         if(e == pref.getError(pref.ERROR_SUCCESS)):
-            attr = cTuple[0]
-        return e, attr
+            val = cTuple[0]
+        return e, val
 
     # overriding abstract method
     @staticmethod
@@ -299,6 +299,9 @@ class ComputerTable(tableOp.Table):
 
         return e, c
 
+######################################################################################################
+######################## Functions relating to Computer/ComputerTable classes ########################
+######################################################################################################
 def tupleToComputer(tup: tuple, commandName: str):
     '''
     Seperates a tuple of Computer object parameter values to init a Computer object. 
