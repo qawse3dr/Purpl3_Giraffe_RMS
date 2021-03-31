@@ -20,7 +20,7 @@ class Script(tableOp.Entry):
             desc: str - user defined script description
             dtCreated: datetime.datetime - dateTime when createEntry is called for the script
             dtModified: datetime.datetime - dateTime when createEntry is called for the script or when editEntry is called
-            size: float - size of file containing script (in MB)
+            size: float - size of file containing script (in bytes)
             isAdmin: bool - whether or not the script requires admin access to run
         @return 
             None
@@ -70,10 +70,11 @@ class Script(tableOp.Entry):
             if attr == "ID":
                 pass
             elif attr[0:2] == "dt":
-                param = param + (value.strftime('%Y-%m-%d %H:%M:%S'), )
+                param = param + (value.strftime('%Y-%m-%d %H:%M:%S.%f'), )
             else:
                 param = param + (value, )
         return param
+
 
 
 class ScriptTable(tableOp.Table):
@@ -127,23 +128,32 @@ class ScriptTable(tableOp.Table):
             s - the entry retrieved from the SQL table as a Script object
         '''
         command = """SELECT * FROM s WHERE ID = """ + str(ID) + """;"""
-        e, scriptTuple = sqlFuncs.getRow(command, "getByID", "Script")
-        s = Script(scriptTuple[0], scriptTuple[1], scriptTuple[2], scriptTuple[3], scriptTuple[4], scriptTuple[5], scriptTuple[6], scriptTuple[7], scriptTuple[8])
+        s = None
+        e, scriptTuple = sqlFuncs.getRow(command, "getByID", "Script") 
+        if(e == pref.getError(pref.ERROR_SUCCESS)):
+            e, s = tupleToScript(scriptTuple, "getByID")
         return e, s
 
     # overriding abstract method
     @staticmethod
     def getAll():
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Retreives all entries from the script SQL table and returns them as a list of script objects
+        @param 
+            None.
+        @return 
+            sList - list of script objects.
         '''
-        skelScript1 = Script(1, "SkeletonScriptName1", "SkeletonScriptName1.py", 1, "Skeleton Script Description 1", datetime.datetime.now(), datetime.datetime.now(), 0, False)
-        skelScript2 = Script(2, "SkeletonScriptName2", "SkeletonScriptName2.py", 1, "Skeleton Script Description 2", datetime.datetime.now(), datetime.datetime.now(), 0, False)
-        scriptTup = (skelScript1, skelScript2)
-        return pref.getError(pref.ERROR_SUCCESS), scriptTup
+        command = """SELECT * FROM s;"""
+        e, rows = sqlFuncs.getAllRows(command, "getAll", "Script")
+        sList = []
+        if(e == pref.getError(pref.ERROR_SUCCESS)):
+            for row in rows:
+                e, s = tupleToScript(row, "getAll")
+                if(e == pref.getError(pref.ERROR_SUCCESS)):
+                    sList.append(s)
+
+        return e, sList
 
     # overriding abstract method
     @staticmethod
@@ -161,6 +171,7 @@ class ScriptTable(tableOp.Table):
         @return 
             script - script object created
         '''
+        script = None
         # id will be set when object is added to table
         id = None
         # set dtCreated
@@ -169,41 +180,35 @@ class ScriptTable(tableOp.Table):
         dtModified = dtCreated
         # set size
         filePath = str(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH)) + fileName
-        fileStats = os.stat(filePath)
-        fileSizeMB = fileStats.st_size / (1024 * 1024)
-        
+        try:
+            fileStats = os.stat(filePath)
+            fileSizeB = fileStats.st_size
+        except OSError as err:
+            fileSizeB = 0.0 # set size to zero script file does not exist
+
         # create script object
-        script = Script(None, name, fileName, author, desc, dtCreated, dtModified, fileSizeMB, isAdmin)
+        script = Script(None, name, fileName, author, desc, dtCreated, dtModified, fileSizeB, isAdmin)
+
         return script 
 
     # overriding abstract method
     @staticmethod
     def getAttrByID(attr: str, ID: int):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Retrieves a specified attrubute from an entry of the script SQL table based on primary key - ID
+        @param 
+            attr - one of the columns of the script table
+            ID - primary key of script
+        @return 
+            e - error created during execution of function or Success if no error occurs
+            s - the specified attribute's value from the entry retrieved from the SQL table 
         '''
-        # int
-        if(attr == "ID" or attr == "author"):
-            return pref.getError(pref.ERROR_SUCCESS), 0
-        #str
-        elif(attr == "name"):
-            return pref.getError(pref.ERROR_SUCCESS), "skelScriptName"
-        elif(attr == "fileName" or attr == "desc"):
-            return pref.getError(pref.ERROR_SUCCESS), "FIXME"
-        # datetime
-        elif(attr == "dtCreated" or attr == "dtModified"):
-            return pref.getError(pref.ERROR_SUCCESS), datetime.datetime.now()
-        #float
-        elif(attr == "size"):
-            return pref.getError(pref.ERROR_SUCCESS), 0
-        #bool
-        elif(attr == "isAdmin"):
-            return pref.getError(pref.ERROR_SUCCESS), False
-        else:
-            return pref.getError(pref.ERROR_ATTRIBUTE_NOT_FOUND), None
+        val = None
+        command = """SELECT (""" + attr + """) FROM s WHERE ID = """ + str(ID) + """;"""
+        e, sTuple = sqlFuncs.getRow(command, "getAttrByID", "Script")
+        if(e == pref.getError(pref.ERROR_SUCCESS)):
+            val = sTuple[0]
+        return e, val
 
     # overriding abstract method
     @staticmethod
@@ -231,7 +236,7 @@ class ScriptTable(tableOp.Table):
         @return 
             e - most recent error when executing function or Success if no error occurs
         '''
-        ID = 0
+        ID = None
         command = """ INSERT INTO s (id, name, fileName, author, desc, dtCreated, dtModified, size, isAdmin) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)"""
         data = entry.paramToList()
         e, ID = sqlFuncs.insert(command, data, "add", "Script")
@@ -251,14 +256,123 @@ class ScriptTable(tableOp.Table):
 
     # overriding abstract method
     @staticmethod
-    def editEntry(values: tuple):
+    def editEntry(entry: Script):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Updates a row in the script SQL table based on the entry object passed. 
+        Overwrites all attributes of the row with the values of the entry object.
+        Overwrites row based on the ID of the entry object.
+        @param 
+            entry: Script - Script object, must have ID != None or error will be thrown
+        @return 
+            e - most recent error when executing function or Success if no error occurs
+            s - Script object corresponding to row updated in SQL table. Should be the 
+                same as entry passed to function if no error occured
         '''
-        skelScript = Script(0, "SkeletonScriptName", "SkeletonScriptName.py", 1, "Skeleton Script Description", datetime.datetime.now(), datetime.datetime.now(), 0, False)
-        return pref.getError(pref.ERROR_SUCCESS), skelScript
+        s = entry
 
+        if(entry.ID == None):
+            e = pref.getError(pref.ERROR_NO_ID_PROVIDED, args=("editEntry", "Script"))
 
+        else:
+            command = """UPDATE s SET """
+            for attr, value in entry.__dict__.items():
+                if (attr == "ID"):
+                    pass
+                else:
+                    command = command + str(attr)
+                    if(value == None):
+                        command = command + """ = NULL"""
+                    elif attr[0:2] == "dt":
+                        command = command + """ = """ + """\"""" + str(value.strftime('%Y-%m-%d %H:%M:%S.%f')) + """\""""
+                    elif isinstance(value, str):
+                        command = command + """ = """ + """\"""" + str(value) + """\""""
+                    else:
+                        command = command + """ = """ + str(value)
+                    command = command + """, """
+            command = command[:-2] #remove last ' ,'
+            command = command + """ WHERE ID = """ + str(entry.ID) + """;"""
+
+            e = sqlFuncs.exeCommand(command, "editEntry", "Script")
+
+            if(e == pref.getError(pref.ERROR_SUCCESS)):
+                command2 = """SELECT * FROM s WHERE ID = """ + str(entry.ID) + """;"""
+                e, row = sqlFuncs.getRow(command2, "editEntry", "Script")
+                if(e == pref.getError(pref.ERROR_SUCCESS)):
+                    e, s = tupleToScript(row, "editEntry")
+
+        return e, s
+
+######################################################################################################
+########################## Functions relating to Script/ScriptTable classes ##########################
+######################################################################################################
+
+def tupleToScript(tup: tuple, commandName: str):
+    '''
+    Seperates a tuple of script object parameter values to init a script object. 
+    Does error checking to confirm that the tuple contains elements for all attributes of the script class.
+    Casts all attributes to correct type. 
+    @param 
+        tup - a tuple containing values for every parameter of the Script class
+    @return 
+        e - most recent error when executing function or Success if no error occurs 
+        s - the Script object created
+    '''
+    # ID: int, name: str, fileName: str, author: int, desc: str, dtCreated: datetime.datetime,dtModified: datetime.datetime, size: float, isAdmin: bool
+    e = pref.getError(pref.ERROR_SUCCESS)
+
+    if(len(tup) != 9):
+        e = pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR, args=(commandName, "Script", len(tup), 9))
+        s = None
+    else:
+        try:
+            if(tup[0] == None):
+                ID = None
+            else:
+                ID = int(tup[0])
+
+            if(tup[1] == None):
+                name = None
+            else:
+                name = str(tup[1])
+
+            if(tup[2] == None):
+                fileName = None
+            else:
+                fileName = str(tup[2])
+
+            if(tup[3] == None):
+                author = None
+            else:
+                author = int(tup[3])
+
+            if(tup[4] == None):
+                desc = None
+            else:
+                desc = str(tup[4])
+
+            if(tup[5] == None):
+                dtCreated = None
+            else:
+                dtCreated = datetime.datetime.strptime(tup[5], '%Y-%m-%d %H:%M:%S.%f')
+
+            if(tup[6] == None):
+                dtModified = None
+            else:
+                dtModified = datetime.datetime.strptime(tup[6], '%Y-%m-%d %H:%M:%S.%f')
+
+            if(tup[7] == None):
+                size = None
+            else:
+                size = int(tup[7])
+
+            if(tup[8] == None):
+                isAdmin = None
+            else:
+                isAdmin = bool(tup[8])
+
+            s = Script(ID, name, fileName, author, desc, dtCreated, dtModified, size, isAdmin)
+        except ValueError as err:
+            e = pref.getError(pref.ERROR_SQL_RETURN_CAST, args=(commandName, "Script", err))
+            s = None
+
+    return e, s

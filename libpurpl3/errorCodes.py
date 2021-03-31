@@ -118,6 +118,10 @@ def getErrorCodeList() -> dict:
     # 66- 72 SQLITE3 ERRORS
     getAttrName(ERROR_CREATE_SQLITE3_CONNECTION): Error(66, "Returned: %d, connection to sqlite3 database failed when executing function %s on table %s with message - \"%s\""),
     getAttrName(ERROR_EXECUTE_SQLITE3_COMMAND): Error(67, "Returned: %d, executing command of type %s failed on table %s with message - \"%s\""),
+    getAttrName(ERROR_NO_ID_PROVIDED): Error(68, "Returned: %d, executing command %s on table %s requires ID but no ID was provided"),
+    getAttrName(ERROR_SQL_RETURN_CAST): Error(69, "Returned: %d, after executing command %s there was an error casting an element of returned tuple to %s type - \"%s\""),
+    getAttrName(ERROR_SQL_RETURN_MISSING_ATTR): Error(70, "Returned: %d, after executing command %s on table %s, only %d attributes were returned out of expected %d"),
+    getAttrName(ERROR_CREATE_SCRIPT_DNE): Error(71, "Returned: %d, attempting to create a Script object (createEntry) for a script file that does not exist - %s"),
     
     #Vars for error codes
     getAttrName(ERROR_VAR) : {
@@ -167,3 +171,7 @@ ERROR_SQL_FAILURE = "ERROR:SQL_FAILURE"
 # 66- 72 SQLITE3 ERRORS
 ERROR_CREATE_SQLITE3_CONNECTION = "ERROR:CREATE_SQLITE3_CONNECTION"
 ERROR_EXECUTE_SQLITE3_COMMAND = "ERROR:EXECUTE_SQLITE3_COMMAND"
+ERROR_NO_ID_PROVIDED = "ERROR:NO_ID_PROVIDED"
+ERROR_SQL_RETURN_CAST = "ERROR:SQL_RETURN_CAST"
+ERROR_SQL_RETURN_MISSING_ATTR = "ERROR:SQL_RETURN_MISSING_ATTR"
+ERROR_CREATE_SCRIPT_DNE = "ERROR:CREATE_SCRIPT_DNE"

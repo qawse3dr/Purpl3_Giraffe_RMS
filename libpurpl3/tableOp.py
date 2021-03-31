@@ -15,6 +15,10 @@ class Entry(ABC):
     def toJson(self):
         raise NotImplementedError("Subclasses should implement this!")
 
+    def print(self):
+        for attr, value in self.__dict__.items():
+            print(str(attr) + ": " + str(value))
+
 class Table(ABC): 
     # This function is for initializing an sql table of the programs database 
     # returns 1 if table is successfully created, -1 otherwise
