@@ -4,6 +4,7 @@ import logging
 import threading
 import os
 from typing import Tuple 
+from flask import session
 import datetime
 import libpurpl3.preferences as pref 
 import paramiko
@@ -23,27 +24,22 @@ class sshConnection():
     sshConnection(computer, user, script)
   '''
 
-  #TODO change to computer class
   computer = None
-
-  #TODO change to user class
-  user = None
-
-  #TODO change to script class
   script = None
+  userID = None
 
   #ssh driver
   ssh = None
-  def __init__(self, computer: computerTable.Computer, user: userTable.User, script: scriptTable.Script):
+  def __init__(self, computer: computerTable.Computer, userID: int, script: scriptTable.Script):
     '''
       @param computer::Computer, is the computer connected though ssh
-      @param user::User, the user that started the script (not the user logged into the computer)
+      @param userId::int the id of the currently logged in user
       @param script::Script, the script that is being run on the computer
     '''
     self.computer = computer
-    self.user = user
     self.script = script
     self.scriptLog = None
+    self.userID = userID
   def connect(self) -> pref.Error:
     '''
     Connects its self to the computer based on
@@ -57,6 +53,21 @@ class sshConnection():
     err = pref.Success
 
     for _ in range(1):
+      #make sure ip isnt Blacklisted
+      blackListFileName = pref.getNoCheck(pref.CONFIG_BLACKLIST_IP_FILE)
+      if(blackListFileName != ""):
+        blackList = None
+        try:
+          blackList = [line.rstrip("\n") for line in open(blackListFileName)]
+        except:
+          tempErr = pref.getError(pref.ERROR_FILE_NOT_FOUND, args=(blackListFileName))
+          logger.error(tempErr)
+          break
+
+        err = whitelistBlackList.confirmValidIP(self.computer.IP, blackList)
+      else:
+        logger.warning("no ip blacklist no filtering")
+
       #Create ssh client with basic autoadd settings
       self.ssh = paramiko.SSHClient()
       self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -71,6 +82,7 @@ class sshConnection():
         break
       
       #connect to the computer
+      #TODO test self.computer.IP, needs list of blacklisted commands
       try:        
         self.ssh.connect(self.computer.IP, username=self.computer.username, pkey = keyFile, timeout=5, allow_agent=False)
       #Authentication error rerun addComputer on this computer to fix
@@ -93,6 +105,8 @@ class sshConnection():
     err = pref.Success
 
     for _ in range(1):
+
+      #creates sftp connection
       try:
         ftp_client = self.ssh.open_sftp()
       except:
@@ -116,7 +130,9 @@ class sshConnection():
             break
 
           err = whitelistBlackList.confirmValidCommads("{}{}".format(scriptFolder,self.script.fileName), blackList)
-          print(blackList)
+          if(err != pref.Success):
+            logger.error(err)
+            break
         else:
           logger.warning("no cmd blacklist no filtering")
 
@@ -137,11 +153,13 @@ class sshConnection():
       echoCmd = "printf \"\\n\nReturned: %d\" $?"
       _, stdout, stderr = self.ssh.exec_command("{}{}; {}".format(remoteFolder, self.script.fileName, echoCmd))
 
-      #creates Script logs TODO: change to correct way when ready
-      self.scriptLog = scriptLogTable.ScriptLog(0, self.script.ID, None, self.computer.ID,datetime.datetime.now(),None,None,None,"liveSTDOUT.txt","liveSTDERR.txt",self.computer.asAdmin)
-           
-      outputThread = threading.Thread(target=self.getOutput, daemon=True, args=(stdout,stderr))
-      outputThread.start()
+      #creates Script logs
+      self.scriptLog = scriptLogTable.ScriptLogTable.createEntry(self.script.ID, self.userID, self.computer.ID, self.computer.asAdmin)
+      err = scriptLogTable.ScriptLogTable.add(self.scriptLog)
+
+      if(err == pref.Success):
+        outputThread = threading.Thread(target=self.getOutput, daemon=True, args=(stdout,stderr))
+        outputThread.start()
 
     
     id = self.scriptLog.ID if self.scriptLog != None else -1
@@ -214,7 +232,6 @@ class sshConnection():
     stdoutFile.close()
     stderrFile.close()
 
-
     #gets returnValue
     stdoutFile = open("{}{}".format(logFolder, self.scriptLog.stdoutFile), "r+")
     stdoutFile.seek(0,os.SEEK_END)
@@ -237,16 +254,18 @@ class sshConnection():
     else:
       returnValue = returnValue[-1]
       logger.info("Complete script {} with return value {}".format(self.script.name, returnValue))
-    EndTime = datetime.datetime.now()
-    ErrorCode = err.code
-    
+    self.scriptLog.endTime = datetime.datetime.now()
+    self.scriptLog.errorCode = err.code
+    self.scriptLog.returnVal = returnValue
+    self.ssh.close()
+
     #Writes return value to db
-    #TODO WRITE TO DB
+    scriptLogTable.ScriptLogTable.editEntry(self.scriptLog)
+    
   @staticmethod
-  def addNewComputer(computerIP: str,username: str, password:str, userID: int = None, name:str = None, nickName:str =None , desc:str = None, asAdmin:bool = False) -> pref.Error:
+  def addNewComputer(computerIP: str,username: str, password:str) -> pref.Error:
     '''
     adds a new computer with using its username and password
-    and adds it to the db.
     @param computerIP:str ip of the computer to add as a string.
     @param username:str username of the computer not user adding the computer.
     @param password:str password of the user described above.
@@ -263,11 +282,29 @@ class sshConnection():
     stderr = None
 
     for _ in range(1):
+      #make sure ip isnt Blacklisted
+      blackListFileName = pref.getNoCheck(pref.CONFIG_BLACKLIST_IP_FILE)
+      if(blackListFileName != ""):
+        blackList = None
+        try:
+          blackList = [line.rstrip("\n") for line in open(blackListFileName)]
+        except:
+          tempErr = pref.getError(pref.ERROR_FILE_NOT_FOUND, args=(blackListFileName))
+          logger.error(tempErr)
+          break
+
+        err = whitelistBlackList.confirmValidIP(computerIP, blackList)
+        if(err != pref.Success):
+          logger.error(err)
+          break
+      else:
+        logger.warning("no ip blacklist no filtering")
+
       #get shh public key
       sshKey = pref.getNoCheck(pref.CONFIG_PUBLIC_SSH_KEY)
 
       #if its empty row public sshkey empty
-      if(sshKey == ""):
+      if(sshKey == None or sshKey.strip().strip("\n") == ""):
         err = pref.getError(pref.ERROR_EMPTY_SSH_PUBLIC_KEY)
         logger.error(err)
         break
@@ -316,15 +353,10 @@ class sshConnection():
         err = pref.getError(pref.ERROR_SSH_SCRIPT_FAILED_WITH_ERROR_CODE,args=(errCode))
         logger.error(err)
 
-    #Adds computer to db
-    if(err == pref.Success):
-      #TODO change to now way of creating computer when updated
-      computer = computerTable.Computer(None,userID,name,nickName,desc,username,computerIP,datetime.datetime.now(),datetime.datetime.now(),asAdmin)
-      computerTable.ComputerTable.add(computer)
     return err
 
   def __str__(self):
-    return "sshSever run on {}@{} by executed by {}, to run script {}".format(self.computer.username,self.computer.ip,self.user.name,self.script.name) 
+    return "sshSever run on {}@{} by executed by {}, to run script {}".format(self.computer.username,self.computer.ip,self.userID,self.script.name) 
 
 
 def copyFileToComputer(ftp_client: paramiko.SFTPClient, remoteFolder: str,resFolder: str, filename: str) -> pref.Error:
@@ -337,7 +369,7 @@ def copyFileToComputer(ftp_client: paramiko.SFTPClient, remoteFolder: str,resFol
 
   #creates folder if it doesn't exist
   try:
-    ftp_client.mkdir(remoteFolder)
+    ftp_client.mkdir(remoteFolder, mode=0o777)
   except: #This is happen if the folder already exists .
     pass
 
@@ -346,9 +378,12 @@ def copyFileToComputer(ftp_client: paramiko.SFTPClient, remoteFolder: str,resFol
     ftp_client.put("{}{}".format(resFolder,filename),"{}{}".format(remoteFolder,filename))
     ftp_client.chmod("{}{}".format(remoteFolder,filename), 0o777)
   except Exception as e:
+    print(e)
     #couldn't find script on sever.
     err = pref.getError(pref.ERROR_FILE_NOT_FOUND, args=(resFolder+filename))
     logger.error(err)
-
+  
+  if(ftp_client):
+    ftp_client.close()
   return err
 

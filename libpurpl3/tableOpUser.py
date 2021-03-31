@@ -111,7 +111,7 @@ class UserTable(tableOp.Table):
         @return user ID, if failed return -1
         '''
         # TODO do a select with this info and see if it gets anythikng back
-        return True
+        return 1
 
     # overriding abstract method
     @staticmethod

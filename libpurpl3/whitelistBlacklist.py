@@ -23,3 +23,18 @@ def confirmValidCommads(fileName: str, blackListedCommands: list) -> pref.Error:
                 return pref.getError(pref.ERROR_BLACKLISTED_COMMAND, args=(commands))
     #return if no blacklisted commands are found
     return pref.Success
+
+def confirmValidIP(userIP: str, blackListedIPs: list) -> pref.Error:
+    '''
+    This function is too check a given ip against a list of blacklisted IP's as
+    defined by the admin of the server
+    @param str userIP, the IP to check against the blackListedIPs
+    @param list blackListedIPs, the list of all of the blacklisted IPs
+    @return error code of the givenerror
+    '''
+
+    for IPs in blackListedIPs:
+        if userIP == IPs:
+            return pref.getError(pref.ERROR_BLACKLISTED_IP, args=(userIP))
+    
+    return pref.Success

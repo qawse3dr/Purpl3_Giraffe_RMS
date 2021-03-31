@@ -1,7 +1,7 @@
 import logo from './res/logo.png';
 import './App.css';
 import axios from "axios";
-import React, { Component, useState } from 'react';
+import React, {useState } from 'react';
 import {
   Route,
   Switch,
@@ -14,15 +14,18 @@ import Schedule from './pages/Schedule'
 import ScriptLogs from './pages/ScriptLogs'
 import ScriptsViewer from './pages/ScriptsViewer'
 import ErrorDoc from './pages/ErrorDoc'
+import PrivateRoute from './components/PrivateRoute'
 
 function App() {
+
+  const [loggedIn, setLogin] = useState(false);
 
   return (
     <div className="App">
       
       <HashRouter>
         <Switch>
-          <Route exact path="/" component={Login}></Route>
+          <Route exact path="/" render={(props) => (<Login {...props} sendLoginStatus={getLoginStatus} />)}/>
           <>
             <div className="logoHeader">
               <img src={logo}></img>
@@ -40,11 +43,11 @@ function App() {
             
 
             <div className="content">
-              <Route path="/run-script" component={RunScripts}></Route>
-              <Route path="/script-logs" component={ScriptLogs}></Route>
-              <Route path="/schedule" component={Schedule}></Route>
-              <Route path="/script-viewer" component={ScriptsViewer}></Route>
-              <Route path="/error-doc" component={ErrorDoc}></Route>
+              <PrivateRoute path="/run-script" loginState={loggedIn} component={RunScripts}/>
+              <PrivateRoute path="/script-logs" loginState={loggedIn} component={ScriptLogs}/>
+              <PrivateRoute path="/schedule" loginState={loggedIn} component={Schedule}/>
+              <PrivateRoute path="/script-viewer" loginState={loggedIn} component={ScriptsViewer}/>
+              <PrivateRoute path="/error-doc" loginState={loggedIn} component={ErrorDoc}/>
             </div>
           </>
         </Switch>
@@ -53,21 +56,10 @@ function App() {
       
     </div>
   );
+
+  function getLoginStatus(loginState){
+    setLogin(loginState)
+  }
 }
 
-//.getElementsByClassName("tab").onClick = () => {
- // if this.
-
-//}
-
-function Ping(){
-  
-  axios.post("/ping", {
-    body: {ping:"ping"}
-    }).then((res) => {
-      alert(JSON.stringify(res.data))
-    }).catch((res) =>{
-      alert("Post Failed")
-    })
-}
 export default App;

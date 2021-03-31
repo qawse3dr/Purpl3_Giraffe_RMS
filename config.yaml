@@ -3,4 +3,5 @@ LOG_LEVEL: 20
 PRIVATE_SSH_KEY_PATH: "res/key"
 REMOTE_FOLDER: "/tmp/Purpl3_RMS/"
 BLACKLIST_CMD_FILE: "res/blacklistCMD.txt"
+DB_PATH: 'purpl3_rms.db'
 PUBLIC_SSH_KEY_VALUE:

@@ -208,8 +208,10 @@ CONFIG_REMOTE_FOLDER ="REMOTE_FOLDER"
 
 #Whitelist blacklist
 CONFIG_BLACKLIST_CMD_FILE = "BLACKLIST_CMD_FILE"
+CONFIG_BLACKLIST_IP_FILE  = "BLACKLIST_IP_FILE"
 
-
+#session key for flask
+CONFIG_SESSION_KEY = "SESSION_KEY"
 #built in script names (will be assumed to be in res folder)
 CONFIG_ADD_COMPUTER_SCRIPT = "ADD_COMPUTER_SCRIPT_NAME"
 
@@ -233,6 +235,7 @@ LOGIN_RESET_PASSWORD = "LOGIN:RESET_PASSWORD"
 LOGIN_CHANGE_PASSWORD = "LOGIN:CHANGE_PASSWORD"
 LOGIN_USERNAME = "LOGIN:USERNAME"
 LOGIN_PASSWORD = "LOGIN:PASSWORD"
+LOGIN_LOGOUT = "LOGIN:LOGOUT"
 
 #ErrorCodes dictionary of all error codes.
 CONFIG_ERROR_CODES = "ERROR"
@@ -241,9 +244,24 @@ CONFIG_ERROR_CODES = "ERROR"
 REQ_VAR_BODY = "REQ_VAR:BODY"
 REQ_VAR_DATA = "REQ_VAR:DATA"
 REQ_VAR_OP   = "REQ_VAR:OP"
+REQ_VAR_FUNC_OP   = "REQ_VAR:FUNC_OP"
 REQ_VAR_SCRIPT_ID = "REQ_VAR:SCRIPT_ID"
 REQ_VAR_COMPUTER_ID = "REQ_VAR:COMPUTER_ID"
-
+REQ_VAR_USER_ID = "REQ_VAR:USER_ID"
+REQ_VAR_NICK_NAME = "REQ_VAR:NICK_NAME"
+REQ_VAR_DESC = "REQ_VAR:DESC"
+REQ_VAR_USERNAME = "REQ_VAR:USERNAME"
+REQ_VAR_PASSWORD = "REQ_VAR:PASSWORD"
+REQ_VAR_IP = "REQ_VAR:IP"
+REQ_VAR_IS_ADMIN = "REQ_VAR:IS_ADMIN"
+REQ_VAR_ID = "REQ_VAR:ID"
+REQ_VAR_FILE_TYPE = "REQ_VAR:FILE_TYPE"
+REQ_VAR_FP = "REQ_VAR:FP"
+REQ_VAR_FILE_STDOUT = "REQ_VAR:FILE_STDOUT"
+REQ_VAR_FILE_STDERR = "REQ_VAR:FILE_STDERR"
+REQ_VAR_FILE_SCRIPT = "REQ_VAR:FILE_SCRIPT"
+REQ_VAR_FILE_NAME = "REQ_VAR:FILE_NAME"
+REQ_VAR_SCRIPT_DATA = "REQ_VAR:SCRIPT_DATA"
 CONFIG_OPERATIONS = "OPERATION"
 def getOperationList() -> dict:
   '''
@@ -251,14 +269,14 @@ def getOperationList() -> dict:
   '''
   return {
     getAttrName(OPERATION_RUN_SCRIPT): "RUN_SCRIPT",
-    getAttrName(OPERATION_MANAGE_SCRIPT): "MANAGE_SCRIPT",
+    getAttrName(OPERATION_MANAGE_SCRIPT): "MANAGE_SCRIPTS",
     getAttrName(OPERATION_MANAGE_COMPUTERS): "MANAGE_COMPUTER",
     getAttrName(OPERATION_MANAGE_SCRIPT_LOGS): "MANAGE_SCRIPT_LOGS",
     getAttrName(OPERATION_SCHEDULE_SCRIPT):  "SCHEDULE_SCRIPT",
   }
 
 
-CONFIG_TABLE_OPERATION = "TABLE_OPERATIONS"
+CONFIG_TABLE_OPERATION = "TABLE_OP"
 def getTableOperationList() -> dict:
   '''
   @return dict of all tables operations.
@@ -272,7 +290,7 @@ def getTableOperationList() -> dict:
     getAttrName(TABLE_OP_GET_FILE): "GET_FILE"
   }
 
-CONFIG_TABLES = "TABLES"
+CONFIG_TABLES = "TABLE"
 def getTableList() -> dict:
   '''
   @return dict of all tables.
@@ -290,8 +308,11 @@ def getLoginOperations() -> dict:
   '''
   return {
     getAttrName(LOGIN_LOGIN): "LOGIN",
+    getAttrName(LOGIN_LOGOUT): "LOGOUT",
     getAttrName(LOGIN_CHANGE_PASSWORD): "CHANGE_PASSWORD",
-    getAttrName(LOGIN_RESET_PASSWORD): "RESET_PASSWORD", 
+    getAttrName(LOGIN_RESET_PASSWORD): "RESET_PASSWORD",
+    getAttrName(LOGIN_USERNAME): "Username",
+    getAttrName(LOGIN_PASSWORD): "Password",
   }
 
 CONFIG_REQUEST_VAR = "REQ_VAR"
@@ -303,8 +324,24 @@ def getRequestVars() -> dict:
     getAttrName(REQ_VAR_BODY) : "body",
     getAttrName(REQ_VAR_DATA) : "data",
     getAttrName(REQ_VAR_OP) : "op",
+    getAttrName(REQ_VAR_FUNC_OP): "funcOP",
     getAttrName(REQ_VAR_SCRIPT_ID) : "ScriptID",
     getAttrName(REQ_VAR_COMPUTER_ID) : "ComputerID",
+    getAttrName(REQ_VAR_USER_ID): "userID",
+    getAttrName(REQ_VAR_NICK_NAME): "Name",
+    getAttrName(REQ_VAR_DESC): "Desc",
+    getAttrName(REQ_VAR_USERNAME): "Username",
+    getAttrName(REQ_VAR_PASSWORD): "Password",
+    getAttrName(REQ_VAR_IP): "IP",
+    getAttrName(REQ_VAR_IS_ADMIN): "isAdmin",
+    getAttrName(REQ_VAR_ID): "Id",
+    getAttrName(REQ_VAR_FILE_TYPE): "Filetype",
+    getAttrName(REQ_VAR_FP): "FP",
+    getAttrName(REQ_VAR_FILE_STDOUT): "STDOUT",
+    getAttrName(REQ_VAR_FILE_STDERR): "STDERR",
+    getAttrName(REQ_VAR_FILE_SCRIPT): "SCRIPT",
+    getAttrName(REQ_VAR_FILE_NAME): "fileName",
+    getAttrName(REQ_VAR_SCRIPT_DATA): "scriptData",
 
   }
 #Holds default config settings.
@@ -350,9 +387,13 @@ def defaultConfig() -> dict:
 
     #Whitelist blacklist
     CONFIG_BLACKLIST_CMD_FILE: "res/blacklistCMD.txt",
+    CONFIG_BLACKLIST_IP_FILE : "res/blacklistIP.txt",
 
     #built in script names (will be assumed to be in res folder)
-    CONFIG_ADD_COMPUTER_SCRIPT: "addSSHKey.sh"
+    CONFIG_ADD_COMPUTER_SCRIPT: "addSSHKey.sh",
+
+    #key for sessions
+    CONFIG_SESSION_KEY: "asersfgesafr324"
   }
 
 #Create config.

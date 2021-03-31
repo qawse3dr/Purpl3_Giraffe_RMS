@@ -99,7 +99,7 @@ def getErrorCodeList() -> dict:
     #31-45 account managment
     getAttrName(ERROR_USER_AUTHENTICATION_ERROR): Error(31, "Returned: %d, failed login for %s"),
     getAttrName(ERROR_USERNAME_INVALID): Error(32, "Return: %d, failed login due too invalid username"),
-
+    getAttrName(ERROR_NOT_LOGGED_IN): Error(33,"Returned %d: Not Logged In to user"),
     #46-59 ssh errors
     getAttrName(ERROR_CONNECTION_FAILED): Error(46,"Returned: %d, Connection to %s@%s could not be made."),
 
@@ -112,8 +112,9 @@ def getErrorCodeList() -> dict:
     getAttrName(ERROR_SSH_CONNECTION_LOST): Error(55,"Returned %d: Connection to remote computer %s@%s running script %s lost"),
 
     #James' blacklist commands
-    getAttrName(ERROR_BLACKLISTED_COMMAND): Error(56, "Returned%d, script contained invalid command: %s"),
-    
+    getAttrName(ERROR_BLACKLISTED_COMMAND): Error(56, "Returned %d, script contained invalid command: %s"),
+    getAttrName(ERROR_BLACKLISTED_IP): Error(57, "Returned: %d, ip %s is blacklisted"),
+
     # 66- 72 SQLITE3 ERRORS
     getAttrName(ERROR_CREATE_SQLITE3_CONNECTION): Error(66, "Returned: %d, connection to sqlite3 database failed when executing function %s on table %s with message - \"%s\""),
     getAttrName(ERROR_EXECUTE_SQLITE3_COMMAND): Error(67, "Returned: %d, executing command of type %s failed on table %s with message - \"%s\""),
@@ -144,7 +145,7 @@ ERROR_ATTRIBUTE_NOT_FOUND = "ERROR:ATTRIBUTE_NOT_FOUND"
 #31-45 account managment
 ERROR_USER_AUTHENTICATION_ERROR = "ERROR:ERROR_USER_ATHENTICATION_ERROR"
 ERROR_USERNAME_INVALID = "ERROR:INVALID_USERNAME"
-
+ERROR_NOT_LOGGED_IN = "ERROR:NOT_LOGGED_IN"
 #46-59 ssh errors
 ERROR_CONNECTION_FAILED = "ERROR:CONNECTION_FAILED"
 
@@ -158,6 +159,7 @@ ERROR_SSH_CONNECTION_LOST = "ERROR:ERROR_SSH_CONNECTION_LOST"
 
 #James' blacklist commands
 ERROR_BLACKLISTED_COMMAND = "ERROR:ERROR_BLACKLISTED_COMMAND"
+ERROR_BLACKLISTED_IP = "ERROR:ERROR_BLACKLISTED_IP"
 
 ERROR_VAR = "ERROR:VAR"
 ERROR_VAR_CODE = "ERROR:VAR:CODE"
