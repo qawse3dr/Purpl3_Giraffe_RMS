@@ -734,6 +734,9 @@ class BaseTestCase(unittest.TestCase):
       self.assertEqual(u_id_3, -1)
 
     ################# DELETE ENTRY TESTS (SUCCESS) ##################
+    # Tests delete function on Script table (expecting success) 
+    # then tries to access deleted entry (expecting failure).
+    # Checks that file corresponding to script is deleted.
     def test_deleteS(self):
       createTablesBig()
       open(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH) + "test_script_name.sh", "a") # create file to be deleted
@@ -750,6 +753,9 @@ class BaseTestCase(unittest.TestCase):
       self.assertEqual(s, None)
       open(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH) + "test_script_name.sh", "a") # recreate deleted file
 
+    # Tests delete function on last entry of Script table (expecting success) 
+    # then tries to access deleted entry (expecting failure).
+    # Checks that file corresponding to script is deleted.
     def test_deleteS2(self):
       createTablesBig()
       open(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH) + "sleepScript copy.sh", "a") # create file to be deleted
@@ -766,6 +772,8 @@ class BaseTestCase(unittest.TestCase):
       self.assertEqual(s, None)
       open(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH) + "sleepScript copy.sh", "a") # recreate deleted file
 
+    # Tests delete function on Computer table (expecting success) 
+    # then tries to access deleted entry (expecting failure).
     def test_deleteC(self):
       createTablesBig()
       err = toc.ComputerTable().delete(1)
@@ -776,6 +784,9 @@ class BaseTestCase(unittest.TestCase):
       self.assertEqual(err2,errExp2)
       self.assertEqual(c, None)
 
+    # Tests delete function on ScriptLog table (expecting success) 
+    # then tries to access deleted entry (expecting failure).
+    # Checks that files (stdout/stderr) corresponding to scriptLog are deleted.
     def test_deleteSL(self):
       createTablesBig()
       stdoutFile = pref.getNoCheck(pref.CONFIG_SCRIPT_LOG_PATH) + "STDOUT_test_script_name_3.log"
@@ -800,6 +811,8 @@ class BaseTestCase(unittest.TestCase):
       open(stdoutFile, "a") # recreate deleted files
       open(stderrFile, "a")
 
+    # Tests delete function on User table (expecting success) 
+    # then tries to access deleted entry (expecting failure).
     def test_deleteU(self):
       createTablesBig()
       err = tou.UserTable().delete(2)
@@ -811,6 +824,8 @@ class BaseTestCase(unittest.TestCase):
       self.assertEqual(u, None)
 
     ################# DELETE ENTRY TESTS (FAILURE) ##################
+    # Tests delete function on Script table for script that does not exist in database (expecting failure). 
+    # Since script file also does not exist, this will cause errors.
     def test_deleteS_F(self):
       createTablesBig()
       err = tos.ScriptTable().delete(99) # delete non-existent script
@@ -819,6 +834,8 @@ class BaseTestCase(unittest.TestCase):
 
     # no files correspond to computer/user entries and deleting non-existent entries will not cause an error
 
+    # Tests delete function on ScriptLog table for scriptLog that does not exist in database (expecting failure).
+    # Since scriptLog files (stdout/stderr) also does not exist, this will cause errors.
     def test_deleteSL_F(self):
       createTablesBig()
       err = tosl.ScriptLogTable().delete(99) # delete non-existent computer

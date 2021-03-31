@@ -244,10 +244,11 @@ class UserTable(tableOp.Table):
     @staticmethod
     def delete(ID: int):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Removes a user entry from the database based on it's ID. 
+        @param 
+            ID: int - primary key of user
+        @return 
+            e - most recent error when executing function or Success if no error occurs
         '''
         command = """DELETE FROM u WHERE ID = """ + str(ID) + """;"""
         e = sqlFuncs.exeCommand(command, "delete", "User")

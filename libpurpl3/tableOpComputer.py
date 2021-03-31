@@ -249,10 +249,11 @@ class ComputerTable(tableOp.Table):
     @staticmethod
     def delete(ID: int):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Removes a computer entry from the database based on it's ID. 
+        @param 
+            ID: int - primary key of computer 
+        @return 
+            e - most recent error when executing function or Success if no error occurs
         '''
         command = """DELETE FROM c WHERE ID = """ + str(ID) + """;"""
         e = sqlFuncs.exeCommand(command, "delete", "Computer")

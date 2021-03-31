@@ -252,10 +252,12 @@ class ScriptTable(tableOp.Table):
     @staticmethod
     def delete(ID: int):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Removes a script entry from the database based on it's ID. 
+        Also removes the corresponding file from directory.
+        @param 
+            ID: int - primary key of script
+        @return 
+            e - most recent error when executing function or Success if no error occurs
         '''
         e, fileName = ScriptTable.getAttrByID("fileName", ID)
         if(e == pref.getError(pref.ERROR_SUCCESS)):

@@ -283,10 +283,12 @@ class ScriptLogTable(tableOp.Table):
     @staticmethod
     def delete(ID: int):
         '''
-        #TODO
-        *add description*.
-        @param *add param*.
-        @return *add return*.
+        Removes a scriptLog entry from the database based on it's ID. 
+        Also removes the corresponding files (stdout/stderr) from directory.
+        @param 
+            ID: int - primary key of scriptLog
+        @return 
+            e - most recent error when executing function or Success if no error occurs
         '''
         e, stdoutFile = ScriptLogTable.getAttrByID("stdoutFile", ID)
         e, stderrFile = ScriptLogTable.getAttrByID("stderrFile", ID)
