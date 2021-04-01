@@ -150,7 +150,6 @@ def loginRequest():
         Error = err.toJson(),
         data = {}
       )
-    if op == pref.getNoCheck(pref.LOGIN_LOGOUT): return redirect("/")
     return (returnValue,200)
 
     
