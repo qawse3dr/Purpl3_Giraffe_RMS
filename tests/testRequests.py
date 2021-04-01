@@ -6,6 +6,7 @@ from Purpl3_RMS import app
 import datetime
 import unittest
 import tests.testHelpers as helper
+from flask import session
 
 
 class BaseTestCase(unittest.TestCase):
@@ -275,3 +276,29 @@ class BaseTestCase(unittest.TestCase):
     
     self.assertEqual(rv.get_json()["Error"]["code"],pref.getError(pref.ERROR_SQL_RETURN_MISSING_ATTR).code)
 
+  def test_logout(self):
+
+    paramsLogin = {
+      pref.getNoCheck(pref.REQ_VAR_BODY):{
+        pref.getNoCheck(pref.REQ_VAR_OP): pref.getAttrName(pref.getNoCheck(pref.LOGIN_LOGIN)),
+        pref.getNoCheck(pref.REQ_VAR_DATA):{
+          pref.getNoCheck(pref.LOGIN_USERNAME): "unittest",
+          pref.getNoCheck(pref.LOGIN_PASSWORD): "unittest"
+        }
+      }
+    }
+
+    paramsLogout = {
+      pref.getNoCheck(pref.REQ_VAR_BODY):{
+        pref.getNoCheck(pref.REQ_VAR_OP): pref.getAttrName(pref.getNoCheck(pref.LOGIN_LOGOUT)),
+        pref.getNoCheck(pref.REQ_VAR_DATA):{
+        }
+      }
+    }
+
+    with self.c as cLogin:
+      rv = cLogin.post('/login', json=paramsLogin)
+      self.assertEqual(True, pref.getNoCheck(pref.REQ_VAR_USER_ID) in session)
+      rv = cLogin.post('/login', json=paramsLogout)
+      self.assertEqual(rv.get_json()["Error"]["code"],0)
+      self.assertEqual(False, pref.getNoCheck(pref.REQ_VAR_USER_ID) in session)

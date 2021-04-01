@@ -47,7 +47,7 @@ def login(data: dict) -> str:
 def logout(data: dict)-> str:
     if "userID" in session:
         session.pop("userID", None)
-        return redirect("/")
+        
 
     return jsonify(
         Error = pref.Success.toJson()
