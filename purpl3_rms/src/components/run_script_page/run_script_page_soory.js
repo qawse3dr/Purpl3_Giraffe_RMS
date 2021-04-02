@@ -93,7 +93,7 @@ class RunScriptPage extends React.Component {
                 //alert(JSON.stringify(res.data))
 
                 //Update output textarea and FP depending on which consoleType
-                if (this.state.consoleType = "STDOUT") { //STDOUT
+                if (this.state.consoleType === "STDOUT") { //STDOUT
                     this.setState(state => ({
                         currentOutputSTDOUT: state.currentOutputSTDOUT + res.data.entry,
                         filePositionSTDOUT: res.data.FP
@@ -139,6 +139,7 @@ class RunScriptPage extends React.Component {
             consoleType: "STDOUT"
         }));
         document.getElementById("displayLabel").innerHTML = "Displaying: STDOUT";
+        document.getElementById("Live_Output").value = this.state.currentOutputSTDOUT;
     }
 
     handleDisplaySTDERR() {
@@ -146,6 +147,7 @@ class RunScriptPage extends React.Component {
             consoleType: "STDERR",
         }));
         document.getElementById("displayLabel").innerHTML = "Displaying: STDERR";
+        document.getElementById("Live_Output").value = this.state.currentOutputSTDERR;
     }
 
     render() {
