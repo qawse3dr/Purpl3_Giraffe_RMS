@@ -8,8 +8,9 @@ class RunScriptPage extends React.Component {
         super();
         this.state = {
             runningScript: -1,
-            filePosition: 0,
             consoleType: "STDOUT",
+            filePositionSTDOUT: 0,
+            filePositionSTDERR: 0,
             currentOutputSTDOUT: "",
             currentOutputSTDERR: ""
         }
@@ -56,7 +57,8 @@ class RunScriptPage extends React.Component {
 
         //Reset file position and output eitherway
         this.setState(state => ({
-            filePosition: 0,
+            filePositionSTDOUT: 0,
+            filePositionSTDERR: 0,
             currentOutputSTDOUT: "",
             currentOutputSTDERR: "",
         }));
@@ -66,6 +68,15 @@ class RunScriptPage extends React.Component {
     handleLiveOutput() {
         //Only run if the is a script actually running.
         if (this.state.runningScript != -1) {
+            //Local variable of the current fileposition to reduce code
+            let filePos;
+            if (this.state.consoleType == "STDOUT") {
+                filePos = this.state.filePositionSTDOUT;
+            } else {
+                filePos = this.state.filePositionSTDERR;
+            }
+
+            //Backend Call for getting live output
             axios.post("/api", {
                 body: {
                     op:"MANAGE_SCRIPT_LOGS",
@@ -74,28 +85,25 @@ class RunScriptPage extends React.Component {
                         data:{
                             Id: this.state.runningScript, //return value of soory's handleRunScript()
                             Filetype: this.state.consoleType, //default of STDOUT
-                            FP: this.state.filePosition //default of 0
+                            FP: filePos //default of 0
                         }
                     }
                 }
             }).then((res) => { //Success
                 //alert(JSON.stringify(res.data))
 
-                //Update newest file position
-                this.setState(state => ({
-                    filePosition: res.data.FP
-                }));
-
-                //Update output textarea depending on which consoleType
+                //Update output textarea and FP depending on which consoleType
                 if (this.state.consoleType = "STDOUT") { //STDOUT
                     this.setState(state => ({
-                        currentOutputSTDOUT: state.currentOutputSTDOUT + res.data.entry
+                        currentOutputSTDOUT: state.currentOutputSTDOUT + res.data.entry,
+                        filePositionSTDOUT: res.data.FP
                     }));
                     document.getElementById("Live_Output").value = this.state.currentOutputSTDOUT;
 
                 } else { //STDERR
                     this.setState(state => ({
-                        currentOutputSTDERR: state.currentOutputSTDERR + res.data.entry
+                        currentOutputSTDERR: state.currentOutputSTDERR + res.data.entry,
+                        filePositionSTDERR: res.data.FP
                     }));
                     document.getElementById("Live_Output").value = this.state.currentOutputSTDERR;
                 }
@@ -105,19 +113,21 @@ class RunScriptPage extends React.Component {
                 
                 //Reset file position and output
                 this.setState(state => ({
-                    filePosition: 0,
+                    filePositionSTDOUT: 0,
+                    filePositionSTDERR: 0,
                     currentOutputSTDOUT: "",
                     currentOutputSTDERR: ""
                 }));
 
-                alert("Post Failed")
+                alert("Post Failed.");
             })
         } else {
             document.getElementById("Live_Output").value = "Run a script first before checking the live output!"
 
             //Reset file position eitherway
             this.setState(state => ({
-                filePosition: 0,
+                filePositionSTDOUT: 0,
+                filePositionSTDERR: 0,
                 currentOutputSTDOUT: "",
                 currentOutputSTDERR: ""
             }));
