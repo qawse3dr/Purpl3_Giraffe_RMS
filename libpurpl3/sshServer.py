@@ -201,27 +201,25 @@ class sshConnection():
     #gets the output
     while not stdout.channel.exit_status_ready() or not stderr.channel.exit_status_ready() or stdout.channel.recv_ready() or stderr.channel.recv_ready():
       #stdout
-      
-      if(stdout.channel.recv_ready()):
-        try:
-          stdout_buffer = stdout.read(1).decode()
-          stdoutFile.write(stdout_buffer)
-          if stdout_buffer == "\n":
-            stdoutFile.write("{}: ".format(datetime.datetime.now()))
-          stdoutFile.flush()
-        except:
-          pass
+
+      try:
+        stdout_buffer = stdout.read(1).decode()
+        stdoutFile.write(stdout_buffer)
+        if stdout_buffer == "\n":
+          stdoutFile.write("{}: ".format(datetime.datetime.now()))
+        stdoutFile.flush()
+      except:
+        pass
         
       #stderr
-      if(stderr.channel.recv_ready()):
-        try:
-          stderr_buffer = stderr.read(1).decode()
-          stderrFile.write(stderr_buffer)
-          if stderr_buffer == "\n":
-            stderrFile.write("{}: ".format(datetime.datetime.now()))
-          stderrFile.flush()
-        except:
-          pass
+      try:
+        stderr_buffer = stderr.read(1).decode()
+        stderrFile.write(stderr_buffer)
+        if stderr_buffer == "\n":
+          stderrFile.write("{}: ".format(datetime.datetime.now()))
+        stderrFile.flush()
+      except:
+        pass
 
     #writes rest of data
     for line in stdout.readlines():
