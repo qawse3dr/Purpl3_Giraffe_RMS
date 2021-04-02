@@ -26,7 +26,7 @@ cp ../Purpl3_CMD.py Purpl3_Giraffe_RMS
 cp ../config.yaml Purpl3_Giraffe_RMS
 cp ../deployment/wsgi.py Purpl3_Giraffe_RMS
 cp ../deployment/Purpl3_RMS.ini Purpl3_Giraffe_RMS
-cp ../purpl3_rms.db
+cp ../purpl3_rms.db Purpl3_Giraffe_RMS
 cp -r ../deployment Purpl3_Giraffe_RMS
 cp -r ../purpl3_rms/build/* Purpl3_Giraffe_RMS/web
 cp -r ../res  Purpl3_Giraffe_RMS/res
