@@ -49,31 +49,42 @@ class Computer extends React.Component {
         if (name.value != "" && description.value != "" && username.value != "" && password.value != "" && ip.value != "") {
         	axios.post("/api", {
             	body: {
-	                op:"MANAGE_COMPUTERS",
-	                funcOP: "ADD",
-	                data:{
-	                	Name: name.value,
-						Desc: description.value,
-						Username: username.value,
-						Password:  password.value,
-						IP: ip.value,
-						isAdmin: false
-	                }
+	                op:"MANAGE_COMPUTER",
+                    data:{
+                        funcOP: "ADD",
+                        data:{
+                            Name: name.value,
+                            Desc: description.value,
+                            Username: username.value,
+                            Password:  password.value,
+                            IP: ip.value,
+                            isAdmin: false
+                        }
+                    }
 	            }
 	        }).then((res) => {
-	            alert("Success! Computer added.");
-	            message.innerHTML = "Success! Computer added.";
+	        	
+	        	//Post request might go through, though an error could still occur such as incorrect fields.
+	        	if (res.data.Error.code == 0) {
+					alert("Success! Computer added.");
+		            message.innerHTML = "Success! Computer added.";
 
-	            //Clearing fields after successfully adding
-	            name.value = "";
-		        description.value = "";
-		        username.value = "";
-		        password.value = "";
-		        ip.value = "";
+		            //Clearing fields after successfully adding
+		            name.value = "";
+			        description.value = "";
+			        username.value = "";
+			        password.value = "";
+			        ip.value = "";
+	        	} else {
+	        		message.innerHTML = "Error: Failed to add computer.";
+	        		alert("Post Success, error " + res.data.Error.code + ": " + res.data.Error.reason);
+	        	}
 
 	        }).catch((res) =>{
-	            alert("Post Failed");
+
 	            message.innerHTML = "Error: Failed to add computer.";
+	            alert("Post Failed.");
+
 	        })
         } else {
         	message.innerHTML = "Please fill in all the blanks!";
