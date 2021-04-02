@@ -8,8 +8,10 @@ class RunScriptPage extends React.Component {
         super();
         this.state = {
             runningScript: -1,
+            filePosition: 0,
             consoleType: "STDOUT",
-            filePosition: 0
+            currentOutputSTDOUT: "",
+            currentOutputSTDERR: ""
         }
 
         this.handleRunScript = this.handleRunScript.bind(this);
@@ -18,10 +20,11 @@ class RunScriptPage extends React.Component {
         this.handleDisplaySTDERR = this.handleDisplaySTDERR.bind(this);
     }
 
-    handleRunScript(){
+    handleRunScript() {
         let in_computer = document.getElementById("Select_Computer_text");
         let in_script = document.getElementById("Select_Script_text");
 
+        //Backend call to run script
         axios.post("/api", {
             body: {
               op:"RUN_SCRIPT",
@@ -30,58 +33,94 @@ class RunScriptPage extends React.Component {
                 ComputerID: in_computer.value
               }
             }
-        }).then((res) => {
+        }).then((res) => { //Sucess
             alert(JSON.stringify(res.data))
-            let btn = document.getElementById("run_page_runbtn");
-            btn.value = res.data;
-            console.log(btn.value.Id);
+            //let btn = document.getElementById("run_page_runbtn");
+            //btn.value = res.data;
+            //console.log(btn.value.Id);
         
             //Updating the currently running script to be the return of this function call
             this.setState(state => ({
-                runningScript: res.data.id
+                runningScript: res.data.Id,
             }));
 
-        }).catch((res) =>{ //Script failed
+        }).catch((res) =>{ //Fail
             alert("Post Failed"); //Prob remove this final ver
 
             //Update the currently running script to be -1 or nothing
             this.setState(state => ({
-                runningScript: -1
+                runningScript: -1,
             }));
             document.getElementById("Live_Output").value = "Running the script failed. Try again";
         })
+
+        //Reset file position and output eitherway
+        this.setState(state => ({
+            filePosition: 0,
+            currentOutputSTDOUT: "",
+            currentOutputSTDERR: "",
+        }));
     }
 
     //Call to backend to retrieve script output.
-    handleLiveOutput(){
+    handleLiveOutput() {
         //Only run if the is a script actually running.
         if (this.state.runningScript != -1) {
             axios.post("/api", {
                 body: {
-                    op:"GET_FILE",
+                    op:"MANAGE_SCRIPT_LOGS",
                     data:{
-                        Id: this.state.runningScript, //return value of soory's handleRunScript()
-                        Filetype: this.state.consoleType, //default of STDOUT
-                        FP: this.state.filePosition //default of 0
+                        funcOP:"GET_FILE",
+                        data:{
+                            Id: this.state.runningScript, //return value of soory's handleRunScript()
+                            Filetype: this.state.consoleType, //default of STDOUT
+                            FP: this.state.filePosition //default of 0
+                        }
                     }
                 }
-            }).then((res) => {
-                alert(JSON.stringify(res.data))
+            }).then((res) => { //Success
+                //alert(JSON.stringify(res.data))
 
                 //Update newest file position
                 this.setState(state => ({
                     filePosition: res.data.FP
                 }));
 
-                //Update output textarea
-                document.getElementById("Live_Output").value = res.data.entry
-            }).catch((res) =>{
-                document.getElementById("Live_Output").value = "Something went wrong with getting the live output :C. Please try again."
-                this.state.filePosition = 0;
+                //Update output textarea depending on which consoleType
+                if (this.state.consoleType = "STDOUT") { //STDOUT
+                    this.setState(state => ({
+                        currentOutputSTDOUT: state.currentOutputSTDOUT + res.data.entry
+                    }));
+                    document.getElementById("Live_Output").value = this.state.currentOutputSTDOUT;
+
+                } else { //STDERR
+                    this.setState(state => ({
+                        currentOutputSTDERR: state.currentOutputSTDERR + res.data.entry
+                    }));
+                    document.getElementById("Live_Output").value = this.state.currentOutputSTDERR;
+                }
+
+            }).catch((res) =>{ //Fail
+                document.getElementById("Live_Output").value = "Something went wrong with getting the live output :C. Please try again.";
+                
+                //Reset file position and output
+                this.setState(state => ({
+                    filePosition: 0,
+                    currentOutputSTDOUT: "",
+                    currentOutputSTDERR: ""
+                }));
+
                 alert("Post Failed")
             })
         } else {
             document.getElementById("Live_Output").value = "Run a script first before checking the live output!"
+
+            //Reset file position eitherway
+            this.setState(state => ({
+                filePosition: 0,
+                currentOutputSTDOUT: "",
+                currentOutputSTDERR: ""
+            }));
         }
     }
 
@@ -137,7 +176,7 @@ class RunScriptPage extends React.Component {
                         <button class="button" type="button" onClick={this.handleLiveOutput}>Refresh Output</button>
                     </div>
                     
-                    <p id="displayLabel">Displaying:</p>
+                    <p id="displayLabel">Displaying: STDOUT</p>
                     <button class="tab" onClick={this.handleDisplaySTDOUT}>stdout</button>
                     <button class="tab" onClick={this.handleDisplaySTDERR}>stderr</button>  
 
@@ -152,14 +191,14 @@ class RunScriptPage extends React.Component {
 
 function Select_computer_func(parms){
     let text = document.getElementById("Select_Computer_text");
-    text.textContent = "Selected Computer : " + parms;
-    text.value = parms;
+    text.textContent = "Selected Computer : " + parms.name;
+    text.value = parms.name;
 }
 
 function Select_script_func(parms){
     let text = document.getElementById("Select_Script_text");
-    text.textContent = "Selected Script : " + parms;
-    text.value = parms;
+    text.textContent = "Selected Script : " + parms.name;
+    text.value = parms.name;
 }
   
 export default RunScriptPage
