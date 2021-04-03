@@ -20,6 +20,7 @@ class BaseTestCase(unittest.TestCase):
     helper.createMockDB()
     self.user = helper.createUserAccount()
     self.script = helper.createScript()
+    self.script2 = helper.createScript2()
     self.computer = helper.createComputer()
     self.c = helper.mockApp()
     
@@ -302,3 +303,65 @@ class BaseTestCase(unittest.TestCase):
       rv = cLogin.post('/login', json=paramsLogout)
       self.assertEqual(rv.get_json()["Error"]["code"],0)
       self.assertEqual(False, pref.getNoCheck(pref.REQ_VAR_USER_ID) in session)
+
+  def test_edit(self):
+    '''
+    Tests edit on a computer
+    '''
+    params = {
+      pref.getNoCheck(pref.REQ_VAR_BODY):{
+        pref.getNoCheck(pref.REQ_VAR_OP): pref.getAttrName(pref.getNoCheck(pref.OPERATION_MANAGE_COMPUTERS)),
+        pref.getNoCheck(pref.REQ_VAR_DATA):{
+          pref.getNoCheck(pref.REQ_VAR_FUNC_OP): pref.getNoCheck(pref.TABLE_OP_EDIT),
+          pref.getNoCheck(pref.REQ_VAR_DATA):{
+            pref.getNoCheck(pref.REQ_VAR_ID): 1,
+            pref.getNoCheck(pref.REQ_VAR_NICK_NAME): "name",
+            pref.getNoCheck(pref.REQ_VAR_DESC): "desc",
+            pref.getNoCheck(pref.REQ_VAR_USERNAME): "username",
+            pref.getNoCheck(pref.REQ_VAR_IP): "192.168.100.1",
+            pref.getNoCheck(pref.REQ_VAR_IS_ADMIN): True
+          }
+        }
+      }
+    }
+
+    rv = self.c.post("/api", json=params)
+    
+    self.assertEqual(rv.get_json()["Error"]["code"],0)
+    self.assertEqual(rv.get_json()["entry"]["ID"],"1")
+    self.assertEqual(rv.get_json()["entry"]["userID"],"1")
+    self.assertEqual(rv.get_json()["entry"]["nickName"],"name")
+    self.assertEqual(rv.get_json()["entry"]["IP"],"192.168.100.1")
+
+  def test_edit_script(self):
+    '''
+    Tests get by id for an object that doesnt exist
+    '''
+    params = {
+      pref.getNoCheck(pref.REQ_VAR_BODY):{
+        pref.getNoCheck(pref.REQ_VAR_OP): pref.getAttrName(pref.getNoCheck(pref.OPERATION_MANAGE_SCRIPT)),
+        pref.getNoCheck(pref.REQ_VAR_DATA):{
+          pref.getNoCheck(pref.REQ_VAR_FUNC_OP): pref.getNoCheck(pref.TABLE_OP_EDIT),
+          pref.getNoCheck(pref.REQ_VAR_DATA):{
+            pref.getNoCheck(pref.REQ_VAR_ID): 2,
+            pref.getNoCheck(pref.REQ_VAR_NICK_NAME): "test",
+            pref.getNoCheck(pref.REQ_VAR_DESC): "test",
+            pref.getNoCheck(pref.REQ_VAR_FILE_NAME): "test_script_name.sh",
+            pref.getNoCheck(pref.REQ_VAR_SCRIPT_DATA): "TEST",
+            pref.getNoCheck(pref.REQ_VAR_IS_ADMIN): True
+          }
+        }
+      }
+    }
+
+    rv = self.c.post("/api", json=params)
+    
+    self.assertEqual(rv.get_json()["Error"]["code"],0)
+    self.assertEqual(rv.get_json()["entry"]["ID"],"2")
+    self.assertEqual(rv.get_json()["entry"]["name"],"test")
+    
+    #test so see if file content was changed
+    fp = open("{}test_script_name.sh".format(pref.getNoCheck(pref.CONFIG_SCRIPT_PATH)),"r")
+
+    self.assertEqual(fp.readline(),"TEST")
+    fp.close()

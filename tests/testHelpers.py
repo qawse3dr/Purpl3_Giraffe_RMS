@@ -42,6 +42,10 @@ def createScript():
   entry =scriptTable.ScriptTable.createEntry("unittest","sleepScript.sh",1,"unittest script",False)
   scriptTable.ScriptTable.add(entry)
   return entry
+def createScript2():
+  entry =scriptTable.ScriptTable.createEntry("unittest","test_script_name.sh",1,"unittest script",False)
+  scriptTable.ScriptTable.add(entry)
+  return entry
 
 def createComputer():
   entry = computerTable.ComputerTable.createEntry(1,"name","name","desc","root","localhost",False)
