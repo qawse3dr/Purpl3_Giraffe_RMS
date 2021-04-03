@@ -7,7 +7,7 @@ const Button = (props) => {
     }
     return (
         <div>
-            <button className="tableButton" onClick={onClick}>{props.name}</button>
+            <button className="tableButton" onClick={onClick} scriptid={props.scriptid}>{props.name}</button>
         </div>
     )
 }
