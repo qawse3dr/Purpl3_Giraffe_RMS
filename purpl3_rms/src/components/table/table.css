@@ -1,5 +1,10 @@
-div.scroll { 
-    height: 110px; 
-    overflow-x: hidden; 
-    overflow-y: auto;
+div.scroll {
+    width:100%;
+    min-height:100px;
+    height:20%;
+    max-height: 300px;
+    overflow-x:hidden;
+    overflow-y:auto;
+    -ms-overflow-y:auto;
+    -ms-overflow-x:hidden;
 } 

@@ -1,7 +1,7 @@
 import logo from './res/logo.png';
 import './App.css';
 import axios from "axios";
-import React, {useState } from 'react';
+import React, {useState} from 'react';
 import {
   Route,
   Switch,
@@ -28,9 +28,10 @@ function App() {
           <Route exact path="/" render={(props) => (<Login {...props} sendLoginStatus={getLoginStatus} />)}/>
           <>
             <div className="logoHeader">
-              <img src={logo}></img>
+              <img src={logo}/>
             </div>
             <div className="header">
+              <button className="logout-button" onClick={handleLogout}/>
               <h1>User stuff goes here</h1>
             </div>
             <ul className="navTabs">
@@ -59,6 +60,18 @@ function App() {
 
   function getLoginStatus(loginState){
     setLogin(loginState)
+  }
+
+  function handleLogout(){
+      axios.post("/login", {
+        body: {
+            op: "LOGOUT",
+            data: {
+            }
+        }
+      })
+      
+    setLogin(false);
   }
 }
 
