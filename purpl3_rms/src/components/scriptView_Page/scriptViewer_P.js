@@ -3,6 +3,7 @@ import ScriptTable from '../table/ScriptTable';
 import React, {useState , useEffect} from "react";
 import CreateScript from './CreateScript';
 import DeleteScript from './DeleteScript';
+import EditScript from './EditScript'
 
 const ScriptViewpage = (props) => {
     const [numScripts, setNumScripts] = useState(0)
@@ -40,6 +41,7 @@ const ScriptViewpage = (props) => {
             <button style={{color:"red"}} onClick={() => setShowDeleteScript(!showDeleteScript)}>Delete</button>
             <button style={{color:"orange"}} onClick={() => setShowAddScript(!showAddScript)}>Create new script +</button>
             {showAddScript && <CreateScript addScript={Add} closeForm={closeAddScript}/>}
+            {showEditScript && <EditScript scriptid={selectedScriptID} editScript={Edit} closeForm={closeEditScript}/>}
             {showDeleteScript && <DeleteScript deleteScript={Delete} closeForm={closeDeleteScript}/>}
         </div>
     );
@@ -92,23 +94,42 @@ const ScriptViewpage = (props) => {
             }
         }).then((res) => {
             setNumScripts(list.length + 1)
-            console.log(list)
+            alert(name + " Script added")
         }).catch((res) =>{
             alert("Post Failed")
-          })
-          closeAddScript();
+        })
+        
+        closeAddScript();
     }
 
-    function Edit(prams)
-    {
+    function Edit(id, name, fname, desc, admin, data) {
         let text = document.getElementById("SelectScript");
-        if (text.textContent !== "") 
-        {
-            console.log(list[text.index],"open the add script tab stuff")
+        if (text.textContent !== "") {
+          axios.post("/api", {
+            body: {
+              op: "MANAGE_SCRIPTS",
+              data: {
+                  funcOP: "EDIT",
+                  data: {
+                      Id: id,
+                      Name: name,
+                      fileName: fname,
+                      Desc: desc,
+                      isAdmin: admin,
+                      scriptData: data
+                  }
+              }
+            }
+          }).then((res) => {
+            setNumScripts(list.length + 0)
+            //console.log(list)
+          }).catch((res) =>{
+            alert("Post Failed")
+          })
+          closeEditScript();
         }
-
-        closeEditScript();
     }
+
 
     function closeAddScript(){
         setShowAddScript(!showAddScript);
