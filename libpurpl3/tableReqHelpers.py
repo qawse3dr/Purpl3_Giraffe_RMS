@@ -143,7 +143,7 @@ def processRequest(tableName: pref.prefENUM, tableOP: pref.prefENUM, data: dict)
     id = None
     try:
       id = data[pref.getNoCheck(pref.REQ_VAR_ID)]
-    except: #TODO CREATE NEW ERROR
+    except:
       err = pref.getError(pref.ERROR_INVALID_REQUEST,args=(data))
 
     #Gets the entry by id
@@ -156,9 +156,15 @@ def processRequest(tableName: pref.prefENUM, tableOP: pref.prefENUM, data: dict)
     returnVal = jsonify(Error=err.toJson(), entry=entryResponse)
 
   elif(tableOP == pref.getNoCheck(pref.TABLE_OP_EDIT)):
-    err, entry = createObjFromReq(tableName, table, data)
+    err, entry = createObjFromReq(tableName, table, data, isEdit=True)
+
+    try:
+      entry.ID = data[pref.getNoCheck(pref.REQ_VAR_ID)]
+    except:
+      err = pref.getError(pref.ERROR_INVALID_REQUEST,args=(data))
+
     if(err == pref.Success):
-      err = table.editEntry(entry)
+      err, entry = table.editEntry(entry)
     
     #create return object
     returnVal = jsonify(Error= err.toJson(), entry= entry.toJson())
@@ -171,11 +177,12 @@ def processRequest(tableName: pref.prefENUM, tableOP: pref.prefENUM, data: dict)
 
   return returnVal
     
-def createObjFromReq(tableName: str, table: tableOp.Table, data: dict) -> Tuple[pref.Error, tableOp.Entry]:
+def createObjFromReq(tableName: str, table: tableOp.Table, data: dict, isEdit:bool = False) -> Tuple[pref.Error, tableOp.Entry]:
   '''
   creates a table object from a request data
   @param tableName the name of the table being use ie computer
   @param data tableData that the object will be created from
+  @param isEdit only used for edit script to know if it should be overwriting a file or not
   @return newly created object
   '''
   entry = None
@@ -238,10 +245,15 @@ def createObjFromReq(tableName: str, table: tableOp.Table, data: dict) -> Tuple[
       except:
         err = pref.getError(pref.ERROR_INVALID_REQUEST,args=(data))
 
-    #create file in script folder. return error if it already exists
+    #create file in script folder. overwrite if it already exists (only for edit)
     try:
       scriptPath = pref.getNoCheck(pref.CONFIG_SCRIPT_PATH)
-      fp = open("{}{}".format(scriptPath,filename), "x")
+
+      #should it overwrite or be a new file
+      writeMode = "x"
+      if(isEdit): writeMode = "w"
+      
+      fp = open("{}{}".format(scriptPath,filename), writeMode)
       fp.write(scriptData)
     except:
       print("ere")
