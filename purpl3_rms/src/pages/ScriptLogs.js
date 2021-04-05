@@ -1,9 +1,10 @@
 import React from 'react'
+import ScriptLogPage from '../components/script_log/script_log_p.js'
 
 class ScriptLogs extends React.Component {
     render() {
         return (
-            <h1>Script Logs!!</h1>
+            <ScriptLogPage/>
         );
     }
 }

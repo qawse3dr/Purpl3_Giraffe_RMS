@@ -12,7 +12,9 @@ class RunScriptPage extends React.Component {
             filePositionSTDOUT: 0,
             filePositionSTDERR: 0,
             currentOutputSTDOUT: "",
-            currentOutputSTDERR: ""
+            currentOutputSTDERR: "",
+            script_list: [],
+            computer_list: []
         }
 
         this.handleRunScript = this.handleRunScript.bind(this);
@@ -21,10 +23,44 @@ class RunScriptPage extends React.Component {
         this.handleDisplaySTDERR = this.handleDisplaySTDERR.bind(this);
     }
 
+    componentDidMount() {
+        axios.post("/api", {
+          body: {
+            op: "MANAGE_SCRIPTS",
+            data:{
+              funcOP: "GET_ALL",
+              data: {}
+            }
+          }
+          }).then((res) => {
+            this.setState(state => ({
+              script_list: [...res.data.entries]
+            }));
+          }).catch((res) =>{
+            alert("Post Failed")
+          })
+        
+        axios.post("/api", {
+            body: {
+              op: "MANAGE_COMPUTER",
+              data:{
+                funcOP: "GET_ALL",
+                data: {}
+              }
+            }
+            }).then((res) => {
+              this.setState(state => ({
+                computer_list: [...res.data.entries]
+              }));
+            }).catch((res) =>{
+              console.log(res)
+            })
+      }
+
     handleRunScript() {
         let in_computer = document.getElementById("Select_Computer_text");
         let in_script = document.getElementById("Select_Script_text");
-
+        console.log(in_script.value,in_computer.value)
         //Backend call to run script
         axios.post("/api", {
             body: {
@@ -157,24 +193,14 @@ class RunScriptPage extends React.Component {
                     <div className="column">
                         <h1>Select Computer</h1>
                         <div className="scroll">
-                            <Table input={[ {name:'Soory\'s computer\tIp:123.1234.7777',script:Select_computer_func},
-                                            {name:'Larry\'s computer\tIp:123.1234.7777',script:Select_computer_func},
-                                            {name:'Julian\'s computer\tIp:123.1234.7777',script:Select_computer_func},
-                                            {name:'Rachael\'s computer\tIp:123.1234.7777',script:Select_computer_func},
-                                            {name:'Daniela\'s computer\tIp:123.1234.7777',script:Select_computer_func},
-                                            {name:'James\'s computer\tIp:123.1234.7777',script:Select_computer_func}]}/>
+                            <Table input={this.state.computer_list} onClickFunc={Select_computer_func}/>
                         </div>
                     </div>
 
                     <div className="column">
                         <h1>Select Script</h1>
                         <div className="scroll">
-                            <Table input={[ {name:'Shutdown computer',script:Select_script_func},
-                                            {name:'Install Libre Office',script:Select_script_func},
-                                            {name:'Send meeting email',script:Select_script_func},
-                                            {name:'Order apple juice',script:Select_script_func},
-                                            {name:'Toggle smart lights',script:Select_script_func},
-                                            {name:'Cancel apple juice',script:Select_script_func}]}/>
+                            <Table input={this.state.script_list} onClickFunc={Select_script_func}/>
                         </div>
                     </div>
 
@@ -204,13 +230,13 @@ class RunScriptPage extends React.Component {
 function Select_computer_func(parms){
     let text = document.getElementById("Select_Computer_text");
     text.textContent = "Selected Computer : " + parms.name;
-    text.value = parms.name;
+    text.value = parseInt(parms.current_object.ID);
 }
 
 function Select_script_func(parms){
     let text = document.getElementById("Select_Script_text");
     text.textContent = "Selected Script : " + parms.name;
-    text.value = parms.name;
+    text.value = parseInt(parms.current_object.ID);
 }
   
 export default RunScriptPage
