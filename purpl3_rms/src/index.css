@@ -25,6 +25,15 @@ code {
 	height: auto;
 }
 
+.logout-button{
+	background: url("./res/logout.png") no-repeat;
+    cursor:pointer;
+    border: none;
+	width: 60px;
+	height: 60px;
+	float: right;
+}
+
 ul.navTabs{
 	margin-left: -40px;
 	display: table;
