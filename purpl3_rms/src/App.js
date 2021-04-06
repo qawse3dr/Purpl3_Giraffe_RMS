@@ -38,7 +38,6 @@ function App() {
             <ul className="navTabs">
               <li className="tab"><NavLink exact to="/run-script">Run Script</NavLink></li>
               <li className="tab"><NavLink to="/script-logs">Script Logs</NavLink></li>
-              <li className="tab"><NavLink to="/schedule">Schedule</NavLink></li>
               <li className="tab"><NavLink to="/script-viewer">Script Viewer</NavLink></li>
               <li className="tab"><NavLink to="/computer">Computer</NavLink></li>
               <li className="tab"><NavLink to="/error-doc">Error Doc</NavLink></li>
@@ -47,7 +46,6 @@ function App() {
             <div className="content">
               <PrivateRoute path="/run-script" loginState={loggedIn} component={RunScripts}/>
               <PrivateRoute path="/script-logs" loginState={loggedIn} component={ScriptLogs}/>
-              <PrivateRoute path="/schedule" loginState={loggedIn} component={Schedule}/>
               <PrivateRoute path="/script-viewer" loginState={loggedIn} component={ScriptsViewer}/>
               <PrivateRoute path="/computer" loginState={loggedIn} component={Computer}/>
               <PrivateRoute path="/error-doc" loginState={loggedIn} component={ErrorDoc}/>
