@@ -49,9 +49,12 @@ class RunScriptPage extends React.Component {
               }
             }
             }).then((res) => {
-              this.setState(state => ({
-                computer_list: [...res.data.entries]
-              }));
+                for(let entry of res.data.entries){
+                    entry.name = entry.nickName;
+                }
+                this.setState(state => ({
+                    computer_list: [...res.data.entries]
+                }));
             }).catch((res) =>{
               console.log(res)
             })

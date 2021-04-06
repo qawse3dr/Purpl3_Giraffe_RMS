@@ -5,76 +5,65 @@ import React, {useState ,useRef, Component, useEffect} from "react";
 
 const ScriptLogPage = (props) => {
     const [script_log_List,setScriptLog_list] = useState([])
-    const [script_list,setScript_list] = useState([])
-    const [computer_list,setComputer_list] = useState([])
     const [pickedLog,setPickedLog] = useState(0)
 
     useEffect(() => {
-        axios.post("/api", {
-            body: {
-              op: "MANAGE_SCRIPTS",
-              data:{
-                funcOP: "GET_ALL",
-                data: {}
-              }
-            }
-            }).then((res) => {
-                setScript_list(old_list => [...res.data.entries])
-            }).catch((res) =>{
-              alert("Post Failed")
-            })
-          
-        axios.post("/api", {
-            body: {
-            op: "MANAGE_COMPUTER",
-            data:{
-                funcOP: "GET_ALL",
-                data: {}
-            }
-            }
-            }).then((res) => {
-                setComputer_list(old_list => [...res.data.entries])
-            }).catch((res) =>{
-                console.log(res)
-            })
+        axios.all([
+            axios.post("/api", {
+                body: {
+                  op: "MANAGE_SCRIPTS",
+                  data:{
+                    funcOP: "GET_ALL",
+                    data: {}
+                  }
+                }
+                }),
+            axios.post("/api", {
+                body: {
+                    op: "MANAGE_COMPUTER",
+                    data:{
+                    funcOP: "GET_ALL",
+                    data: {}
+                    }
+                }
+                }),
+            axios.post("/api", {
+                body: {
+                    op: "MANAGE_SCRIPT_LOGS",
+                    data:{
+                    funcOP: "GET_ALL",
+                    data: {}
+                    }
+                }
+                })
+        ]).then(axios.spread((res1, res2, res3) => {
+            let scripts = res1.data.entries
+            let computers = res2.data.entries
+            let input_list = res3.data.entries
 
-        axios.post("/api", {
-            body: {
-              op: "MANAGE_SCRIPT_LOGS",
-              data:{
-                funcOP: "GET_ALL",
-                data: {}
-              }
+            if (input_list.length == 0) {
+                input_list = [{name:"There are no logs"}]
             }
-            }).then((res) => {
-                let input_list = [...res.data.entries]
-                //let input_list = [{compID:1,scriptID:1,startTime:"now",endTime:"later",stdoutFile:"yo this is out",stderrFile:"yo this is error"}]
-                let script_name = "nothing"
-                let computer_name = "nothing"
-                if (input_list.length == 0) {
-                    input_list = [{name:"There are no logs"}]
-                }
-                else{
-                    
-                    input_list.forEach(element => {
-                        let logs = element
-                        script_list.forEach(scripts => {
-                            if (scripts.ID == logs.scriptID) {
-                                script_name = scripts.name
-                            }
-                        });
-                        computer_list.forEach(computers => {
-                            if (computers.ID == logs.compID) {
-                                computer_name = computers.name
-                            }
-                        });
-                        logs["name"] ="Computer: "+ computer_name + "  / Script: " + script_name + "  / Time:" + logs.startTime +" "+ logs.endTime
+            else{
+                input_list.forEach(element => {
+                    let logs = element
+                    logs["name"] = ""
+                    computers.forEach(computer => {
+                        
+                        if (computer.ID == logs.compID) {
+                            logs["name"] += "Computer: " + computer.nickName
+                        }
                     });
-                }
-                setScriptLog_list(old_list => input_list)
-            }).catch((res) =>{
-              alert("Post Failed")
-            })
+                    scripts.forEach(script => {
+                        if (script.ID == logs.scriptID) {
+                            logs["name"] +="  / Script: " + script.name
+                        }
+                    });
+                    logs["name"] += "  / StartTime: " + logs.startTime +" / EndTime: "+ logs.endTime
+                });
+            }
+            setScriptLog_list(old_list => input_list)
+        }));
     }, []);
 
     function handleDisplaySTDERR(prams)
@@ -88,7 +77,23 @@ const ScriptLogPage = (props) => {
                 text.value = "There are no logs";
             }
             else{
-                text.value = "STDERR : " + text.log.stderrFile;
+                axios.post("/api", {
+                    body: {
+                      op: "MANAGE_SCRIPT_LOGS",
+                      data:{
+                        funcOP: "GET_FILE",
+                        data: {
+                            Id: text.log.ID,
+                            Filetype: "STDERR",
+                            FP: 0           
+                        }
+                      }
+                    }
+                    }).then((res) => {
+                        text.value = res.data.entry
+                    }).catch((res) =>{
+                      console.log(res)
+                    })
             }
         }
     }
@@ -104,7 +109,23 @@ const ScriptLogPage = (props) => {
                 text.value = "There are no logs";
             }
             else{
-                text.value = "STDOUT: " + text.log.stdoutFile;
+                axios.post("/api", {
+                    body: {
+                      op: "MANAGE_SCRIPT_LOGS",
+                      data:{
+                        funcOP: "GET_FILE",
+                        data: {
+                            Id: text.log.ID,
+                            Filetype: "STDOUT",
+                            FP: 0            
+                        }
+                      }
+                    }
+                    }).then((res) => {
+                        text.value = res.data.entry
+                    }).catch((res) =>{
+                      console.log(res)
+                    })
             }
         }
     }
@@ -118,7 +139,23 @@ const ScriptLogPage = (props) => {
             text.value = "There are no logs";
         }
         else{
-            text.value = "STDOUT: " + prams.current_object.stdoutFile;
+            axios.post("/api", {
+                body: {
+                  op: "MANAGE_SCRIPT_LOGS",
+                  data:{
+                    funcOP: "GET_FILE",
+                    data: {
+                        Id: prams.current_object.ID,
+                        Filetype: "STDOUT",
+                        FP: 0      
+                    }
+                  }
+                }
+                }).then((res) => {
+                    text.value = res.data.entry
+                }).catch((res) =>{
+                  console.log(res)
+                })
             text.log = prams.current_object;
         }
         
