@@ -12,6 +12,7 @@ const ScriptViewpage = (props) => {
     const [selectedScriptID, setSelectedScriptID] = useState(0)
     const [showDeleteScript, setShowDeleteScript] = useState(false);
     const [showEditScript, setShowEditScript] = useState(false);
+    const [showScriptData, setShowScriptData] = useState("");
 
     useEffect(() => {
         axios.post("/api", {
@@ -43,9 +44,33 @@ const ScriptViewpage = (props) => {
             {showAddScript && <CreateScript addScript={Add} closeForm={closeAddScript}/>}
             {showEditScript && <EditScript scriptid={selectedScriptID} editScript={Edit} closeForm={closeEditScript}/>}
             {showDeleteScript && <DeleteScript deleteScript={Delete} closeForm={closeDeleteScript}/>}
+
+            <textarea id="Script_Output" readonly rows="10" cols="200" value={showScriptData}>
+                    Script
+            </textarea>
         </div>
     );
 
+    function showScript(id){
+      axios.post("/api", {
+        body: {
+            op:"MANAGE_SCRIPTS",
+            data:{
+                funcOP:"GET_FILE",
+                data:{
+                    Id: id,
+                    Filetype: "SCRIPT", //default of STDOUT
+                    FP: 0
+                }
+            },
+
+        }
+      }).then((res) => {
+        setShowScriptData(res.data.entry);
+      }).catch((res) =>{
+        alert(console.log(res))
+      })
+    }
     function Delete()
     {
         console.log("script deleted!");
@@ -146,6 +171,7 @@ const ScriptViewpage = (props) => {
     function Select_script(prams)
     {
         setSelectedScriptID(prams.scriptid);
+        showScript(prams.scriptid);
         let text = document.getElementById("SelectScript");
         text.textContent = "Selected Script : "+prams.name;
         text.value = prams.name;

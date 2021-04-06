@@ -23,19 +23,42 @@ const EditScript = (props) => {
             }
             }).then((res) => {
             let entry = res.data.entry;
-              alert(JSON.stringify(res.data.entry))
-              setDescription(entry.desc);
-              setName(entry.name);
-              setFileName(entry.filename);
-              if((entry.isAdmin).localeCompare("True") == 0){
-                setAdmin(true);
+              
+              if(res.data.Error.code == 0){
+                setDescription(entry.desc);
+                setName(entry.name);
+                setFileName(entry.filename);
+                if((entry.isAdmin).localeCompare("True") == 0){
+                  setAdmin(true);
+                }
+                else{
+                  setAdmin(false);
+                }
+              } else {
+                alert(JSON.stringify(res.data.entry))
               }
-              else{
-                setAdmin(false);
-              }
+              
             }).catch((res) =>{
               alert("Post Failed")
             })
+      axios.post("/api", {
+        body: {
+            op:"MANAGE_SCRIPTS",
+            data:{
+                funcOP:"GET_FILE",
+                data:{
+                    Id: props.scriptid,
+                    Filetype: "SCRIPT", //default of STDOUT
+                    FP: 0
+                }
+            },
+
+        }
+      }).then((res) => {
+        setdata(res.data.entry)
+      }).catch((res) =>{
+        alert(console.log(res))
+      })
     }, [])
 
     return (
