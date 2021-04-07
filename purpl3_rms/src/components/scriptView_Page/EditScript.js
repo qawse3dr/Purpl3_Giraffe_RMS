@@ -27,7 +27,7 @@ const EditScript = (props) => {
               if(res.data.Error.code == 0){
                 setDescription(entry.desc);
                 setName(entry.name);
-                setFileName(entry.filename);
+                setFileName(entry.fileName);
                 if((entry.isAdmin).localeCompare("True") == 0){
                   setAdmin(true);
                 }
@@ -65,7 +65,7 @@ const EditScript = (props) => {
         <div className="form-popup">
             <div className="form-content">
                 <h2>Edit Script</h2>
-
+                <p style={{color: "red"}} id="invalid"></p>
                 <label for="name"><b>Name</b></label><br/>
                 <input type="text"name="name" value={name} onChange={(e) => setName(e.target.value)}/><br/><br/>
 
@@ -81,12 +81,21 @@ const EditScript = (props) => {
                 <textarea value={data} onChange={(e) => setdata(e.target.value)}>Enter script here...</textarea>
             
                 <div className="button-container">
-                    <button type="button" onClick={() => props.editScript(props.scriptid, name, filename, description, admin, data)} className="btn">Save</button>
+                    <button type="button" onClick={checkFields} className="btn">Save</button>
                     <button type="button" className="btn" onClick={() => props.closeForm()} style={{backgroundColor: "#FF6347"}}>Cancel</button>
                 </div>
             </div>
         </div>
     )
+
+    function checkFields(){
+      if(name !== "" && filename !== "" && description !== "" && data !== ""){
+        props.editScript(props.scriptid, name, filename, description, admin, data)
+      }
+      else{
+          document.getElementById("invalid").innerHTML = "Please fill in all fields.";
+      }
+  }
 
 
 }
