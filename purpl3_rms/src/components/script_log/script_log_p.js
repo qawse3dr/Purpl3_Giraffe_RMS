@@ -40,7 +40,11 @@ const ScriptLogPage = (props) => {
         ]).then(axios.spread((res1, res2, res3) => {
             let scripts = res1.data.entries
             let computers = res2.data.entries
-            let input_list = res3.data.entries
+            let input_list = []
+            for (let index = res3.data.entries.length-1; index >= 0; index--) {
+                let logs = res3.data.entries[index];
+                input_list.push(logs);
+            }
 
             if (input_list.length == 0) {
                 input_list = [{name:"There are no logs"}]
