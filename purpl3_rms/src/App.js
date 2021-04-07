@@ -33,7 +33,6 @@ function App() {
             </div>
             <div className="header">
               <button className="logout-button" onClick={handleLogout}/>
-              <h1>User stuff goes here</h1>
             </div>
             <ul className="navTabs">
               <li className="tab"><NavLink exact to="/run-script">Run Script</NavLink></li>

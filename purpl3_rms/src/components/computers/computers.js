@@ -34,7 +34,7 @@ const ScriptViewpage = (props) => {
 
     return(
         <div>
-            <h3>Select Computer</h3>
+            <h1>Select Computer</h1>
             <div className="scroll">
                 <ScriptTable input={list} func={Select_computer}/>
             </div>
@@ -42,7 +42,7 @@ const ScriptViewpage = (props) => {
             <p id="SelectComputer"></p>
             <button style={{color:"blue"}} onClick={() => setShowEditComputer(!showEditComputer)}>Edit</button>
             <button style={{color:"red"}} onClick={() => setShowDeleteComputer(!showDeleteComputer)}>Delete</button>
-            <button style={{color:"orange"}} onClick={() => setShowAddComputer(!showAddComputer)}>Create new computer +</button>
+            <button style={{color:"green"}} onClick={() => setShowAddComputer(!showAddComputer)}>Create new computer +</button>
             {showAddComputer && <CreateComputer addComputer={Add} closeForm={closeAddComputer}/>}
             {showEditComputer && <EditComputer computerid={selectedComputerID} editComputer={Edit} closeForm={closeEditComputer}/>}
             {showDeleteComputer && <DeleteComputer deleteComputer={Delete} closeForm={closeDeleteComputer}/>}

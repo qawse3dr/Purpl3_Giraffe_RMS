@@ -167,7 +167,7 @@ const ScriptLogPage = (props) => {
             <div className="body">
                 
                 <div className="column4">
-                    <h2>Select Log</h2>
+                    <h1>Select Log</h1>
                     <br></br>
                     <br></br>
                     <div className="scroll">
@@ -177,7 +177,7 @@ const ScriptLogPage = (props) => {
                 </div>
 
                 <div className="column">
-                    <h2>Output</h2>
+                    <h1>Output</h1>
                     <div>
                         <button className="tab" onClick={handleDisplaySTDOUT}>stdout</button>
                         <button className="tab" onClick={handleDisplaySTDERR}>stderr</button>  

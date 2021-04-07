@@ -17,7 +17,8 @@
 
   .form-content input[type=text], textarea{
     text-align: left;
-    width: 100%;
+    width: 98%;
+       
   }
   .form-content > input[type="password"] {
     width: 100%;

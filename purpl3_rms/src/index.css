@@ -4,12 +4,22 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+	height:100%;
 }
 
 html{
 	height: 100%;
+	width: 98%;
+	margin-left:1%;
+	overflow-y: hidden;
 }
-
+button{
+	font-size: larger;
+	font-weight: bold;
+}
+body ,#root, .App, .content {
+	height: 100%;
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
@@ -33,10 +43,21 @@ code {
 	height: 60px;
 	float: right;
 }
+h1, h2, h3, h4, h5, h6 {
+	margin-top: 0;
+}
+.navTabs{
+	margin-top:1%;
+	margin-bottom:0;
 
+}
+.tab{
+	margin-bottom: 0;
+	margin-left:0;
+}
 ul.navTabs{
 	margin-left: -40px;
-	display: table;
+
 }
 
 ul.navTabs li{

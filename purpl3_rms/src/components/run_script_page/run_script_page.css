@@ -29,6 +29,9 @@ div.body{
   min-height: 320px;
 }
 
+p{
+  margin:0;
+}
 .column {
   float: left;
   width: 50%;
@@ -69,6 +72,7 @@ div.body{
 
 textarea {
     overflow-y: scroll;
+    width: 96%;
     height: 300px;
     resize: none; /* Remove this if you want the user to resize the textarea */
 }
@@ -78,7 +82,7 @@ textarea {
   border-bottom: 50px solid #555;
   border-left: 25px solid transparent;
   border-right: 25px solid transparent;
-  height: ;
+
   width: 125px;
 
   text-align: center;

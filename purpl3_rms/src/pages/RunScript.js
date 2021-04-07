@@ -5,9 +5,9 @@ class RunScripts extends React.Component {
     render() {
     	let script = document.getElementById("Select_Computer_text");
         return (
-        	<div>
+
             	<RunScriptPage/>
-            </div>
+
         );
     }
 }

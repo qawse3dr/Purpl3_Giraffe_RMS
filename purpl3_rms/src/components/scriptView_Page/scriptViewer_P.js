@@ -32,7 +32,7 @@ const ScriptViewpage = (props) => {
 
     return(
         <div>
-            <h3>Select Script</h3>
+            <h1>Select Script</h1>
             <div className="scroll">
                 <ScriptTable input={list} func={Select_script}/>
             </div>
@@ -40,7 +40,7 @@ const ScriptViewpage = (props) => {
             <p id="SelectScript"></p>
             <button style={{color:"blue"}} onClick={() => setShowEditScript(!showEditScript)}>Edit</button>
             <button style={{color:"red"}} onClick={() => setShowDeleteScript(!showDeleteScript)}>Delete</button>
-            <button style={{color:"orange"}} onClick={() => setShowAddScript(!showAddScript)}>Create new script +</button>
+            <button style={{color:"green"}} onClick={() => setShowAddScript(!showAddScript)}>Create new script +</button>
             {showAddScript && <CreateScript addScript={Add} closeForm={closeAddScript}/>}
             {showEditScript && <EditScript scriptid={selectedScriptID} editScript={Edit} closeForm={closeEditScript}/>}
             {showDeleteScript && <DeleteScript deleteScript={Delete} closeForm={closeDeleteScript}/>}
@@ -146,6 +146,7 @@ const ScriptViewpage = (props) => {
               }
             }
           }).then((res) => {
+            alert(JSON.stringify(res.data))
             setNumScripts(list.length + 0)
             //console.log(list)
           }).catch((res) =>{
