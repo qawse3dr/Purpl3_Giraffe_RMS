@@ -6,6 +6,7 @@ import React, {useState ,useRef, Component, useEffect} from "react";
 const ScriptLogPage = (props) => {
     const [script_log_List,setScriptLog_list] = useState([])
     const [pickedLog,setPickedLog] = useState(0)
+    const [showDeleteLog, setShowDeleteLog] = useState(false)
 
     useEffect(() => {
         axios.all([
@@ -172,6 +173,7 @@ const ScriptLogPage = (props) => {
                     <div className="scroll">
                         <Table input={script_log_List} onClickFunc={Select_script}/>
                     </div>
+                    <button style={{color:"red"}} onClick={() => setShowDeleteLog(!showDeleteLog)}>Delete Log</button>
                 </div>
 
                 <div className="column">
