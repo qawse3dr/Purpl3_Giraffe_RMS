@@ -1,0 +1,5 @@
+parmiko
+pytest
+pytest-cov
+pyyaml
+flask
