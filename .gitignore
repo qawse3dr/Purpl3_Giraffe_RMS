@@ -11,4 +11,4 @@ key.pub
 
 unittest.db
 sqlite
-*.log
+*.log tsts
