@@ -1,4 +1,4 @@
-parmiko
+paramiko
 pytest
 pytest-cov
 pyyaml
