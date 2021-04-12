@@ -11,7 +11,7 @@ python3 and flask needed to run
 python3
 venv #might already be installed
 
-```
+``` tewt
 ### Install deps 
 python -m pip install flask
 python -m pip install pyyaml
