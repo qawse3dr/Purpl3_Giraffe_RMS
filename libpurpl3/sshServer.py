@@ -3,6 +3,7 @@
 import logging
 import threading
 import os
+import time
 from typing import Tuple 
 from flask import session
 import datetime
@@ -194,33 +195,33 @@ class sshConnection():
     #writes basic info to stdout and stderr
     stdoutFile.write("Script Start at: {}\n".format(datetime.datetime.now()))
     stderrFile.write("Script Start at: {}\n".format(datetime.datetime.now()))
-    stdoutFile.write("{}: ".format(datetime.datetime.now()))
-    stderrFile.write("{}: ".format(datetime.datetime.now()))
     stdoutFile.flush()
     stderrFile.flush()
     #gets the output
     while not stdout.channel.exit_status_ready() or not stderr.channel.exit_status_ready() or stdout.channel.recv_ready() or stderr.channel.recv_ready():
-      #stdout
 
+      retrivedInput = False
+      #stdout
       try:
-        stdout_buffer = stdout.read(1).decode()
-        stdoutFile.write(stdout_buffer)
-        if stdout_buffer == "\n":
-          stdoutFile.write("{}: ".format(datetime.datetime.now()))
+        stdout_buffer = stdout.readline()
+        stdoutFile.write("{}: {}".format(datetime.datetime.now(), stdout_buffer))
         stdoutFile.flush()
+        retrivedInput = True
       except:
         pass
         
       #stderr
-      try:
-        stderr_buffer = stderr.read(1).decode()
-        stderrFile.write(stderr_buffer)
-        if stderr_buffer == "\n":
-          stderrFile.write("{}: ".format(datetime.datetime.now()))
+      try: 
+        stderr_buffer = stderr.readline()
+        stderrFile.write("{}: {}".format(datetime.datetime.now(), stderr_buffer))
         stderrFile.flush()
+        retrivedInput = True
       except:
         pass
-
+      
+      #sleeps to lower cpu usage
+      if(not retrivedInput):
+        time.sleep(pref.getNoCheck(pref.CONFIG_OUTPUT_TIMEOUT))
     #writes rest of data
     for line in stdout.readlines():
       stdoutFile.write("{}: {}".format(datetime.datetime.now(),line))
