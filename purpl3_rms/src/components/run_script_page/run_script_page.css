@@ -1,91 +1,23 @@
-.logo {
-  height: 40vmin;
-  pointer-events: none;
+
+.selectContainer{
+  
+  height: 40%;
+
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.outputButtons {
+  margin: 1%;
 }
 
-.logoImg {
-  max-height: 155px;
+.runScript {
+  height:100%;
+  
+  
 }
 
-.App-header {
-  background-color: #000000;
-  min-height: 100px;
-  max-height: 150px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.Run_Button{
+  height: 10%;
 }
-
-div.body{
-  min-height: 320px;
-}
-
-p{
-  margin:0;
-}
-.column {
-  float: left;
-  width: 50%;
-}
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.button {
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  width: 200px;
-  float: right;
-}
-
-textarea {
-    overflow-y: scroll;
-    width: 96%;
-    height: 300px;
-    resize: none; /* Remove this if you want the user to resize the textarea */
-}
-
-.trapezoid {
-  background-color: transparent;
-  border-bottom: 50px solid #555;
-  border-left: 25px solid transparent;
-  border-right: 25px solid transparent;
-
-  width: 125px;
-
-  text-align: center;
-  text-align-last: center;
-
+.runScript .LiveOutput {
+    height: 50%;
 }

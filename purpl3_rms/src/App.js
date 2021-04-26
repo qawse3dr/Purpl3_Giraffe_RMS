@@ -1,21 +1,23 @@
 import logo from './res/logo.png';
+import logoutBtn from "./res/logout.png"
 import './App.css';
 import axios from "axios";
 import React, {useState} from 'react';
 import {
   Route,
   Switch,
-  NavLink,
   HashRouter
 } from "react-router-dom";
+import {Navbar, Nav } from 'react-bootstrap'
 import Login from './pages/Login';
 import RunScripts from './pages/RunScript'
-import Schedule from './pages/Schedule'
+//import Schedule from './pages/Schedule'
 import ScriptLogs from './pages/ScriptLogs'
 import ScriptsViewer from './pages/ScriptsViewer'
 import ErrorDoc from './pages/ErrorDoc'
 import Computer from './pages/Computer'
 import PrivateRoute from './components/PrivateRoute'
+import {LinkContainer} from "react-router-bootstrap"
 
 function App() {
 
@@ -27,30 +29,76 @@ function App() {
       <HashRouter>
         <Switch>
           <Route exact path="/" render={(props) => (<Login {...props} sendLoginStatus={getLoginStatus} />)}/>
-          <>
-            <div className="logoHeader">
-              <img src={logo}/>
+          <Route>
+            <div className="MenuBar">
+
+              <Navbar bg="dark" expand="lg" variant="dark">
+              <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+              <Navbar.Brand>
+                <img
+                  src={logo}
+                  height="50"
+                  className="d-inline-block align-top"
+                  alt="Purpl3 Giraffe logo"
+                />
+              </Navbar.Brand>
+              <Navbar.Collapse id="responsive-navbar-nav"> 
+                <Nav className="mr-auto">
+                  <LinkContainer to="/run-script">
+                    <Nav.Link>
+                      Run Script
+                    </Nav.Link>
+                  </LinkContainer>
+
+                  <LinkContainer to="/script-logs">
+                    <Nav.Link>
+                      Script Logs
+                    </Nav.Link>
+                  </LinkContainer>
+
+                  <LinkContainer to="/script-viewer">
+                    <Nav.Link>
+                      Script Viewer
+                    </Nav.Link>
+                  </LinkContainer>
+
+                  <LinkContainer to="/computer">
+                    <Nav.Link>
+                      Computer Viewer
+                    </Nav.Link>
+                  </LinkContainer>
+
+                  <LinkContainer to="/error-doc">
+                    <Nav.Link>
+                      Error Doc
+                    </Nav.Link>
+                  </LinkContainer>       
+                </Nav>
+              </Navbar.Collapse>
+
+              <img
+                  src={logoutBtn}
+                  height="50"
+                  onClick={handleLogout}
+                  className="d-inline-block align-top "
+                  alt="Logout logo"
+                />
+
+            </Navbar>
+
             </div>
-            <div className="header">
-              <button className="logout-button" onClick={handleLogout}/>
-            </div>
-            <ul className="navTabs">
-              <li className="tab"><NavLink exact to="/run-script">Run Script</NavLink></li>
-              <li className="tab"><NavLink to="/script-logs">Script Logs</NavLink></li>
-              <li className="tab"><NavLink to="/script-viewer">Script Viewer</NavLink></li>
-              <li className="tab"><NavLink to="/computer">Computer</NavLink></li>
-              <li className="tab"><NavLink to="/error-doc">Error Doc</NavLink></li>
-            </ul>
-            
             <div className="content">
-              <PrivateRoute path="/run-script" loginState={loggedIn} component={RunScripts}/>
-              <PrivateRoute path="/script-logs" loginState={loggedIn} component={ScriptLogs}/>
-              <PrivateRoute path="/script-viewer" loginState={loggedIn} component={ScriptsViewer}/>
-              <PrivateRoute path="/computer" loginState={loggedIn} component={Computer}/>
-              <PrivateRoute path="/error-doc" loginState={loggedIn} component={ErrorDoc}/>
+              <Switch>
+                <PrivateRoute path="/run-script" loginState={loggedIn} component={RunScripts}/>
+                <PrivateRoute path="/script-logs" loginState={loggedIn} component={ScriptLogs}/>
+                <PrivateRoute path="/script-viewer" loginState={loggedIn} component={ScriptsViewer}/>
+                <PrivateRoute path="/computer" loginState={loggedIn} component={Computer}/>
+                <PrivateRoute path="/error-doc" loginState={loggedIn} component={ErrorDoc}/>
+              </Switch>
             </div>
-          </>
-        </Switch>
+          </Route>
+            
+          </Switch>
       </HashRouter>
 
       

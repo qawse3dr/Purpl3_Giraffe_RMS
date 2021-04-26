@@ -28,7 +28,7 @@ const EditComputer = (props) => {
               setName(entry.nickName);
               setUsername(entry.username);
               setIP(entry.IP);
-              if((entry.asAdmin).localeCompare("True") == 0){
+              if((entry.asAdmin).localeCompare("True") === 0){
                 setAdmin(true);
               }
               else{
@@ -37,7 +37,7 @@ const EditComputer = (props) => {
             }).catch((res) =>{
               alert("Post Failed")
             })
-    }, [])
+    }, [props.computerid])
 
     return (
         <div className="form-popup">

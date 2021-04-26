@@ -1,12 +1,12 @@
-import Computers from '../components/computers/computers'
+import ComputerViewer from '../components/computers/computers'
 import React from 'react';
-import axios from 'axios'
+
 
 class Computer extends React.Component {
 
     render() {
         return (
-            <Computers/>
+            <ComputerViewer/>
         );
     }
 }

@@ -1,6 +1,7 @@
 import axios from "axios";
-import ScriptTable from '../table/ScriptTable';
+import SelectTable from '../table/SelectTable';
 import React, {useState , useEffect} from "react";
+import {Table, Button, ButtonGroup} from "react-bootstrap";
 import CreateScript from './CreateScript';
 import DeleteScript from './DeleteScript';
 import EditScript from './EditScript'
@@ -9,11 +10,10 @@ const ScriptViewpage = (props) => {
     const [numScripts, setNumScripts] = useState(0)
     const [list, setScript_list] = useState([])
     const [showAddScript, setShowAddScript] = useState(false);
-    const [selectedScriptID, setSelectedScriptID] = useState(0)
+    const [selectedScript, setSelectedScript] = useState(null)
     const [showDeleteScript, setShowDeleteScript] = useState(false);
     const [showEditScript, setShowEditScript] = useState(false);
     const [showScriptData, setShowScriptData] = useState("");
-
     useEffect(() => {
         axios.post("/api", {
             body: {
@@ -25,40 +25,105 @@ const ScriptViewpage = (props) => {
             }
             }).then((res) => {
               setScript_list(res.data.entries)
+              console.log(res.data.entries)
             }).catch((res) =>{
               alert("Post Failed")
             })
     }, [numScripts])
 
     return(
-        <div>
-            <h1>Select Script</h1>
-            <div className="scroll">
-                <ScriptTable input={list} func={Select_script}/>
+        <div className="scriptViewerContainer">
+            <div className="title text-center">
+              <h3>
+                Script Viewer
+              </h3>
+            </div>
+            <div className="scrollScriptLogs">
+                <SelectTable value={selectedScript} tableName="scriptTable" input={list} onChange={Select_script}/>
             </div>
             
-            <p id="SelectScript"></p>
-            <button style={{color:"blue"}} onClick={() => setShowEditScript(!showEditScript)}>Edit</button>
-            <button style={{color:"red"}} onClick={() => setShowDeleteScript(!showDeleteScript)}>Delete</button>
-            <button style={{color:"green"}} onClick={() => setShowAddScript(!showAddScript)}>Create new script +</button>
+            
+            <div className="action-buttons">
+            <ButtonGroup className="font-weight-bold">
+              <Button onClick={() => {setShowEditScript(true)}} className="font-weight-bolder" variant="primary">Edit</Button>
+              <Button onClick={() => {setShowDeleteScript(true)}}  className="font-weight-bolder" variant="danger">Delete</Button>
+              <Button onClick={() => {setShowAddScript(true)}} className="font-weight-bolder" variant="success">Create</Button>
+            </ButtonGroup>
+          </div>
             {showAddScript && <CreateScript addScript={Add} closeForm={closeAddScript}/>}
-            {showEditScript && <EditScript scriptid={selectedScriptID} editScript={Edit} closeForm={closeEditScript}/>}
+            {showEditScript && <EditScript scriptid={selectedScript.ID} editScript={Edit} closeForm={closeEditScript}/>}
             {showDeleteScript && <DeleteScript deleteScript={Delete} closeForm={closeDeleteScript}/>}
 
-            <textarea id="Script_Output" readonly rows="10" cols="200" value={showScriptData}>
-                    Script
-            </textarea>
+            {/* Information table about the script */}
+            <Table striped bordered hover responsive variant="dark" size="lg" className="mb-0" >
+              <thead>
+                <tr>
+                  <th>
+                    Name
+                  </th>
+                  <th>
+                    Description
+                  </th>
+                  <th>
+                    File name
+                  </th>
+                  <th>
+                    Size(B)
+                  </th>
+                  <th>
+                    Date Created
+                  </th>
+                  <th>
+                    Date Modified
+                  </th>
+                  <th>
+                    Admin Script
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    {selectedScript != null ? selectedScript.name : "Select A Script"}
+                  </td>
+                  <td>
+                    {selectedScript != null ? selectedScript.desc : ""}
+                  </td>
+                  <td>
+                    {selectedScript != null ? selectedScript.fileName : ""}
+                  </td>
+                  <td>
+                    {selectedScript != null ? selectedScript.size : ""}
+                  </td>
+                  <td>
+                    {selectedScript != null ? selectedScript.dtCreated : ""}
+                  </td>
+                  <td>
+                    {selectedScript != null ? selectedScript.dtModified : ""}
+                  </td>
+                  <td>
+                    {selectedScript != null ? selectedScript.isAdmin : ""}
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
+
+            <div className="scriptOutputContainer">
+              <textarea readonly className="scriptOutput bg-secondary text-white"  value={showScriptData}></textarea>
+            </div>
+            
+
         </div>
     );
 
-    function showScript(id){
+    function showScript(script){
       axios.post("/api", {
         body: {
             op:"MANAGE_SCRIPTS",
             data:{
                 funcOP:"GET_FILE",
                 data:{
-                    Id: id,
+                    Id: script.ID,
                     Filetype: "SCRIPT", //default of STDOUT
                     FP: 0
                 }
@@ -83,7 +148,7 @@ const ScriptViewpage = (props) => {
                   data:{
                     funcOP: "DEL",
                     data: {
-                        Id: selectedScriptID
+                        Id: selectedScript.ID
                     }
                   }
                 }
@@ -171,12 +236,8 @@ const ScriptViewpage = (props) => {
 
     function Select_script(prams)
     {
-        setSelectedScriptID(prams.scriptid);
-        showScript(prams.scriptid);
-        let text = document.getElementById("SelectScript");
-        text.textContent = "Selected Script : "+prams.name;
-        text.value = prams.name;
-        text.index = prams.index;
+        setSelectedScript(prams);
+        showScript(prams);
     }
 }
 

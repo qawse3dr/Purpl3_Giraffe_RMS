@@ -1,0 +1,10 @@
+
+
+.LiveOutput, .scriptOutput {
+  width: 100%;
+  height:100%
+}
+
+.tab-content, .tab-content .fade{
+  height: 100%;
+}
