@@ -15,7 +15,7 @@ import RunScripts from './pages/RunScript'
 import ScriptLogs from './pages/ScriptLogs'
 import ScriptsViewer from './pages/ScriptsViewer'
 import ErrorDoc from './pages/ErrorDoc'
-import Computer from './pages/Computer'
+import ComputerViewer from './components/computers/computers'
 import PrivateRoute from './components/PrivateRoute'
 import {LinkContainer} from "react-router-bootstrap"
 
@@ -62,7 +62,7 @@ function App() {
                     </Nav.Link>
                   </LinkContainer>
 
-                  <LinkContainer to="/computer">
+                  <LinkContainer to="/computerViewer">
                     <Nav.Link>
                       Computer Viewer
                     </Nav.Link>
@@ -92,7 +92,7 @@ function App() {
                 <PrivateRoute path="/run-script" loginState={loggedIn} component={RunScripts}/>
                 <PrivateRoute path="/script-logs" loginState={loggedIn} component={ScriptLogs}/>
                 <PrivateRoute path="/script-viewer" loginState={loggedIn} component={ScriptsViewer}/>
-                <PrivateRoute path="/computer" loginState={loggedIn} component={Computer}/>
+                <PrivateRoute path="/computerViewer" loginState={loggedIn} component={ComputerViewer}/>
                 <PrivateRoute path="/error-doc" loginState={loggedIn} component={ErrorDoc}/>
               </Switch>
             </div>

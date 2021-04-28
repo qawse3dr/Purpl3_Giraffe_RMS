@@ -32,7 +32,7 @@ const ComputerViewer = (props) => {
               alert("Post Failed")
             })
     }, [numComputers])
-
+    
     return(
         <div className="computerViewerContainer">
           <div className="title text-center">
@@ -109,7 +109,6 @@ const ComputerViewer = (props) => {
                 </tr>
               </tbody>
             </Table>
-
         </div>
     );
 
@@ -206,7 +205,6 @@ const ComputerViewer = (props) => {
           closeEditComputer();
         }
     }
-
 
     function closeAddComputer(){
         setShowAddComputer(!showAddComputer);
