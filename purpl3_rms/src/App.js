@@ -9,7 +9,7 @@ import {
   HashRouter
 } from "react-router-dom";
 import {Navbar, Nav } from 'react-bootstrap'
-import Login from './pages/Login';
+import Login from './components/login/Login';
 import RunScripts from './pages/RunScript'
 //import Schedule from './pages/Schedule'
 import ScriptLogs from './pages/ScriptLogs'
