@@ -3,21 +3,6 @@ import React from 'react'
 
 class ErrorDoc extends React.Component {
 
-	// parseJSONtoTable() 
-	// 	let tableHTML = "";
-	// 	let i = 0;
-	// 	let tableData = JSON.parse('"code": 123,"errorName": "test","description": "testDesc","errorMessage": "testErrorMsg"');
-	// 	//let tableData = JSON.parse('"code": 123,"errorName": "test","description": "testDesc","errorMessage": "testErrorMsg","code": 123,"errorName": "test",description": "testDesc","errorMessage": "testErrorMsg"]");
-
-	//     tableHTML += "<table>";
-	//     for (i in tableData) 
-	//     	tableHTML += "<tr><td>" + tableData[i] + "</td></tr>";
-	    
-	//     tableHTML += "</table>";
-
-	//     return tableHTML;
-	// 
-
     render() {
         return (
         	<div>

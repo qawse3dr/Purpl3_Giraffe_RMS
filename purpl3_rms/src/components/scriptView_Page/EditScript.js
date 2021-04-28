@@ -24,11 +24,11 @@ const EditScript = (props) => {
             }).then((res) => {
             let entry = res.data.entry;
               
-              if(res.data.Error.code == 0){
+              if(res.data.Error.code === 0){
                 setDescription(entry.desc);
                 setName(entry.name);
                 setFileName(entry.fileName);
-                if((entry.isAdmin).localeCompare("True") == 0){
+                if((entry.isAdmin).localeCompare("True") === 0){
                   setAdmin(true);
                 }
                 else{
@@ -59,7 +59,7 @@ const EditScript = (props) => {
       }).catch((res) =>{
         alert(console.log(res))
       })
-    }, [])
+    }, [props.scriptid])
 
     return (
         <div className="form-popup">

@@ -1,12 +1,16 @@
-import './run_script_page.css';
-import axios from "axios";
-import Table from '../table/table_soory.js';
-import React from "react";
 
+import axios from "axios";
+import SelectTable from '../table/SelectTable.js';
+import LiveOutput from "./LiveOutput.js";
+import React from "react";
+import { Button, Col, Container, Row} from 'react-bootstrap';
+import './run_script_page.css';
 class RunScriptPage extends React.Component {
     constructor() {
         super();
         this.state = {
+            selectedComputer: -1,
+            selectedScript: -1,
             runningScript: -1,
             consoleType: "STDOUT",
             filePositionSTDOUT: 0,
@@ -19,8 +23,9 @@ class RunScriptPage extends React.Component {
 
         this.handleRunScript = this.handleRunScript.bind(this);
         this.handleLiveOutput = this.handleLiveOutput.bind(this);
-        this.handleDisplaySTDOUT = this.handleDisplaySTDOUT.bind(this);
-        this.handleDisplaySTDERR = this.handleDisplaySTDERR.bind(this);
+        this.handleSelectComputer = this.handleSelectComputer.bind(this);
+        this.handleSelectScript = this.handleSelectScript.bind(this);
+        this.handleConsoleType = this.handleConsoleType.bind(this);
     }
 
     componentDidMount() {
@@ -61,24 +66,17 @@ class RunScriptPage extends React.Component {
       }
 
     handleRunScript() {
-        let in_computer = document.getElementById("Select_Computer_text");
-        let in_script = document.getElementById("Select_Script_text");
-        console.log(in_script.value,in_computer.value)
         //Backend call to run script
         axios.post("/api", {
             body: {
               op:"RUN_SCRIPT",
               data:{
-                ScriptID: in_script.value,
-                ComputerID: in_computer.value
+                ScriptID: this.state.selectedScript.ID,
+                ComputerID: this.state.selectedComputer.ID,
               }
             }
         }).then((res) => { //Sucess
-            alert(JSON.stringify(res.data))
-            //let btn = document.getElementById("run_page_runbtn");
-            //btn.value = res.data;
-            //console.log(btn.value.Id);
-        
+            alert(JSON.stringify(res.data))   
             //Updating the currently running script to be the return of this function call
             this.setState(state => ({
                 runningScript: res.data.Id,
@@ -91,10 +89,9 @@ class RunScriptPage extends React.Component {
             this.setState(state => ({
                 runningScript: -1,
             }));
-            document.getElementById("Live_Output").value = "Running the script failed. Try again";
         })
 
-        //Reset file position and output eitherway
+        //Reset file position and output either way
         this.setState(state => ({
             filePositionSTDOUT: 0,
             filePositionSTDERR: 0,
@@ -106,10 +103,10 @@ class RunScriptPage extends React.Component {
     //Call to backend to retrieve script output.
     handleLiveOutput() {
         //Only run if the is a script actually running.
-        if (this.state.runningScript != -1) {
+        if (this.state.runningScript !== -1) {
             //Local variable of the current fileposition to reduce code
             let filePos;
-            if (this.state.consoleType == "STDOUT") {
+            if (this.state.consoleType === "STDOUT") {
                 filePos = this.state.filePositionSTDOUT;
             } else {
                 filePos = this.state.filePositionSTDERR;
@@ -137,18 +134,18 @@ class RunScriptPage extends React.Component {
                         currentOutputSTDOUT: state.currentOutputSTDOUT + res.data.entry,
                         filePositionSTDOUT: res.data.FP
                     }));
-                    document.getElementById("Live_Output").value = this.state.currentOutputSTDOUT;
+                    //document.getElementById("Live_Output").value = this.state.currentOutputSTDOUT;
 
                 } else { //STDERR
                     this.setState(state => ({
                         currentOutputSTDERR: state.currentOutputSTDERR + res.data.entry,
                         filePositionSTDERR: res.data.FP
                     }));
-                    document.getElementById("Live_Output").value = this.state.currentOutputSTDERR;
+                    //document.getElementById("Live_Output").value = this.state.currentOutputSTDERR;
                 }
 
             }).catch((res) =>{ //Fail
-                document.getElementById("Live_Output").value = "Something went wrong with getting the live output :C. Please try again.";
+                //document.getElementById("Live_Output").value = "Something went wrong with getting the live output :C. Please try again.";
                 
                 //Reset file position and output
                 this.setState(state => ({
@@ -161,7 +158,7 @@ class RunScriptPage extends React.Component {
                 alert("Post Failed.");
             })
         } else {
-            document.getElementById("Live_Output").value = "Run a script first before checking the live output!"
+            //document.getElementById("Live_Output").value = "Run a script first before checking the live output!"
 
             //Reset file position eitherway
             this.setState(state => ({
@@ -173,73 +170,61 @@ class RunScriptPage extends React.Component {
         }
     }
 
-    handleDisplaySTDOUT() {
-        this.setState(state => ({
-            consoleType: "STDOUT"
-        }));
-        document.getElementById("displayLabel").innerHTML = "Displaying: STDOUT";
-        document.getElementById("Live_Output").value = this.state.currentOutputSTDOUT;
+    
+    handleSelectComputer(params){
+        this.setState(state => ({selectedComputer: params}));
+    }
+    
+    handleSelectScript(params){
+        this.setState(state => ({selectedScript: params}));
     }
 
-    handleDisplaySTDERR() {
-        this.setState(state => ({
-            consoleType: "STDERR",
-        }));
-        document.getElementById("displayLabel").innerHTML = "Displaying: STDERR";
-        document.getElementById("Live_Output").value = this.state.currentOutputSTDERR;
+    handleConsoleType(consoleType){
+        this.setState(state => ({consoleType: consoleType}), () =>{
+            this.handleLiveOutput()
+        })
     }
-
     render() {
         return (
-            <div>
-                <div className="body">
-                    <div className="column">
-                        <h1>Select Computer</h1>
-                        <div className="scroll">
-                            <Table input={this.state.computer_list} onClickFunc={Select_computer_func}/>
-                        </div>
-                    </div>
+            <div className="runScript">
+                
+                {/* Select computer and script*/}
+                <Container className="selectContainer">
+                    <Row className="text-center">
+                        <Col>
+                            <h3>Computer</h3>
+                        </Col>
+                        <Col>
+                            <h3>Script</h3>    
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
 
-                    <div className="column">
-                        <h1>Select Script</h1>
-                        <div className="scroll">
-                            <Table input={this.state.script_list} onClickFunc={Select_script_func}/>
-                        </div>
-                    </div>
-
-                    <p id="Select_Computer_text"></p>
-                    <p id="Select_Script_text"></p>
+                            <SelectTable value={this.state.selectedComputer} tableName="ComputerTable" input={this.state.computer_list} onChange={this.handleSelectComputer}/>
+                        </Col>
+                        <Col>
+                        
+                            <SelectTable value={this.state.selectedScript} tableName="ScriptTable" input={this.state.script_list} onChange={this.handleSelectScript}/>
+                        </Col>
+                    </Row>
+                </Container>
+            
+                <div className="Run_Button">
+                    <Button className="outputButtons" size="lg" variant="success" type="button" onClick={this.handleRunScript}>Run Script</Button>
+                    <Button className="outputButtons" size="lg" variant="success" type="button" onClick={this.handleLiveOutput}>Refresh Output</Button>
                 </div>
+                
+                <LiveOutput 
+                    stdout={this.state.currentOutputSTDOUT}
+                    stderr={this.state.currentOutputSTDERR}
+                    setConsoleType={this.handleConsoleType}
+                />
 
-                <footer>
-                    <div className="Run_Button">
-                        <button class="button" type="button" onClick={this.handleRunScript}>Run Script</button>
-                        <button class="button" type="button" onClick={this.handleLiveOutput}>Refresh Output</button>
-                    </div>
-                    
-                    <p id="displayLabel">Displaying: STDOUT</p>
-                    <button class="tab" onClick={this.handleDisplaySTDOUT}>stdout</button>
-                    <button class="tab" onClick={this.handleDisplaySTDERR}>stderr</button>  
-
-                    <textarea id="Live_Output" readonly rows="10" cols="200">
-                        Run a program to view it's output!
-                    </textarea>
-                </footer>
             </div>
         );
     }
 }
 
-function Select_computer_func(parms){
-    let text = document.getElementById("Select_Computer_text");
-    text.textContent = "Selected Computer : " + parms.name;
-    text.value = parseInt(parms.current_object.ID);
-}
-
-function Select_script_func(parms){
-    let text = document.getElementById("Select_Script_text");
-    text.textContent = "Selected Script : " + parms.name;
-    text.value = parseInt(parms.current_object.ID);
-}
   
 export default RunScriptPage

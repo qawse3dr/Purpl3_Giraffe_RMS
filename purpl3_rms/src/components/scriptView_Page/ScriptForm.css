@@ -1,39 +1,44 @@
 
   
-  /* Add styles to the form container */
-  .form-popup {
-    max-width: 500px;
-    padding: 10px;
-    background-color: white;
-    position:fixed;
-    background: white;
-    width: 80%;
-    height: auto;
-    top:50%;
-    left:50%;
-    transform: translate(-50%,-50%);
-    border: 2px solid black;
+/* Add styles to the form container */
+.form-popup {
+  max-width: 500px;
+  padding: 10px;
+  background-color: white;
+  position:fixed;
+  background: white;
+  width: 80%;
+  height: auto;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  border: 2px solid black;
+}
+
+.form-content input[type=text], textarea{
+  text-align: left;
+  width: 96%;
   }
 
-  .form-content input[type=text], textarea{
-    text-align: left;
-    width: 96%;
-  }
+.form-content{
+  padding: 10px;
+}
 
-  .form-content{
-    padding: 10px;
-  }
+/* Set a style for the submit/login button */
+.button-container{
+  text-align: center;
+}
+
+
+.scrollScriptLogs {
+  height: 30%;
   
-  /* Set a style for the submit/login button */
-  .button-container{
-    text-align: center;
-  }
+}
 
-  .btn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 16px 20px;
-    border: none;
-    cursor: pointer;
-    display: inline-block;
-  }
+.scriptOutputContainer {
+  height: 60%;
+}
+
+.scriptViewerContainer {
+  height: 90%; 
+}

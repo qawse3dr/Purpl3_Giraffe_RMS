@@ -4,93 +4,41 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-	height:100%;
 }
 
 html{
 	height: 100%;
-	width: 98%;
-	margin-left:1%;
+	width: 100%;
 }
 button{
 	font-size: larger;
 	font-weight: bold;
 }
-body ,#root, .App, .content {
+body ,#root, .App {
 	height: 100%;
 }
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
 
-.logoHeader{
-	background-color: black;
-	width: 100%;
-	text-align: center;
-}
-.logoHeader img{
-	width: 200px;
-	height: auto;
-}
-
-.logout-button{
-	background: url("./res/logout.png") no-repeat;
-    cursor:pointer;
-    border: none;
-	width: 60px;
-	height: 60px;
-	float: right;
-}
 h1, h2, h3, h4, h5, h6 {
 	margin-top: 0;
-}
-.navTabs{
-	margin-top:1%;
-	margin-bottom:0;
-
-}
-.tab{
-	margin-bottom: 0;
-	margin-left:0;
-}
-ul.navTabs{
-	margin-left: -40px;
-
-}
-
-ul.navTabs li{
-	display: inline-block;
-    list-style-type: none;
-	text-align: center;
-}
-
-ul.navTabs li a{
-	color: black;
-    font-weight: bold;
-    text-decoration: none;
 }
 
 .content{
 	background-color: #d3d3d3;
+	height:90%;
+	min-width: 50vh;
+	min-height: 100vh;
 }
 
-.trapezoid {
-	border-bottom: 40px solid #555;
-	border-left: 50px solid transparent;
-	border-right: 55px solid transparent;
-	height: 0;
-	width: 250px;
-	background-color: grey;
-	display: inline-block;
+.title{
+	height: 5%;
 }
 
-.tab {
-	color: #fff;
-	background-color: rgb(175,175,175);
-	border-radius: 60px 60px 0 0;
-	padding: 10px 20px;
-	width: auto;
-	text-decoration: none;
-	display:inline-block;
-  }
+.action-buttons{
+	height: 5%;
+	margin-left:5%;
+}

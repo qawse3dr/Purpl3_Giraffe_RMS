@@ -1,15 +1,13 @@
 import React from 'react'
-import RunScriptPage from '../components/run_script_page/run_script_page_soory.js'
+import RunScriptPage from '../components/run_script_page/run_script_page.js'
 
-class RunScripts extends React.Component {
-    render() {
-    	let script = document.getElementById("Select_Computer_text");
-        return (
+const RunScripts = () => {
+    
 
-            	<RunScriptPage/>
-
-        );
-    }
+    return (
+            <RunScriptPage/>
+    );
+    
 }
 
 export default RunScripts

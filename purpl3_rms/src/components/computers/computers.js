@@ -1,15 +1,16 @@
 import axios from "axios";
-import ScriptTable from '../table/ScriptTable';
+import SelectTable from '../table/SelectTable';
 import React, {useState , useEffect} from "react";
+import {Button, ButtonGroup, Table} from "react-bootstrap";
 import CreateComputer from './CreateComputer';
 import DeleteComputer from './DeleteComputer';
 import EditComputer from './EditComputer'
 
-const ScriptViewpage = (props) => {
+const ComputerViewer = (props) => {
     const [numComputers, setNumComputers] = useState(0)
     const [list, setComputer_list] = useState([])
     const [showAddComputer, setShowAddComputer] = useState(false);
-    const [selectedComputerID, setSelectedComputerID] = useState(0)
+    const [selectedComputer, setSelectedComputer] = useState(null)
     const [showDeleteComputer, setShowDeleteComputer] = useState(false);
     const [showEditComputer, setShowEditComputer] = useState(false);
 
@@ -33,19 +34,82 @@ const ScriptViewpage = (props) => {
     }, [numComputers])
 
     return(
-        <div>
-            <h1>Select Computer</h1>
-            <div className="scroll">
-                <ScriptTable input={list} func={Select_computer}/>
+        <div className="computerViewerContainer">
+          <div className="title text-center">
+            <h3>
+              Computer Viewer
+            </h3>
+          </div>
+            <div className="scrollComputers">
+                <SelectTable value={selectedComputer} tableName="computerTable"  input={list} onChange={Select_computer}/>
             </div>
             
-            <p id="SelectComputer"></p>
-            <button style={{color:"blue"}} onClick={() => setShowEditComputer(!showEditComputer)}>Edit</button>
-            <button style={{color:"red"}} onClick={() => setShowDeleteComputer(!showDeleteComputer)}>Delete</button>
-            <button style={{color:"green"}} onClick={() => setShowAddComputer(!showAddComputer)}>Create new computer +</button>
-            {showAddComputer && <CreateComputer addComputer={Add} closeForm={closeAddComputer}/>}
-            {showEditComputer && <EditComputer computerid={selectedComputerID} editComputer={Edit} closeForm={closeEditComputer}/>}
-            {showDeleteComputer && <DeleteComputer deleteComputer={Delete} closeForm={closeDeleteComputer}/>}
+          <div className="action-buttons">
+            <ButtonGroup className="font-weight-bold">
+              <Button onClick={() => {setShowEditComputer(true)}} className="font-weight-bolder" variant="primary">Edit</Button>
+              <Button onClick={() => {setShowDeleteComputer(true)}}  className="font-weight-bolder" variant="danger">Delete</Button>
+              <Button onClick={() => {setShowAddComputer(true)}} className="font-weight-bolder" variant="success">Create</Button>
+            </ButtonGroup>
+          </div>
+
+          {showAddComputer && <CreateComputer addComputer={Add} closeForm={closeAddComputer}/>}
+          {showEditComputer && <EditComputer computerid={selectedComputer.ID} editComputer={Edit} closeForm={closeEditComputer}/>}
+          {showDeleteComputer && <DeleteComputer deleteComputer={Delete} closeForm={closeDeleteComputer}/>}
+      
+          {/* Information table about the script */}
+          <Table striped bordered hover responsive variant="dark" size="lg" className="mb-0" >
+              <thead>
+                <tr>
+                  <th>
+                    Name
+                  </th>
+                  <th>
+                    Description
+                  </th>
+                  <th>
+                    Username
+                  </th>
+                  <th>
+                    IP
+                  </th>
+                  <th>
+                    Date Created
+                  </th>
+                  <th>
+                    Date Modified
+                  </th>
+                  <th>
+                    Admin Computer
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    {selectedComputer != null ? selectedComputer.name : "Select A Computer"}
+                  </td>
+                  <td>
+                    {selectedComputer != null ? selectedComputer.desc : ""}
+                  </td>
+                  <td>
+                    {selectedComputer != null ? selectedComputer.username : ""}
+                  </td>
+                  <td>
+                    {selectedComputer != null ? selectedComputer.IP : ""}
+                  </td>
+                  <td>
+                    {selectedComputer != null ? selectedComputer.dtCreated : ""}
+                  </td>
+                  <td>
+                    {selectedComputer != null ? selectedComputer.dtModified : ""}
+                  </td>
+                  <td>
+                    {selectedComputer != null ? selectedComputer.asAdmin : ""}
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
+
         </div>
     );
 
@@ -53,16 +117,14 @@ const ScriptViewpage = (props) => {
     {
         console.log("Computer deleted!");
 
-        let text = document.getElementById("SelectComputer");
-        console.log(text)
-        if (text.textContent !== "") {
+        if (selectedComputer !== null) {
             axios.post("/api", {
                 body: {
                   op: "MANAGE_COMPUTER",
                   data:{
                     funcOP: "DEL",
                     data: {
-                        Id: selectedComputerID
+                        Id: selectedComputer.ID
                     }
                   }
                 }
@@ -99,7 +161,7 @@ const ScriptViewpage = (props) => {
               }  
             }
         }).then((res) => {
-            if(res.data.Error.code == 0){
+            if(res.data.Error.code === 0){
               setNumComputers(list.length + 1)
               alert(name + " Script added")
             } 
@@ -118,8 +180,8 @@ const ScriptViewpage = (props) => {
     function Edit(id, name, description, username, IP, admin){
         console.log(name, description, username, IP, admin)
 
-        let text = document.getElementById("SelectComputer");
-        if (text.textContent !== "") {
+        
+        if (selectedComputer !== null) {
           axios.post("/api", {
             body: {
               op: "MANAGE_COMPUTER",
@@ -160,11 +222,9 @@ const ScriptViewpage = (props) => {
 
     function Select_computer(prams)
     {
-        setSelectedComputerID(prams.scriptid);
-        let text = document.getElementById("SelectComputer");
-        text.textContent = "Selected Computer : "+prams.name;
-        text.value = prams.name;
-        text.index = prams.index;
+      console.log(prams)
+      setSelectedComputer(prams);
+        
     }
 
     function refreshList(){
@@ -187,4 +247,4 @@ const ScriptViewpage = (props) => {
     }
 }
 
-export default ScriptViewpage
+export default ComputerViewer
