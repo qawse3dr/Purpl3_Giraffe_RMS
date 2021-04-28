@@ -14,7 +14,7 @@ import RunScripts from './pages/RunScript'
 //import Schedule from './pages/Schedule'
 import ScriptLogs from './pages/ScriptLogs'
 import ScriptsViewer from './pages/ScriptsViewer'
-import ErrorDoc from './pages/ErrorDoc'
+import ErrorDoc from './components/errorDoc/errorDoc'
 import ComputerViewer from './components/computers/computers'
 import PrivateRoute from './components/PrivateRoute'
 import {LinkContainer} from "react-router-bootstrap"
