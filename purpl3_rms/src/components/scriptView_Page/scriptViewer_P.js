@@ -14,6 +14,7 @@ const ScriptViewpage = (props) => {
     const [showDeleteScript, setShowDeleteScript] = useState(false);
     const [showEditScript, setShowEditScript] = useState(false);
     const [showScriptData, setShowScriptData] = useState("");
+    
     useEffect(() => {
         axios.post("/api", {
             body: {
@@ -220,7 +221,6 @@ const ScriptViewpage = (props) => {
           closeEditScript();
         }
     }
-
 
     function closeAddScript(){
         setShowAddScript(!showAddScript);
