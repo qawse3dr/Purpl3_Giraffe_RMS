@@ -11,8 +11,7 @@ import {
 import {Navbar, Nav } from 'react-bootstrap'
 import Login from './components/login/Login';
 import RunScriptPage from './components/run_script_page/run_script_page';
-//import Schedule from './pages/Schedule'
-// import ScriptLogs from './pages/ScriptLogs'
+//import Schedule from 
 import ScriptLogPage from './components/script_log/script_log';
 import ScriptsViewer from './pages/ScriptsViewer'
 import ErrorDoc from './components/errorDoc/errorDoc'
