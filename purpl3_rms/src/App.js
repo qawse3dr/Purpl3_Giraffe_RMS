@@ -12,7 +12,8 @@ import {Navbar, Nav } from 'react-bootstrap'
 import Login from './components/login/Login';
 import RunScriptPage from './components/run_script_page/run_script_page';
 //import Schedule from './pages/Schedule'
-import ScriptLogs from './pages/ScriptLogs'
+// import ScriptLogs from './pages/ScriptLogs'
+import ScriptLogPage from './components/script_log/script_log';
 import ScriptsViewer from './pages/ScriptsViewer'
 import ErrorDoc from './components/errorDoc/errorDoc'
 import ComputerViewer from './components/computers/computers'
@@ -90,7 +91,7 @@ function App() {
             <div className="content">
               <Switch>
                 <PrivateRoute path="/run-script" loginState={loggedIn} component={RunScriptPage}/>
-                <PrivateRoute path="/script-logs" loginState={loggedIn} component={ScriptLogs}/>
+                <PrivateRoute path="/script-logs" loginState={loggedIn} component={ScriptLogPage}/>
                 <PrivateRoute path="/script-viewer" loginState={loggedIn} component={ScriptsViewer}/>
                 <PrivateRoute path="/computerViewer" loginState={loggedIn} component={ComputerViewer}/>
                 <PrivateRoute path="/error-doc" loginState={loggedIn} component={ErrorDoc}/>

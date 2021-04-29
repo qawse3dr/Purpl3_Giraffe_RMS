@@ -48,7 +48,6 @@ const ScriptLogPage = (props) => {
         }
     },[consoleType,pickedLog,script]);
 
-
     useEffect(() => {
         axios.all([
             axios.post("/api", {
@@ -111,12 +110,9 @@ const ScriptLogPage = (props) => {
         }));
     }, []);
 
-
-
     function handleConsoleType(consoleType){
         setCurrentConsoleType(consoleType)
     };
-
 
     function Select_script(params)
     {
@@ -204,13 +200,6 @@ const ScriptLogPage = (props) => {
         
     );
 }
-
-
-
-
-
-
-
 
 
 export default ScriptLogPage
