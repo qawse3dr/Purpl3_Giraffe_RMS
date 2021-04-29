@@ -1,4 +1,4 @@
-import './scriptLogCSS.css';
+import './scriptLog.css';
 import axios from "axios";
 import SelectTable from '../table/SelectTable.js';
 import LiveOutput from "../runScript/LiveOutput.js";

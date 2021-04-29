@@ -12,7 +12,7 @@ import {Navbar, Nav } from 'react-bootstrap'
 import Login from './components/login/Login';
 import RunScriptPage from './components/runScript/runScript';
 //import Schedule from 
-import ScriptLogPage from './components/script_log/script_log';
+import ScriptLogPage from './components/scriptLog/scriptLog';
 // import ScriptsViewer from './pages/ScriptsViewer'
 import ScriptViewPage from './components/scriptView_Page/scriptViewer_P';
 
