@@ -14,7 +14,7 @@ import RunScriptPage from './components/runScript/runScript';
 //import Schedule from 
 import ScriptLogPage from './components/scriptLog/scriptLog';
 // import ScriptsViewer from './pages/ScriptsViewer'
-import ScriptViewPage from './components/scriptView_Page/scriptViewer_P';
+import ScriptViewPage from './components/scriptView/scriptView';
 
 import ErrorDoc from './components/errorDoc/errorDoc'
 import ComputerPage from './components/computers/computers'

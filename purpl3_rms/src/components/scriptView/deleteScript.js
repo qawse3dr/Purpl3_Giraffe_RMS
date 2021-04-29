@@ -1,4 +1,4 @@
-import './ScriptForm.css'
+import './scriptView.css'
 
 const DeleteScript = (props) => {   
 
@@ -14,7 +14,6 @@ const DeleteScript = (props) => {
             </div>
         </div>
     )
-
 
 }
 

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import './ScriptForm.css'
+import './scriptView.css'
 
 const CreateScript = (props) => {
 
@@ -46,7 +46,6 @@ const CreateScript = (props) => {
             document.getElementById("invalid").innerHTML = "Please fill in all fields.";
         }
     }
-
 
 }
 

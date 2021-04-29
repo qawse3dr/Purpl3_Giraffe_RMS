@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import './ScriptForm.css'
+import './scriptView.css'
 import axios from "axios";
 
 const EditScript = (props) => {
@@ -89,13 +89,13 @@ const EditScript = (props) => {
     )
 
     function checkFields(){
-      if(name !== "" && filename !== "" && description !== "" && data !== ""){
-        props.editScript(props.scriptid, name, filename, description, admin, data)
-      }
-      else{
-          document.getElementById("invalid").innerHTML = "Please fill in all fields.";
-      }
-  }
+        if(name !== "" && filename !== "" && description !== "" && data !== ""){
+          props.editScript(props.scriptid, name, filename, description, admin, data)
+        }
+        else{
+            document.getElementById("invalid").innerHTML = "Please fill in all fields.";
+        }
+    }
 
 
 }
