@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 import {Navbar, Nav } from 'react-bootstrap'
 import Login from './components/login/Login';
-import RunScripts from './pages/RunScript'
+import RunScriptPage from './components/run_script_page/run_script_page';
 //import Schedule from './pages/Schedule'
 import ScriptLogs from './pages/ScriptLogs'
 import ScriptsViewer from './pages/ScriptsViewer'
@@ -89,7 +89,7 @@ function App() {
             </div>
             <div className="content">
               <Switch>
-                <PrivateRoute path="/run-script" loginState={loggedIn} component={RunScripts}/>
+                <PrivateRoute path="/run-script" loginState={loggedIn} component={RunScriptPage}/>
                 <PrivateRoute path="/script-logs" loginState={loggedIn} component={ScriptLogs}/>
                 <PrivateRoute path="/script-viewer" loginState={loggedIn} component={ScriptsViewer}/>
                 <PrivateRoute path="/computerViewer" loginState={loggedIn} component={ComputerViewer}/>
