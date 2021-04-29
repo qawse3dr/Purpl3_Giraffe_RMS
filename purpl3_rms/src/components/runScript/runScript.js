@@ -4,7 +4,7 @@ import SelectTable from '../table/SelectTable.js';
 import LiveOutput from "./LiveOutput.js";
 import React, {useState , useEffect} from "react";
 import { Button, Col, Container, Row} from 'react-bootstrap';
-import './run_script_page.css';
+import './runScript.css';
 
 const RunScriptPage = (props) => {
     const [showComputer, setComputer] = useState(-1);

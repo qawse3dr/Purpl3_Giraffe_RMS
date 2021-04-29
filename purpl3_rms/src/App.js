@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 import {Navbar, Nav } from 'react-bootstrap'
 import Login from './components/login/Login';
-import RunScriptPage from './components/run_script_page/run_script_page';
+import RunScriptPage from './components/runScript/runScript';
 //import Schedule from 
 import ScriptLogPage from './components/script_log/script_log';
 // import ScriptsViewer from './pages/ScriptsViewer'

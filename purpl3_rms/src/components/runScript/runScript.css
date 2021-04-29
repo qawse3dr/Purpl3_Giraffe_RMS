@@ -18,6 +18,11 @@
 .Run_Button{
   height: 10%;
 }
+
 .runScript .LiveOutput {
     height: 50%;
+}
+
+.tab-content, .tab-content .fade{
+  height: 100%;
 }
