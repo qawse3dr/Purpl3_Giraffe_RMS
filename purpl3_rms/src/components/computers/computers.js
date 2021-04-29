@@ -6,7 +6,7 @@ import CreateComputer from './CreateComputer';
 import DeleteComputer from './DeleteComputer';
 import EditComputer from './EditComputer'
 
-const ComputerViewer = (props) => {
+const ComputerPage = (props) => {
     const [numComputers, setNumComputers] = useState(0)
     const [list, setComputer_list] = useState([])
     const [showAddComputer, setShowAddComputer] = useState(false);
@@ -17,20 +17,20 @@ const ComputerViewer = (props) => {
     useEffect(() => {
         axios.post("/api", {
             body: {
-              op: "MANAGE_COMPUTER",
-              data:{
-                funcOP: "GET_ALL",
-                data: {}
-              }
+                op: "MANAGE_COMPUTER",
+                data:{
+                    funcOP: "GET_ALL",
+                    data: {}
+                }
             }
             }).then((res) => {
-              for(let entry of res.data.entries){
-                entry.name = entry.nickName;
-            }
-              setComputer_list(res.data.entries)
+                for(let entry of res.data.entries){
+                    entry.name = entry.nickName;
+                }
+                setComputer_list(res.data.entries)
             }).catch((res) =>{
-              alert("Post Failed")
-            })
+                alert("Post Failed")
+        })
     }, [numComputers])
     
     return(
@@ -245,4 +245,4 @@ const ComputerViewer = (props) => {
     }
 }
 
-export default ComputerViewer
+export default ComputerPage
