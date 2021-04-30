@@ -1,4 +1,4 @@
-import './table.css'
+import './selectTable.css'
 import {ToggleButtonGroup, ToggleButton} from "react-bootstrap"
 
 const SelectTable = (props) => {

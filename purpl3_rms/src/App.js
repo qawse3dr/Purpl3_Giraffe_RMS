@@ -9,13 +9,15 @@ import {
   HashRouter
 } from "react-router-dom";
 import {Navbar, Nav } from 'react-bootstrap'
-import Login from './pages/Login';
-import RunScripts from './pages/RunScript'
-//import Schedule from './pages/Schedule'
-import ScriptLogs from './pages/ScriptLogs'
-import ScriptsViewer from './pages/ScriptsViewer'
-import ErrorDoc from './pages/ErrorDoc'
-import Computer from './pages/Computer'
+import Login from './components/login/Login';
+import RunScriptPage from './components/runScript/runScript';
+//import Schedule from 
+import ScriptLogPage from './components/scriptLog/scriptLog';
+// import ScriptsViewer from './pages/ScriptsViewer'
+import ScriptViewPage from './components/scriptView/scriptView';
+
+import ErrorDoc from './components/errorDoc/errorDoc'
+import ComputerPage from './components/computers/computers'
 import PrivateRoute from './components/PrivateRoute'
 import {LinkContainer} from "react-router-bootstrap"
 
@@ -62,7 +64,7 @@ function App() {
                     </Nav.Link>
                   </LinkContainer>
 
-                  <LinkContainer to="/computer">
+                  <LinkContainer to="/computerViewer">
                     <Nav.Link>
                       Computer Viewer
                     </Nav.Link>
@@ -89,10 +91,10 @@ function App() {
             </div>
             <div className="content">
               <Switch>
-                <PrivateRoute path="/run-script" loginState={loggedIn} component={RunScripts}/>
-                <PrivateRoute path="/script-logs" loginState={loggedIn} component={ScriptLogs}/>
-                <PrivateRoute path="/script-viewer" loginState={loggedIn} component={ScriptsViewer}/>
-                <PrivateRoute path="/computer" loginState={loggedIn} component={Computer}/>
+                <PrivateRoute path="/run-script" loginState={loggedIn} component={RunScriptPage}/>
+                <PrivateRoute path="/script-logs" loginState={loggedIn} component={ScriptLogPage}/>
+                <PrivateRoute path="/script-viewer" loginState={loggedIn} component={ScriptViewPage}/>
+                <PrivateRoute path="/computerViewer" loginState={loggedIn} component={ComputerPage}/>
                 <PrivateRoute path="/error-doc" loginState={loggedIn} component={ErrorDoc}/>
               </Switch>
             </div>

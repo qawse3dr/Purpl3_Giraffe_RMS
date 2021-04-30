@@ -1,12 +1,12 @@
 import axios from "axios";
-import SelectTable from '../table/SelectTable';
+import SelectTable from '../selectTable/selectTable';
 import React, {useState , useEffect} from "react";
 import {Table, Button, ButtonGroup} from "react-bootstrap";
-import CreateScript from './CreateScript';
-import DeleteScript from './DeleteScript';
-import EditScript from './EditScript'
+import CreateScript from './createScript';
+import DeleteScript from './deleteScript';
+import EditScript from './editScript'
 
-const ScriptViewpage = (props) => {
+const ScriptViewPage = (props) => {
     const [numScripts, setNumScripts] = useState(0)
     const [list, setScript_list] = useState([])
     const [showAddScript, setShowAddScript] = useState(false);
@@ -14,6 +14,7 @@ const ScriptViewpage = (props) => {
     const [showDeleteScript, setShowDeleteScript] = useState(false);
     const [showEditScript, setShowEditScript] = useState(false);
     const [showScriptData, setShowScriptData] = useState("");
+    
     useEffect(() => {
         axios.post("/api", {
             body: {
@@ -139,9 +140,7 @@ const ScriptViewpage = (props) => {
     function Delete()
     {
         console.log("script deleted!");
-
-        let text = document.getElementById("SelectScript");
-        if (text.textContent !== "") {
+        if (selectedScript !== "") {
             axios.post("/api", {
                 body: {
                   op: "MANAGE_SCRIPTS",
@@ -193,8 +192,7 @@ const ScriptViewpage = (props) => {
     }
 
     function Edit(id, name, fname, desc, admin, data) {
-        let text = document.getElementById("SelectScript");
-        if (text.textContent !== "") {
+        if (selectedScript !== "") {
           axios.post("/api", {
             body: {
               op: "MANAGE_SCRIPTS",
@@ -221,7 +219,6 @@ const ScriptViewpage = (props) => {
         }
     }
 
-
     function closeAddScript(){
         setShowAddScript(!showAddScript);
     }
@@ -241,4 +238,4 @@ const ScriptViewpage = (props) => {
     }
 }
 
-export default ScriptViewpage
+export default ScriptViewPage

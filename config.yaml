@@ -5,4 +5,4 @@ REMOTE_FOLDER: "/tmp/Purpl3_RMS/"
 BLACKLIST_CMD_FILE: "res/blacklistCMD.txt"
 DB_PATH: 'purpl3_rms.db'
 OUTPUT_TIMEOUT: 3
-PUBLIC_SSH_KEY_VALUE: 
+

@@ -1,7 +1,7 @@
-import './scriptLogCSS.css';
+import './scriptLog.css';
 import axios from "axios";
-import SelectTable from '../table/SelectTable.js';
-import LiveOutput from "../run_script_page/LiveOutput.js";
+import SelectTable from '../selectTable/selectTable.js';
+import LiveOutput from "../runScript/LiveOutput.js";
 import React, {useState, useEffect} from "react";
 import { Table } from 'react-bootstrap';
 
@@ -47,7 +47,6 @@ const ScriptLogPage = (props) => {
             
         }
     },[consoleType,pickedLog,script]);
-
 
     useEffect(() => {
         axios.all([
@@ -111,12 +110,9 @@ const ScriptLogPage = (props) => {
         }));
     }, []);
 
-
-
     function handleConsoleType(consoleType){
         setCurrentConsoleType(consoleType)
     };
-
 
     function Select_script(params)
     {
@@ -204,13 +200,6 @@ const ScriptLogPage = (props) => {
         
     );
 }
-
-
-
-
-
-
-
 
 
 export default ScriptLogPage
