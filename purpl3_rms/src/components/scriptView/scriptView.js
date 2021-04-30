@@ -1,5 +1,5 @@
 import axios from "axios";
-import SelectTable from '../table/SelectTable';
+import SelectTable from '../selectTable/selectTable';
 import React, {useState , useEffect} from "react";
 import {Table, Button, ButtonGroup} from "react-bootstrap";
 import CreateScript from './createScript';
@@ -140,9 +140,7 @@ const ScriptViewPage = (props) => {
     function Delete()
     {
         console.log("script deleted!");
-
-        let text = document.getElementById("SelectScript");
-        if (text.textContent !== "") {
+        if (selectedScript !== "") {
             axios.post("/api", {
                 body: {
                   op: "MANAGE_SCRIPTS",
@@ -194,8 +192,7 @@ const ScriptViewPage = (props) => {
     }
 
     function Edit(id, name, fname, desc, admin, data) {
-        let text = document.getElementById("SelectScript");
-        if (text.textContent !== "") {
+        if (selectedScript !== "") {
           axios.post("/api", {
             body: {
               op: "MANAGE_SCRIPTS",

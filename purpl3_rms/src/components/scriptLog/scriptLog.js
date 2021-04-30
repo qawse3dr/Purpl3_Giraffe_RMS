@@ -1,6 +1,6 @@
 import './scriptLog.css';
 import axios from "axios";
-import SelectTable from '../table/SelectTable.js';
+import SelectTable from '../selectTable/selectTable.js';
 import LiveOutput from "../runScript/LiveOutput.js";
 import React, {useState, useEffect} from "react";
 import { Table } from 'react-bootstrap';

@@ -1,5 +1,5 @@
 import axios from "axios";
-import SelectTable from '../table/SelectTable';
+import SelectTable from '../selectTable/selectTable';
 import React, {useState , useEffect} from "react";
 import {Button, ButtonGroup, Table} from "react-bootstrap";
 import CreateComputer from './CreateComputer';
@@ -13,6 +13,7 @@ const ComputerPage = (props) => {
     const [selectedComputer, setSelectedComputer] = useState(null)
     const [showDeleteComputer, setShowDeleteComputer] = useState(false);
     const [showEditComputer, setShowEditComputer] = useState(false);
+    const [showSelected, setSelected] = useState(false);
 
     useEffect(() => {
         axios.post("/api", {
@@ -31,6 +32,7 @@ const ComputerPage = (props) => {
             }).catch((res) =>{
                 alert("Post Failed")
         })
+
     }, [numComputers])
     
     return(
@@ -52,8 +54,8 @@ const ComputerPage = (props) => {
             </ButtonGroup>
           </div>
 
-          {showAddComputer && <CreateComputer addComputer={Add} closeForm={closeAddComputer}/>}
-          {showEditComputer && <EditComputer computerid={selectedComputer.ID} editComputer={Edit} closeForm={closeEditComputer}/>}
+          {showAddComputer != null && <CreateComputer addComputer={Add} closeForm={closeAddComputer}/>}
+          {showSelected && <EditComputer editComputer={Edit} closeForm={closeEditComputer}/>}
           {showDeleteComputer && <DeleteComputer deleteComputer={Delete} closeForm={closeDeleteComputer}/>}
       
           {/* Information table about the script */}
@@ -222,6 +224,7 @@ const ComputerPage = (props) => {
     {
       console.log(prams)
       setSelectedComputer(prams);
+      setSelected(true);
         
     }
 

@@ -1,6 +1,6 @@
 
 import axios from "axios";
-import SelectTable from '../table/SelectTable.js';
+import SelectTable from '../selectTable/selectTable.js';
 import LiveOutput from "./LiveOutput.js";
 import React, {useState , useEffect} from "react";
 import { Button, Col, Container, Row} from 'react-bootstrap';
@@ -98,8 +98,9 @@ const RunScriptPage = (props) => {
         setScript(params)
     }
 
-    function handleConsoleType(consoleType){
-        setConsoleType(consoleType);
+    // FIXME - null issue
+    async function handleConsoleType(consoleType){
+        await setConsoleType(consoleType);
         handleLiveOutput()
     }
 
@@ -130,7 +131,8 @@ const RunScriptPage = (props) => {
     }
 
     //Call to backend to retrieve script output.
-    function handleLiveOutput() {
+    function handleLiveOutput(){
+        console.log("*****" + showConsoleType)
         //Only run if the is a script actually running.
         if (showRunScript !== -1) {
             //Local variable of the current fileposition to reduce code
@@ -158,11 +160,11 @@ const RunScriptPage = (props) => {
             }).then((res) => { //Success
                 //Update output textarea and FP depending on which consoleType
                 if (showConsoleType === "STDOUT") { //STDOUT
-                    setOutputSTDOUT(setOutputSTDOUT + res.data.entry)
+                    setOutputSTDOUT(showOutputSTDOUT + res.data.entry)
                     setFpSTDOUT(res.data.FP)
                 } 
                 else { //STDERR
-                    setOutputSTDERR(setOutputSTDERR + res.data.entry)
+                    setOutputSTDERR(showOutputSTDERR + res.data.entry)
                     setFpSTDERR(res.data.FP)
                 }
 
