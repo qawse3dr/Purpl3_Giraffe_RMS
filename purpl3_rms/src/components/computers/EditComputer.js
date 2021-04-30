@@ -17,26 +17,26 @@ const EditComputer = (props) => {
 				data:{
 					funcOP: "GET_BY_ID",
 					data: {
-							Id: props.computerid
+						Id: props.computerid
 					}
 				}
 			}
-			}).then((res) => {
-			    let entry = res.data.entry;
-				alert(JSON.stringify(res.data.entry))
-				setDescription(entry.desc);
-				setName(entry.nickName);
-				setUsername(entry.username);
-				setIP(entry.IP);
-				if((entry.asAdmin).localeCompare("True") === 0){
-					setAdmin(true);
-				}
-				else{
-					setAdmin(false);
-				}
-			}).catch((res) =>{
-				alert("Post Failed")
-			})
+		}).then((res) => {
+			let entry = res.data.entry;
+			alert(JSON.stringify(res.data.entry))
+			setDescription(entry.desc);
+			setName(entry.nickName);
+			setUsername(entry.username);
+			setIP(entry.IP);
+			if((entry.asAdmin).localeCompare("True") === 0){
+				setAdmin(true);
+			}
+			else{
+				setAdmin(false);
+			}
+		}).catch((res) =>{
+			alert("Post Failed")
+		})
 	}, [props.computerid])
 
 	return (

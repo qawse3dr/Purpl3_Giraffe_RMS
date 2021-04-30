@@ -17,7 +17,7 @@ const LiveOutput = (props) => {
               className = "bg-dark"
               variant="pills"
             //   onSelect={handleLiveOutput} FIXME - null issue
-              onSelect={consoleType =>  { this.props.setConsoleType(consoleType)}}
+              onSelect={consoleType =>  {props.setConsoleType(consoleType)}}
               defaultActiveKey="STDOUT"
           >
               <Tab eventKey="STDOUT" title="STDOUT" tabClassName="h-100">

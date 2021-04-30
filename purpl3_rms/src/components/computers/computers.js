@@ -7,13 +7,12 @@ import DeleteComputer from './DeleteComputer';
 import EditComputer from './EditComputer'
 
 const ComputerPage = (props) => {
-    const [numComputers, setNumComputers] = useState(0)
-    const [list, setComputer_list] = useState([])
-    const [showAddComputer, setShowAddComputer] = useState(false);
-    const [selectedComputer, setSelectedComputer] = useState(null)
-    const [showDeleteComputer, setShowDeleteComputer] = useState(false);
-    const [showEditComputer, setShowEditComputer] = useState(false);
-    const [showSelected, setSelected] = useState(false);
+    const [numComputers, setNumComputers] = useState(0);
+    const [list, setComputer_list] = useState([]);
+    const [showAddComputer, setAddComputer] = useState(false);
+    const [showDeleteComputer, setDeleteComputer] = useState(false);
+    const [showEditComputer, setEditComputer] = useState(false);
+    const [selectedComputer, setSelectedComputer] = useState(null);
 
     useEffect(() => {
         axios.post("/api", {
@@ -24,15 +23,14 @@ const ComputerPage = (props) => {
                     data: {}
                 }
             }
-            }).then((res) => {
-                for(let entry of res.data.entries){
-                    entry.name = entry.nickName;
-                }
-                setComputer_list(res.data.entries)
-            }).catch((res) =>{
-                alert("Post Failed")
+        }).then((res) => {
+            for(let entry of res.data.entries){
+                entry.name = entry.nickName;
+            }
+            setComputer_list(res.data.entries)
+        }).catch((res) =>{
+            alert("Post Failed")
         })
-
     }, [numComputers])
     
     return(
@@ -48,15 +46,15 @@ const ComputerPage = (props) => {
             
           <div className="action-buttons">
             <ButtonGroup className="font-weight-bold">
-              <Button onClick={() => {setShowEditComputer(true)}} className="font-weight-bolder" variant="primary">Edit</Button>
-              <Button onClick={() => {setShowDeleteComputer(true)}}  className="font-weight-bolder" variant="danger">Delete</Button>
-              <Button onClick={() => {setShowAddComputer(true)}} className="font-weight-bolder" variant="success">Create</Button>
+              <Button onClick={() => {setEditComputer(true)}} className="font-weight-bolder" variant="primary">Edit</Button>
+              <Button onClick={() => {setDeleteComputer(true)}}  className="font-weight-bolder" variant="danger">Delete</Button>
+              <Button onClick={() => {setAddComputer(true)}} className="font-weight-bolder" variant="success">Create</Button>
             </ButtonGroup>
           </div>
 
-          {showAddComputer != null && <CreateComputer addComputer={Add} closeForm={closeAddComputer}/>}
-          {showSelected && <EditComputer editComputer={Edit} closeForm={closeEditComputer}/>}
-          {showDeleteComputer && <DeleteComputer deleteComputer={Delete} closeForm={closeDeleteComputer}/>}
+          {(showAddComputer === true)  && <CreateComputer addComputer={Add} closeForm={closeAddComputer}/>}
+          {(showEditComputer === true) && <EditComputer computerid={selectedComputer.ID} editComputer={Edit} closeForm={closeEditComputer}/>}
+          {(showDeleteComputer === true) && <DeleteComputer deleteComputer={Delete} closeForm={closeDeleteComputer}/>}
       
           {/* Information table about the script */}
           <Table striped bordered hover responsive variant="dark" size="lg" className="mb-0" >
@@ -116,8 +114,6 @@ const ComputerPage = (props) => {
 
     function Delete()
     {
-        console.log("Computer deleted!");
-
         if (selectedComputer !== null) {
             axios.post("/api", {
                 body: {
@@ -142,9 +138,7 @@ const ComputerPage = (props) => {
     }
 
     function Add(name, description, username, password, IP, admin)
-    {
-        console.log(name, description, username, password, IP, admin)
-        
+    {        
         axios.post("/api", {
             body: {
               op: "MANAGE_COMPUTER",
@@ -179,9 +173,6 @@ const ComputerPage = (props) => {
     }
 
     function Edit(id, name, description, username, IP, admin){
-        console.log(name, description, username, IP, admin)
-
-        
         if (selectedComputer !== null) {
           axios.post("/api", {
             body: {
@@ -209,23 +200,21 @@ const ComputerPage = (props) => {
     }
 
     function closeAddComputer(){
-        setShowAddComputer(!showAddComputer);
+        setAddComputer(!showAddComputer);
     }
 
     function closeDeleteComputer(){
-        setShowDeleteComputer(!showDeleteComputer);
+        setDeleteComputer(!showDeleteComputer);
     }
 
     function closeEditComputer(){
-        setShowEditComputer(!showEditComputer);
+        setEditComputer(!showEditComputer);
     }
 
     function Select_computer(prams)
     {
       console.log(prams)
       setSelectedComputer(prams);
-      setSelected(true);
-        
     }
 
     function refreshList(){
