@@ -11,7 +11,7 @@ const CreateComputer = (props) => {
     const [IP, setIP] = useState('')
 
     return (
-        <div class="overlay">
+        <div className="overlay">
             <div className="form-popup">
                 <div className="form-content">
                     <h2>Create New Computer</h2>

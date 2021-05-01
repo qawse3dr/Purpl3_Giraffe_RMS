@@ -1,9 +1,8 @@
-
-import axios from "axios";
 import SelectTable from '../selectTable/selectTable.js';
 import LiveOutput from "./LiveOutput.js";
 import React, {useState , useEffect} from "react";
 import { Button, Col, Container, Row} from 'react-bootstrap';
+import {getAllScripts, getAllComputers, runScript, getScriptLogs} from "../../purpl3API/purpl3API"
 import './runScript.css';
 
 const RunScriptPage = (props) => {
@@ -19,39 +18,25 @@ const RunScriptPage = (props) => {
     const [showCompList, setCompList] = useState([]);
 
     useEffect(() => {
-        axios.post("/api", {
-            body: {
-                op: "MANAGE_SCRIPTS",
-                data:{
-                    funcOP: "GET_ALL",
-                    data: {}
-                }
-            }
-        }).then((res) => {
-            setScriptList([...res.data.entries]);
-        }).catch((res) =>{
-            alert("Post Failed")
-        })
-            
-        axios.post("/api", {
-            body: {
-                op: "MANAGE_COMPUTER",
-                data:{
-                    funcOP: "GET_ALL",
-                    data: {}
-                }
-            }
-        }).then((res) => {
+        getAllScripts().then(res => {
+            setScriptList(res.data.entries);
+        }).catch(res => console.log(res));
+        
+        getAllComputers().then(res => {
             for(let entry of res.data.entries){
                 entry.name = entry.nickName;
             }
-            setCompList([...res.data.entries])
-        }).catch((res) =>{
-            console.log(res)
+            setCompList(res.data.entries)
         })
+            
 
     }, [setScriptList, setCompList])
 
+    
+    useEffect(() => {
+        handleLiveOutput();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showConsoleType, showRunScript]);
     return (
         <div className="runScript">
             
@@ -106,22 +91,15 @@ const RunScriptPage = (props) => {
 
     function handleRunScript() {
         //Backend call to run script
-        axios.post("/api", {
-            body: {
-              op:"RUN_SCRIPT",
-              data:{
-                ScriptID: showScript.ID,
-                ComputerID: showComputer.ID,
-              }
-            }
-        }).then((res) => { //Sucess
-            alert(JSON.stringify(res.data))   
-            setRunScript(res.data.Id);
+        if(showScript && showComputer){
+            runScript(showScript.ID, showComputer.ID).then(res => {
+                setRunScript(res.data.Id);
+                alert(res.data.Error)
+            }).catch(res =>{
+                setRunScript(-1);
+            })
 
-        }).catch((res) =>{ //Fail
-            alert("Post Failed"); //Prob remove this final ver
-            setRunScript(-1);
-        })
+        }
 
         //Reset file position and output either way
         setFpSTDERR(0);
@@ -132,7 +110,7 @@ const RunScriptPage = (props) => {
 
     //Call to backend to retrieve script output.
     function handleLiveOutput(){
-        console.log("*****" + showConsoleType)
+        
         //Only run if the is a script actually running.
         if (showRunScript !== -1) {
             //Local variable of the current fileposition to reduce code
@@ -145,19 +123,7 @@ const RunScriptPage = (props) => {
             }
 
             //Backend Call for getting live output
-            axios.post("/api", {
-                body: {
-                    op:"MANAGE_SCRIPT_LOGS",
-                    data:{
-                        funcOP:"GET_FILE",
-                        data:{
-                            Id: showRunScript, //return value of soory's handleRunScript()
-                            Filetype: showConsoleType, //default of STDOUT
-                            FP: filePos //default of 0
-                        }
-                    }
-                }
-            }).then((res) => { //Success
+            getScriptLogs(showRunScript,filePos,showConsoleType).then(res => {
                 //Update output textarea and FP depending on which consoleType
                 if (showConsoleType === "STDOUT") { //STDOUT
                     setOutputSTDOUT(showOutputSTDOUT + res.data.entry)
@@ -167,7 +133,6 @@ const RunScriptPage = (props) => {
                     setOutputSTDERR(showOutputSTDERR + res.data.entry)
                     setFpSTDERR(res.data.FP)
                 }
-
             }).catch((res) =>{ //Fail                
                 //Reset file position and output
                 setFpSTDERR(0);
@@ -176,10 +141,11 @@ const RunScriptPage = (props) => {
                 setOutputSTDOUT("");
 
                 alert("Post Failed.");
-            })
+            });
+            
         } 
         else {
-            //Reset file position eitherway
+            //Reset file position either way
             setFpSTDERR(0);
             setFpSTDOUT(0);
             setOutputSTDERR("");

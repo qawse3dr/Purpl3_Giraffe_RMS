@@ -1,9 +1,9 @@
 import './scriptLog.css';
-import axios from "axios";
 import SelectTable from '../selectTable/selectTable.js';
 import LiveOutput from "../runScript/LiveOutput.js";
 import React, {useState, useEffect} from "react";
-import { Table } from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
+import { getScriptLogs, getAllComputers, getAllScripts, getAllScriptLogs, deleteScriptLogs} from "../../purpl3API/purpl3API";
 
 const ScriptLogPage = (props) => {
     const [script_log_List,setScriptLog_list] = useState([])
@@ -15,100 +15,63 @@ const ScriptLogPage = (props) => {
     const [currentSTDERR, setCurrentSTDERR] = useState("")
     const [consoleType, setCurrentConsoleType] = useState("STDOUT")
 
+    const [refresh , setRefresh] = useState(true)
     useEffect(() => {
 
-        if (pickedLog === 0) {
-            // TODO add logs
+        if (pickedLog === 0 || !script) {
+            console.log("script is null")
         }
         else{
-            
-            axios.post("/api", {
-                body: {
-                    op: "MANAGE_SCRIPT_LOGS",
-                    data:{
-                    funcOP: "GET_FILE",
-                    data: {
-                        Id: script.ID,
-                        Filetype: consoleType,
-                        FP: 0            
-                    }
-                    }
-                }
-                }).then((res) => {
-                    if(consoleType === "STDOUT"){
-                        setCurrentSTDOUT(res.data.entry)
-                    }else {
-                        setCurrentSTDERR(res.data.entry)
-                    }
-                }).catch((res) =>{
-                    console.log(res)
-                })
-            
+            getScriptLogs(script.ID, 0, consoleType).then(res => {
+              if(consoleType === "STDOUT"){
+                setCurrentSTDOUT(res.data.entry)
+              }else {
+                setCurrentSTDERR(res.data.entry)
+              }
+            }).catch(res => {
+
+            })           
             
         }
     },[consoleType,pickedLog,script]);
 
     useEffect(() => {
-        axios.all([
-            axios.post("/api", {
-                body: {
-                  op: "MANAGE_SCRIPTS",
-                  data:{
-                    funcOP: "GET_ALL",
-                    data: {}
-                  }
-                }
-                }),
-            axios.post("/api", {
-                body: {
-                    op: "MANAGE_COMPUTER",
-                    data:{
-                    funcOP: "GET_ALL",
-                    data: {}
-                    }
-                }
-                }),
-            axios.post("/api", {
-                body: {
-                    op: "MANAGE_SCRIPT_LOGS",
-                    data:{
-                    funcOP: "GET_ALL",
-                    data: {}
-                    }
-                }
-                })
-        ]).then(axios.spread((res1, res2, res3) => {
-            let scripts = res1.data.entries
-            let computers = res2.data.entries
-            let input_list = []
-            for (let index = res3.data.entries.length-1; index >= 0; index--) {
-                let logs = res3.data.entries[index];
-                input_list.push(logs);
-            }
+      //only refresh if refresh is true
+      async function retrieveScriptLogs(){
+        let scriptLogs = (await getAllScriptLogs()).data.entries;
+        let scripts = (await getAllScripts()).data.entries;
+        let computers = (await getAllComputers()).data.entries;
 
-            if (input_list.length === 0) {
-                input_list = [{name:"There are no logs"}]
-            }
-            else{
-                input_list.forEach(element => {
-                    let logs = element
-                    logs["name"] = `Script Log: ${logs.ID} / `
-                    computers.forEach(computer => {
-                        
-                        if (computer.ID === logs.compID) {
-                            logs["name"] += "Computer: " + computer.nickName
-                        }
-                    });
-                    scripts.forEach(script => {
-                        if (script.ID === logs.scriptID) {
-                            logs["name"] +="  / Script: " + script.name
-                        }
-                    });
+        let input_list = []
+        for (let index = scriptLogs.length-1; index >= 0; index--) {
+          let logs = scriptLogs[index];
+          input_list.push(logs);
+        }
+
+        if (input_list.length === 0) {
+            input_list = [{name:"There are no logs"}]
+        }
+        else{
+            input_list.forEach(element => {
+                let logs = element
+                logs["name"] = `Script Log: ${logs.ID} / `
+                computers.forEach(computer => {
+                    
+                    if (computer.ID === logs.compID) {
+                        logs["name"] += "Computer: " + computer.nickName
+                    }
                 });
-            }
-            setScriptLog_list(old_list => input_list)
-        }));
-    }, []);
+                scripts.forEach(script => {
+                    if (script.ID === logs.scriptID) {
+                        logs["name"] +="  / Script: " + script.name
+                    }
+                });
+            });
+        }
+        setScriptLog_list(input_list)
+      }
+      retrieveScriptLogs();
+    }, [refresh]);
 
     function handleConsoleType(consoleType){
         setCurrentConsoleType(consoleType)
@@ -121,7 +84,17 @@ const ScriptLogPage = (props) => {
         setScript(params);
         
     };
+    
+    function deleteLog(){
+      if(script !== null){
+        deleteScriptLogs(script.ID).then(res => {
+          setRefresh(!refresh);
+        }).catch(res => {
+          setRefresh(!refresh)
+        })
 
+      }
+    }
     return(
         <div className="h-100">
             
@@ -135,7 +108,7 @@ const ScriptLogPage = (props) => {
                 
             </div>
             <div className="action-buttons">
-                <button style={{color:"red"}} onClick={() => setShowDeleteLog(!showDeleteLog)}>Delete Log</button>
+              <Button onClick={() => {deleteLog();setShowDeleteLog(true)}}  className="font-weight-bolder" variant="danger">Delete</Button>
             </div>
                 
             {/* Information table about the script */}

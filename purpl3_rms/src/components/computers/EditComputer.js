@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import './computers.css'
-import axios from "axios";
+import {getComputerByID} from "../../purpl3API/purpl3API"
 
 const EditComputer = (props) => {
 
@@ -11,17 +11,7 @@ const EditComputer = (props) => {
 	const [IP, setIP] = useState('')
 
 	useEffect(() => {
-		axios.post("/api", {
-			body: {
-				op: "MANAGE_COMPUTER",
-				data:{
-					funcOP: "GET_BY_ID",
-					data: {
-						Id: props.computerid
-					}
-				}
-			}
-		}).then((res) => {
+		getComputerByID(props.computerid).then(res => {
 			let entry = res.data.entry;
 			alert(JSON.stringify(res.data.entry))
 			setDescription(entry.desc);
@@ -34,8 +24,8 @@ const EditComputer = (props) => {
 			else{
 				setAdmin(false);
 			}
-		}).catch((res) =>{
-			alert("Post Failed")
+		}).catch(res => {
+
 		})
 	}, [props.computerid])
 
