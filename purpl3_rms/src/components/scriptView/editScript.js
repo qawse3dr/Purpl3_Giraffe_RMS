@@ -1,6 +1,8 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import './scriptView.css'
-import {getScriptByID, getScriptFile} from "../../purpl3API/purpl3API"
+import {getScriptByID, getScriptFile} from "../../libpurpl3/purpl3API"
+import {ErrorContext} from "../../context/errorContext";
+
 const EditScript = (props) => {
 
     const [name, setName] = useState('')
@@ -8,6 +10,7 @@ const EditScript = (props) => {
     const [description, setDescription] = useState('')
     const [admin, setAdmin] = useState(false)
     const [data, setdata] = useState('')
+    const [error, setError] = useContext(ErrorContext);
 
     useEffect(() => {
       getScriptByID(props.scriptid).then(res => {
@@ -29,9 +32,7 @@ const EditScript = (props) => {
       });
       getScriptFile(props.scriptid,0).then(res => {
         setdata(res.data.entry);
-      }).catch(res =>{
-        console.log(res)
-      })
+      }).catch(setError);
       
   
     }, [props.scriptid])

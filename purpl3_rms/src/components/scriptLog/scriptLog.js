@@ -1,9 +1,10 @@
 import './scriptLog.css';
 import SelectTable from '../selectTable/selectTable.js';
 import LiveOutput from "../runScript/LiveOutput.js";
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import { Table, Button } from 'react-bootstrap';
-import { getScriptLogs, getAllComputers, getAllScripts, getAllScriptLogs, deleteScriptLogs} from "../../purpl3API/purpl3API";
+import { getScriptLogs, getAllComputers, getAllScripts, getAllScriptLogs, deleteScriptLogs} from "../../libpurpl3/purpl3API";
+import {ErrorContext} from "../../context/errorContext";
 
 const ScriptLogPage = (props) => {
     const [script_log_List,setScriptLog_list] = useState([])
@@ -16,6 +17,8 @@ const ScriptLogPage = (props) => {
     const [consoleType, setCurrentConsoleType] = useState("STDOUT")
 
     const [refresh , setRefresh] = useState(true)
+    const [error, setError] = useContext(ErrorContext);
+
     useEffect(() => {
 
         if (pickedLog === 0 || !script) {
@@ -28,9 +31,7 @@ const ScriptLogPage = (props) => {
               }else {
                 setCurrentSTDERR(res.data.entry)
               }
-            }).catch(res => {
-
-            })           
+            }).catch(setError);           
             
         }
     },[consoleType,pickedLog,script]);
@@ -38,9 +39,20 @@ const ScriptLogPage = (props) => {
     useEffect(() => {
       //only refresh if refresh is true
       async function retrieveScriptLogs(){
-        let scriptLogs = (await getAllScriptLogs()).data.entries;
-        let scripts = (await getAllScripts()).data.entries;
-        let computers = (await getAllComputers()).data.entries;
+        let scriptLogs = null;
+        let scripts = null;
+        let computers = null;
+
+        try{
+          scriptLogs = (await getAllScriptLogs()).data.entries;
+          scripts = (await getAllScripts()).data.entries;
+          computers = (await getAllComputers()).data.entries;
+
+        }catch(err) {
+          setError(err);
+          setRefresh(!refresh);
+          return;
+        }
 
         let input_list = []
         for (let index = scriptLogs.length-1; index >= 0; index--) {
@@ -91,6 +103,7 @@ const ScriptLogPage = (props) => {
           setRefresh(!refresh);
         }).catch(res => {
           setRefresh(!refresh)
+          setError(res);
         })
 
       }

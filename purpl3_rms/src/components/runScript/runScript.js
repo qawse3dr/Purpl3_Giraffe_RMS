@@ -1,9 +1,10 @@
 import SelectTable from '../selectTable/selectTable.js';
 import LiveOutput from "./LiveOutput.js";
-import React, {useState , useEffect} from "react";
+import React, {useState , useEffect, useContext} from "react";
 import { Button, Col, Container, Row} from 'react-bootstrap';
-import {getAllScripts, getAllComputers, runScript, getScriptLogs} from "../../purpl3API/purpl3API"
+import {getAllScripts, getAllComputers, runScript, getScriptLogs} from "../../libpurpl3/purpl3API"
 import './runScript.css';
+import {ErrorContext} from "../../context/errorContext";
 
 const RunScriptPage = (props) => {
     const [showComputer, setComputer] = useState(-1);
@@ -16,18 +17,19 @@ const RunScriptPage = (props) => {
     const [showOutputSTDERR, setOutputSTDERR] = useState("");
     const [showScriptList, setScriptList] = useState([]);
     const [showCompList, setCompList] = useState([]);
+    const [error, setError] = useContext(ErrorContext);
 
     useEffect(() => {
         getAllScripts().then(res => {
             setScriptList(res.data.entries);
-        }).catch(res => console.log(res));
+        }).catch(setError);
         
         getAllComputers().then(res => {
             for(let entry of res.data.entries){
                 entry.name = entry.nickName;
             }
             setCompList(res.data.entries)
-        })
+        }).catch(setError)
             
 
     }, [setScriptList, setCompList])
@@ -97,6 +99,7 @@ const RunScriptPage = (props) => {
                 alert(res.data.Error)
             }).catch(res =>{
                 setRunScript(-1);
+                setError(res);
             })
 
         }
@@ -139,8 +142,7 @@ const RunScriptPage = (props) => {
                 setFpSTDOUT(0);
                 setOutputSTDERR("");
                 setOutputSTDOUT("");
-
-                alert("Post Failed.");
+                setError(res);
             });
             
         } 
