@@ -1,11 +1,10 @@
-import axios from "axios";
 import SelectTable from '../selectTable/selectTable';
 import React, {useState , useEffect} from "react";
 import {Table, Button, ButtonGroup} from "react-bootstrap";
 import CreateScript from './createScript';
 import DeleteScript from './deleteScript';
 import EditScript from './editScript'
-
+import {addScript, deleteScript, editScript, getAllScripts, getScriptFile} from "../../purpl3API/purpl3API"
 const ScriptViewPage = (props) => {
     const [numScripts, setNumScripts] = useState(0)
     const [list, setScript_list] = useState([])
@@ -16,20 +15,9 @@ const ScriptViewPage = (props) => {
     const [showScriptData, setShowScriptData] = useState("");
     
     useEffect(() => {
-        axios.post("/api", {
-            body: {
-              op: "MANAGE_SCRIPTS",
-              data:{
-                funcOP: "GET_ALL",
-                data: {}
-              }
-            }
-            }).then((res) => {
-              setScript_list(res.data.entries)
-              console.log(res.data.entries)
-            }).catch((res) =>{
-              alert("Post Failed")
-            })
+      getAllScripts().then(res => {
+        setScript_list(res.data.entries)
+      })
     }, [numScripts])
 
     return(
@@ -118,103 +106,42 @@ const ScriptViewPage = (props) => {
     );
 
     function showScript(script){
-      axios.post("/api", {
-        body: {
-            op:"MANAGE_SCRIPTS",
-            data:{
-                funcOP:"GET_FILE",
-                data:{
-                    Id: script.ID,
-                    Filetype: "SCRIPT", //default of STDOUT
-                    FP: 0
-                }
-            },
-
-        }
-      }).then((res) => {
+      getScriptFile(script.ID, 0).then(res => {
         setShowScriptData(res.data.entry);
-      }).catch((res) =>{
-        alert(console.log(res))
       })
     }
     function Delete()
     {
-        console.log("script deleted!");
-        if (selectedScript !== "") {
-            axios.post("/api", {
-                body: {
-                  op: "MANAGE_SCRIPTS",
-                  data:{
-                    funcOP: "DEL",
-                    data: {
-                        Id: selectedScript.ID
-                    }
-                  }
-                }
-                }).then((res) => {
-                    setNumScripts(list.length - 1);
-                  console.log(res.data)
-                }).catch((res) =>{
-                  alert("Post Failed")
-                })
-            
-            closeDeleteScript();
-        }
+      console.log("script deleted!");
+      if (selectedScript !== "") {
+        deleteScript(selectedScript.ID).then(res => {
+          setNumScripts(list.length - 1);
+        })
+          
+        closeDeleteScript();
+      }
     }
 
     function Add(name, fname, desc, isAdmin, data)
     {
         console.log(name, fname, desc, isAdmin, data)
-        
-        axios.post("/api", {
-            body: {
-              op: "MANAGE_SCRIPTS",
-              data: {
-                funcOP: "ADD",
-                data: {
-                  Name: name,
-                  fileName: fname,
-                  Desc: desc,
-                  isAdmin: isAdmin,
-                  scriptData: data
-
-                }
-              }  
-            }
-        }).then((res) => {
-            setNumScripts(list.length + 1)
-            alert(name + " Script added")
-        }).catch((res) =>{
-            alert("Post Failed")
+        addScript(name, fname, desc, isAdmin, data).then(res => {
+          setNumScripts(list.length + 1)
         })
         
         closeAddScript();
     }
 
     function Edit(id, name, fname, desc, admin, data) {
-        if (selectedScript !== "") {
-          axios.post("/api", {
-            body: {
-              op: "MANAGE_SCRIPTS",
-              data: {
-                  funcOP: "EDIT",
-                  data: {
-                      Id: id,
-                      Name: name,
-                      fileName: fname,
-                      Desc: desc,
-                      isAdmin: admin,
-                      scriptData: data
-                  }
-              }
-            }
-          }).then((res) => {
-            alert(JSON.stringify(res.data))
+        if (selectedScript) {
+          editScript(id, name, fname, desc, admin, data).then(res => {
+            
+            console.log("here")
             setNumScripts(list.length + 0)
-            //console.log(list)
-          }).catch((res) =>{
-            alert("Post Failed")
+          }).catch(res =>{
+            alert("failed")
           })
+          
           closeEditScript();
         }
     }

@@ -1,7 +1,6 @@
 import logo from './res/logo.png';
 import logoutBtn from "./res/logout.png"
 import './App.css';
-import axios from "axios";
 import React, {useState} from 'react';
 import {
   Route,
@@ -20,6 +19,7 @@ import ErrorDoc from './components/errorDoc/errorDoc'
 import ComputerPage from './components/computers/computers'
 import PrivateRoute from './components/PrivateRoute'
 import {LinkContainer} from "react-router-bootstrap"
+import { logoutRequest } from './purpl3API/purpl3API';
 
 function App() {
 
@@ -112,14 +112,7 @@ function App() {
   }
 
   function handleLogout(){
-      axios.post("/login", {
-        body: {
-            op: "LOGOUT",
-            data: {
-            }
-        }
-      })
-      
+    logoutRequest();  
     setLogin(false);
   }
 }

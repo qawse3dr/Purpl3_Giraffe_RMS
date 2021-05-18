@@ -32,6 +32,7 @@ LOGIN_OPS = {
   pref.getNoCheck(pref.LOGIN_CHANGE_PASSWORD): login.changePassword,
   pref.getNoCheck(pref.LOGIN_RESET_PASSWORD): login.resetPassword,
   pref.getNoCheck(pref.LOGIN_LOGOUT): login.logout,
+  pref.getNoCheck(pref.LOGIN_CHECK): login.loginCheck,
 }
 
 OPS = {

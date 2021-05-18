@@ -1,10 +1,10 @@
-import axios from "axios";
 import SelectTable from '../selectTable/selectTable';
 import React, {useState , useEffect} from "react";
 import {Button, ButtonGroup, Table} from "react-bootstrap";
 import CreateComputer from './CreateComputer';
 import DeleteComputer from './DeleteComputer';
 import EditComputer from './EditComputer'
+import {addComputer, getAllComputers, deleteComputer, editComputer} from "../../purpl3API/purpl3API"
 
 const ComputerPage = (props) => {
     const [numComputers, setNumComputers] = useState(0);
@@ -15,22 +15,15 @@ const ComputerPage = (props) => {
     const [selectedComputer, setSelectedComputer] = useState(null);
 
     useEffect(() => {
-        axios.post("/api", {
-            body: {
-                op: "MANAGE_COMPUTER",
-                data:{
-                    funcOP: "GET_ALL",
-                    data: {}
-                }
-            }
-        }).then((res) => {
-            for(let entry of res.data.entries){
-                entry.name = entry.nickName;
-            }
-            setComputer_list(res.data.entries)
-        }).catch((res) =>{
-            alert("Post Failed")
-        })
+      getAllComputers().then(res => {
+        for(let entry of res.data.entries){
+          entry.name = entry.nickName;
+        }
+        setComputer_list(res.data.entries)
+        console.log("no error")
+      }).catch(error =>{
+        console.log(error)
+      })
     }, [numComputers])
     
     return(
@@ -115,86 +108,32 @@ const ComputerPage = (props) => {
     function Delete()
     {
         if (selectedComputer !== null) {
-            axios.post("/api", {
-                body: {
-                  op: "MANAGE_COMPUTER",
-                  data:{
-                    funcOP: "DEL",
-                    data: {
-                        Id: selectedComputer.ID
-                    }
-                  }
-                }
-                }).then((res) => {
-                  refreshList();
-            
-                  console.log(res.data)
-                }).catch((res) =>{
-                  alert("Post Failed")
-                })
-            
-            closeDeleteComputer();
+          deleteComputer(selectedComputer.ID).then(res =>{
+            setNumComputers(numComputers-1);
+            console.log(res.data)
+          }).catch(err => console.log(err));
+
+          closeDeleteComputer();
         }
     }
 
     function Add(name, description, username, password, IP, admin)
     {        
-        axios.post("/api", {
-            body: {
-              op: "MANAGE_COMPUTER",
-              data: {
-                funcOP: "ADD",
-                data: {
-                  Name: name,
-                  Desc: description,
-                  Username: username,
-                  Password:  password,
-                  IP: IP,
-                  isAdmin: admin
-
-                }
-              }  
-            }
-        }).then((res) => {
-            if(res.data.Error.code === 0){
-              setNumComputers(list.length + 1)
-              alert(name + " Script added")
-            } 
-            else{
-              alert(JSON.stringify(res.data.Error))
-            }
-              
-            
-        }).catch((res) =>{
-            alert("Post Failed")
-        })
+      addComputer(name, description, username, password, IP, admin, (res) => {
+        console.log(res)
+        setNumComputers(list.length + 1)
+        alert(name + " Script added")
+      })
         
-        closeAddComputer();
+      closeAddComputer();
     }
 
     function Edit(id, name, description, username, IP, admin){
         if (selectedComputer !== null) {
-          axios.post("/api", {
-            body: {
-              op: "MANAGE_COMPUTER",
-              data: {
-                  funcOP: "EDIT",
-                  data: {
-                      Id: id,
-                      Name: name,
-                      Desc: description,
-                      Username: username,
-                      IP: IP,
-                      isAdmin: admin
-                  }
-              }
-            }
-          }).then((res) => {
-            refreshList()
-            console.log(list)
-          }).catch((res) =>{
-            alert("Post Failed")
-          })
+          editComputer(id, name, description, username, IP, admin).then(res =>{
+            setNumComputers(numComputers + 0);
+          }).catch(res => console.log(res));
+          
           closeEditComputer();
         }
     }
@@ -217,24 +156,6 @@ const ComputerPage = (props) => {
       setSelectedComputer(prams);
     }
 
-    function refreshList(){
-      axios.post("/api", {
-        body: {
-          op: "MANAGE_COMPUTER",
-          data:{
-            funcOP: "GET_ALL",
-            data: {}
-          }
-        }
-        }).then((res) => {
-          for(let entry of res.data.entries){
-            entry.name = entry.nickName;
-        }
-          setComputer_list(res.data.entries)
-        }).catch((res) =>{
-          alert("Post Failed")
-        })
-    }
 }
 
 export default ComputerPage

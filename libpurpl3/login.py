@@ -53,6 +53,19 @@ def logout(data: dict)-> str:
         Error = pref.Success.toJson()
     )
 
+def loginCheck(data: dict) -> str:
+    '''
+    Checks if the current session has anyone logged in
+    '''
+    err = pref.Success
+
+    if not("userID" in session):
+        err = pref.getError(pref.ERROR_NOT_LOGGED_IN)
+    
+    return jsonify(
+        Error = err.toJson()
+    )
+
 def manageUser(data: dict) -> str:
     return jsonify(
         Error = {

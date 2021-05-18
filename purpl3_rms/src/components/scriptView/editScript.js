@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react";
 import './scriptView.css'
-import axios from "axios";
-
+import {getScriptByID, getScriptFile} from "../../purpl3API/purpl3API"
 const EditScript = (props) => {
 
     const [name, setName] = useState('')
@@ -11,54 +10,30 @@ const EditScript = (props) => {
     const [data, setdata] = useState('')
 
     useEffect(() => {
-        axios.post("/api", {
-            body: {
-              op: "MANAGE_SCRIPTS",
-              data:{
-                funcOP: "GET_BY_ID",
-                data: {
-                    Id: props.scriptid
-                }
-              }
-            }
-            }).then((res) => {
-            let entry = res.data.entry;
+      getScriptByID(props.scriptid).then(res => {
+        let entry = res.data.entry;
               
-              if(res.data.Error.code === 0){
-                setDescription(entry.desc);
-                setName(entry.name);
-                setFileName(entry.fileName);
-                if((entry.isAdmin).localeCompare("True") === 0){
-                  setAdmin(true);
-                }
-                else{
-                  setAdmin(false);
-                }
-              } else {
-                alert(JSON.stringify(res.data.entry))
-              }
-              
-            }).catch((res) =>{
-              alert("Post Failed")
-            })
-      axios.post("/api", {
-        body: {
-            op:"MANAGE_SCRIPTS",
-            data:{
-                funcOP:"GET_FILE",
-                data:{
-                    Id: props.scriptid,
-                    Filetype: "SCRIPT", //default of STDOUT
-                    FP: 0
-                }
-            },
-
+        if(res.data.Error.code === 0){
+          setDescription(entry.desc);
+          setName(entry.name);
+          setFileName(entry.fileName);
+          if((entry.isAdmin).localeCompare("True") === 0){
+            setAdmin(true);
+          }
+          else{
+            setAdmin(false);
+          }
+        } else {
+          alert(JSON.stringify(res.data.entry))
         }
-      }).then((res) => {
-        setdata(res.data.entry)
-      }).catch((res) =>{
-        alert(console.log(res))
+      });
+      getScriptFile(props.scriptid,0).then(res => {
+        setdata(res.data.entry);
+      }).catch(res =>{
+        console.log(res)
       })
+      
+  
     }, [props.scriptid])
 
     return (
