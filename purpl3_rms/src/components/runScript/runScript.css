@@ -18,6 +18,9 @@
     height: 50%;
 }
 
+.select-boxes{
+  height: 90%;
+}
 .tab-content, .tab-content .fade{
   height: 100%;
 }

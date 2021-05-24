@@ -9,6 +9,7 @@ body {
 html{
 	height: 100%;
 	width: 100%;
+
 }
 button{
 	font-size: larger;
@@ -30,8 +31,8 @@ h1, h2, h3, h4, h5, h6 {
 .content{
 	background-color: #d3d3d3;
 	height:90%;
-	min-width: 50vh;
-	min-height: 100vh;
+	min-width: 100vw;
+	min-height: 70rem;
 }
 
 .title{

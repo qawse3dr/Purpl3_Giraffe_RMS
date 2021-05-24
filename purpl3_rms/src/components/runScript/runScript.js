@@ -52,7 +52,7 @@ const RunScriptPage = (props) => {
                         <h3>Script</h3>    
                     </Col>
                 </Row>
-                <Row>
+                <Row className="select-boxes">
                     <Col>
 
                         <SelectTable value={showComputer} tableName="ComputerTable" input={showCompList} onChange={handleSelectComputer}/> {/*consider doing lambda function here and changing directly */}

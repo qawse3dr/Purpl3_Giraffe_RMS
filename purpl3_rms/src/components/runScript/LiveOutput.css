@@ -3,6 +3,10 @@
   height:100%
 }
 
+.scriptOutput{
+  white-space: pre;
+}
+
 .tab-content, .tab-content .fade{
   height: 100%;
 }
