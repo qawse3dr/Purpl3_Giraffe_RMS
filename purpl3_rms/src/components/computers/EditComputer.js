@@ -1,6 +1,7 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import './computers.css'
-import {getComputerByID} from "../../purpl3API/purpl3API"
+import {getComputerByID} from "../../libpurpl3/purpl3API"
+import {ErrorContext} from "../../context/errorContext";
 
 const EditComputer = (props) => {
 
@@ -9,6 +10,7 @@ const EditComputer = (props) => {
 	const [admin, setAdmin] = useState(false)
 	const [username, setUsername] = useState('')
 	const [IP, setIP] = useState('')
+	const [error, setError] = useContext(ErrorContext);
 
 	useEffect(() => {
 		getComputerByID(props.computerid).then(res => {
@@ -24,9 +26,7 @@ const EditComputer = (props) => {
 			else{
 				setAdmin(false);
 			}
-		}).catch(res => {
-
-		})
+		}).catch(setError)
 	}, [props.computerid])
 
 	return (

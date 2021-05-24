@@ -1,10 +1,12 @@
 import SelectTable from '../selectTable/selectTable';
-import React, {useState , useEffect} from "react";
+import React, {useState , useEffect, useContext} from "react";
 import {Button, ButtonGroup, Table} from "react-bootstrap";
 import CreateComputer from './CreateComputer';
 import DeleteComputer from './DeleteComputer';
-import EditComputer from './EditComputer'
-import {addComputer, getAllComputers, deleteComputer, editComputer} from "../../purpl3API/purpl3API"
+import EditComputer from './EditComputer';
+import {ErrorContext} from "../../context/errorContext";
+
+import {addComputer, getAllComputers, deleteComputer, editComputer} from "../../libpurpl3/purpl3API"
 
 const ComputerPage = (props) => {
     const [numComputers, setNumComputers] = useState(0);
@@ -13,6 +15,7 @@ const ComputerPage = (props) => {
     const [showDeleteComputer, setDeleteComputer] = useState(false);
     const [showEditComputer, setEditComputer] = useState(false);
     const [selectedComputer, setSelectedComputer] = useState(null);
+    const [error, setError] = useContext(ErrorContext);
 
     useEffect(() => {
       getAllComputers().then(res => {
@@ -21,8 +24,8 @@ const ComputerPage = (props) => {
         }
         setComputer_list(res.data.entries)
         console.log("no error")
-      }).catch(error =>{
-        console.log(error)
+      }).catch((res) => {
+        setError(res);
       })
     }, [numComputers])
     
@@ -111,7 +114,7 @@ const ComputerPage = (props) => {
           deleteComputer(selectedComputer.ID).then(res =>{
             setNumComputers(numComputers-1);
             console.log(res.data)
-          }).catch(err => console.log(err));
+          }).catch(setError);
 
           closeDeleteComputer();
         }
@@ -132,7 +135,7 @@ const ComputerPage = (props) => {
         if (selectedComputer !== null) {
           editComputer(id, name, description, username, IP, admin).then(res =>{
             setNumComputers(numComputers + 0);
-          }).catch(res => console.log(res));
+          }).catch(setError);
           
           closeEditComputer();
         }

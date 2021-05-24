@@ -1,16 +1,20 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useContext} from 'react'
 import './Login.css'
 import logo from '../../res/logo.png'
 import {Button, Form} from "react-bootstrap"
-import { loginRequest, loginCheckRequest } from '../../purpl3API/purpl3API'
-
+import { loginRequest, loginCheckRequest } from '../../libpurpl3/purpl3API'
+import {ErrorContext} from "../../context/errorContext";
+import {ErrorModal} from "../modals/errorModal"
 const Login = (props) => {
+
+    const [error, setError] = useContext(ErrorContext);
 
     useEffect(() => {
         loginCheckRequest().then((res) => {
             props.sendLoginStatus(true);
             props.history.push("/run-script")
-        }).catch((res) =>{});
+        }).catch(res => {});
+    // eslint-disable-next-line
     }, [])
     return(
         <div className="login-page">
@@ -30,6 +34,7 @@ const Login = (props) => {
                 </Button>
             </Form>
 
+            
         </div>
     );
 
@@ -44,7 +49,7 @@ const Login = (props) => {
         loginRequest(username, password).then(res => {
             props.sendLoginStatus(true);
             props.history.push("/run-script")
-        })
+        }).catch(setError);
     }
 
 }

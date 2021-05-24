@@ -36,13 +36,13 @@ function validateScript(data){
   }
 
   if(!data.Name){
-    reason = "Invalid or empty Name";
+    reason = createError(2,"Returned: 2, invalid Name.");
   
   } else if(!data.fileName || !data.fileName.includes(".")){
-    reason = "Invalid or empty File Name";
+    reason = createError(2,"Returned: 2, invalid File Name.");
   
   } else if(typeof data.isAdmin !== "boolean"){
-    reason = "Invalid isAdmin";
+    reason = createError(2,"Returned: 2, invalid isAdmin.");
   }
 
   return reason;
@@ -64,16 +64,16 @@ function validateComputer(data){
   }
 
   if(!data.Name){
-    reason = "Invalid Name";
+    reason = createError(2,"Returned: 2, invalid Name.");
   
   } else if(!data.Username){
-    reason = "Invalid Username";
+    reason = createError(2,"Returned: 2, invalid Username.");
   
   } else if(!data.IP){
-    reason = "Invalid IP";
+    reason = createError(2,"Returned: 2, invalid IP.");
   
   } else if(typeof data.isAdmin !== "boolean"){
-    reason = "Invalid isAdmin";
+    reason = createError(2,"Returned: 2, invalid isAdmin.");
   
   }
   return reason;
@@ -88,25 +88,29 @@ function validateID(id){
   let reason = "";
 
   if(!Number.isInteger(Number(id)) || id < 1){
-    reason = "Invalid ID";
+    reason = createError(2,"Returned: 2, invalid ID.");
   }
   return reason;
 }
 
+function createError(code, reason){
+  return {
+    code: code,
+    reason: reason
+  }
+}
 function handlePostSuccess(res, extraMessage, resolve, reject){
   if(res.data.Error.code === 0){
     resolve(res);
   } else{
-    //Display Error
-    alert(res.data.Error.reason)
     reject(res.data.Error)
   }
 }
 
 function handlePostFail(res, extraMessage, reject){
-  alert("failed to reach server FATAL ERROR\n" + extraMessage);
-  reject(res);
+  reject(createError(5,"Returned: 5, Failed to connect to server"));
 }
+
 ///////////////////////////////////////////////
 //                                           //
 //               GET_BY_ID                   //
@@ -125,7 +129,6 @@ function getEntryByID(operation, id, resolve, reject){
 
   let reason = validateID(id);
   if(reason){
-    alert(reason)
     reject(reason)
     return
   } else {
@@ -358,7 +361,6 @@ export {addScript, addComputer};
 function deleteEntry(operation, id, resolve, reject){
   let reason = validateID(id);
   if(reason){
-    alert(reason)
     reject(reason)
     return
   } else{
@@ -438,7 +440,6 @@ export {deleteScript, deleteScriptLogs, deleteComputer};
 function editEntry(operation, data, resolve, reject){
   let reason = validateID(data.Id);
   if(reason){
-    alert(reason)
     reject(reason)
     return
   } else {
@@ -482,7 +483,6 @@ function editScript(Id, Name, fileName, Desc, isAdmin, scriptData){
       editEntry(operations.script, data, resolve, reject);
 
     } else {
-      alert(reason)
       reject(reason);
     }
   });
@@ -527,7 +527,6 @@ export {editScript, editComputer};
 function getFile(operation, data, resolve, reject){
   let reason = validateID(data.Id);
   if(reason){
-    alert(reason)
     reject(reason)
   } else {
     axios.post("/api", {
@@ -570,7 +569,6 @@ function getScriptFile(Id, FP){
     if(!reason){
       getFile(operations.script, data, resolve, reject);
     } else {
-      alert(reason)
       reject(reason);
     }
   })
@@ -591,7 +589,7 @@ function getScriptLogs(Id, FP, consoleType){
     }
 
     //validate computer
-    let reason = validateComputer(data);
+    let reason = validateID(Id);
     if(!reason){
       getFile(operations.scriptLogs, data, resolve, reject);
     } else {
@@ -613,13 +611,11 @@ function runScript(ScriptID, ComputerID){
   return new Promise((resolve, reject) =>{
     let reason = validateID(ScriptID);
     if(reason){
-      alert(reason)
       reject(reason)
       return
     }
     reason = validateID(ComputerID);
     if(reason){
-      alert(reason)
       reject(reason)
     } else {
       axios.post("/api", {
@@ -652,10 +648,8 @@ export {runScript};
 function loginRequest(username, password){
   return new Promise((resolve, reject) =>{
     if(!username || !password){
-      let reason = "Invalid or empty username or password";
-      alert(reason)
+      let reason = createError(2, "Returned: 2, Invalid or empty username or password");
       reject(reason)
-      return
     } else {
       axios.post("/login", {
         body: {
@@ -666,6 +660,7 @@ function loginRequest(username, password){
             }
           }
       }).then(res => {
+        console.log(res)
           handlePostSuccess(res, "", resolve, reject);
     
       }).catch((res) =>{
@@ -711,4 +706,6 @@ function loginCheckRequest(){
     }) 
   });
 }
-export {loginRequest, logoutRequest, loginCheckRequest}
+export {loginRequest, logoutRequest, loginCheckRequest};
+
+

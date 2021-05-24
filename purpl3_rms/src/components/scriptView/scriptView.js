@@ -1,10 +1,13 @@
 import SelectTable from '../selectTable/selectTable';
-import React, {useState , useEffect} from "react";
+import React, {useState , useEffect, useContext} from "react";
 import {Table, Button, ButtonGroup} from "react-bootstrap";
 import CreateScript from './createScript';
 import DeleteScript from './deleteScript';
 import EditScript from './editScript'
-import {addScript, deleteScript, editScript, getAllScripts, getScriptFile} from "../../purpl3API/purpl3API"
+import {addScript, deleteScript, editScript, getAllScripts, getScriptFile} from "../../libpurpl3/purpl3API"
+import {ErrorContext} from "../../context/errorContext";
+
+
 const ScriptViewPage = (props) => {
     const [numScripts, setNumScripts] = useState(0)
     const [list, setScript_list] = useState([])
@@ -13,11 +16,12 @@ const ScriptViewPage = (props) => {
     const [showDeleteScript, setShowDeleteScript] = useState(false);
     const [showEditScript, setShowEditScript] = useState(false);
     const [showScriptData, setShowScriptData] = useState("");
+    const [error, setError] = useContext(ErrorContext);
     
     useEffect(() => {
       getAllScripts().then(res => {
         setScript_list(res.data.entries)
-      })
+      }).catch(setError)
     }, [numScripts])
 
     return(
@@ -135,12 +139,9 @@ const ScriptViewPage = (props) => {
     function Edit(id, name, fname, desc, admin, data) {
         if (selectedScript) {
           editScript(id, name, fname, desc, admin, data).then(res => {
-            
-            console.log("here")
+
             setNumScripts(list.length + 0)
-          }).catch(res =>{
-            alert("failed")
-          })
+          }).catch(setError);
           
           closeEditScript();
         }

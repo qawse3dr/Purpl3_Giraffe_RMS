@@ -76,11 +76,18 @@ def processRequest(tableName: pref.prefENUM, tableOP: pref.prefENUM, data: dict)
       elif(Filetype == pref.getNoCheck(pref.REQ_VAR_FILE_SCRIPT)):
         scriptPath = pref.getNoCheck(pref.CONFIG_SCRIPT_PATH)
         filename = scriptPath + entry.fileName
+      fp = None
+      try:
+        fp = open(filename,"r")
+        fp.seek(FP,os.SEEK_SET)
+      except:
+        err = pref.getError(pref.ERROR_FILE_NOT_FOUND,(filename))
 
-      fp = open(filename,"r")
-      fp.seek(FP,os.SEEK_SET)
-      fileData = "".join(fp.readlines())
-      newFP = fp.tell()
+      fileData = None
+      newFP = 0
+      if err == pref.Success:
+        fileData = "".join(fp.readlines())
+        newFP = fp.tell()
 
       returnVal = jsonify(Error = err.toJson(), entry=fileData,FP=newFP)
 
